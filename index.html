@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CENTRO COMERCIAL</title>
-    <!-- Supabase JS Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-main: #0a0a0a;
@@ -70,7 +68,7 @@
 
         /* Navbar */
         .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0f0f0f; display: flex; justify-around; align-items: center; border-top: 1px solid #1f1f1f; z-index: 1000; }
+        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0f0f0f; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1f1f1f; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.72rem; cursor: pointer; gap: 4px; }
         .nav-item.active { color: var(--primary-green); }
 
@@ -281,21 +279,31 @@
         </div>
     </div>
 
-    <script>
-        // إعدادات المتغيرات وتفعيل التوافق مع Publishable Keys الجديدة
-        const SUPABASE_URL = "https://njmehwvnwdzqzjscbqkd.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_rPwcM-4kv4IYo_1JMXVIRw_8WQ0ZlP6";
+    <!-- FIREBASE SDK & APP LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-            auth: { persistSession: false }
-        });
+        // إعدادات Firebase الخاصة بمشروعك
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmS3U5IdiEIZWXhSQ1Numy3zI4sNFH1I4",
+            authDomain: "naruto-44f7d.firebaseapp.com",
+            projectId: "naruto-44f7d",
+            storageBucket: "naruto-44f7d.firebasestorage.app",
+            messagingSenderId: "326662739910",
+            appId: "1:326662739910:web:d3ee6a2079e88f0fb344c7",
+            measurementId: "G-HXE6W6C7LK"
+        };
 
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentUser = null;
         let isSignup = false;
         let activeVipRate = 0;
         let activeMaxTasks = 10;
         let activeCompletedTasks = 0;
         let activeTaskPending = false;
-        let currentUserData = null;
 
         const demoProducts = [
             { name: "سيارة بورش رياضية Porsche 911", img: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800" },
@@ -306,7 +314,7 @@
             { name: "حذاء رياضي عصري", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800" }
         ];
 
-        // Slider logic
+        // Slide animation
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
@@ -320,71 +328,72 @@
         }
         setInterval(nextSlide, 3000);
 
-        function toggleAuth() {
+        window.toggleAuth = function() {
             isSignup = !isSignup;
             document.getElementById('auth-title').innerText = isSignup ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
             document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
-        }
+        };
 
-        async function handleAuth(e) {
+        window.handleAuth = async function(e) {
             e.preventDefault();
-            const phone = document.getElementById('auth-phone').value;
-            const password = document.getElementById('auth-pass').value;
+            const phone = document.getElementById('auth-phone').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+
+            if(!phone || !pass) return alert("يرجى إدخال البيانات كاملة");
+
+            const userRef = doc(db, "users", phone);
+            const userSnap = await getDoc(userRef);
 
             if(isSignup) {
-                const refCode = 'REF' + Math.floor(1000 + Math.random() * 9000);
-                const { data, error } = await supabaseClient
-                    .from('users')
-                    .insert([{ phone: phone, password: password, balance: 50.00, ref_code: refCode }])
-                    .select();
-
-                if (error) {
-                    alert('خطأ أثناء التسجيل: ' + (error.message || JSON.stringify(error)));
+                if(userSnap.exists()) {
+                    alert("هذا الرقم مسجل بالفعل، يرجى تسجيل الدخول.");
                     return;
                 }
+                const newUser = {
+                    phone: phone,
+                    password: pass,
+                    balance: 50.00,
+                    ref: 'REF' + Math.floor(1000 + Math.random() * 9000),
+                    createdAt: new Date().toISOString()
+                };
+                await setDoc(userRef, newUser);
                 localStorage.setItem('user_phone', phone);
-                initApp();
+                listenToUserData(phone);
             } else {
-                const { data, error } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('phone', phone)
-                    .eq('password', password)
-                    .single();
-
-                if (error || !data) {
-                    alert('بيانات الدخول غير صحيحة');
+                if(!userSnap.exists() || userSnap.data().password !== pass) {
+                    alert("رقم الهاتف أو كلمة المرور غير صحيحة!");
                     return;
                 }
                 localStorage.setItem('user_phone', phone);
-                initApp();
+                listenToUserData(phone);
             }
+        };
+
+        function listenToUserData(phone) {
+            const userRef = doc(db, "users", phone);
+            onSnapshot(userRef, (docSnap) => {
+                if(docSnap.exists()) {
+                    currentUser = docSnap.data();
+                    initAppUI();
+                }
+            });
         }
 
-        async function initApp() {
-            const phone = localStorage.getItem('user_phone');
-            if(!phone) return;
-
-            const { data: user, error } = await supabaseClient
-                .from('users')
-                .select('*')
-                .eq('phone', phone)
-                .single();
-
-            if (error || !user) return;
-
-            currentUserData = user;
-            document.getElementById('user-phone-disp').innerText = user.phone;
-            document.getElementById('prof-phone-disp').innerText = user.phone;
-            document.querySelectorAll('.val-balance').forEach(el => el.innerText = parseFloat(user.balance).toFixed(2));
-            document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + user.ref_code;
+        function initAppUI() {
+            if(!currentUser) return;
+            const balance = parseFloat(currentUser.balance || 0).toFixed(2);
+            
+            document.getElementById('user-phone-disp').innerText = currentUser.phone;
+            document.getElementById('prof-phone-disp').innerText = currentUser.phone;
+            document.querySelectorAll('.val-balance').forEach(el => el.innerText = balance);
+            document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + currentUser.ref;
 
             document.getElementById('view-auth').classList.remove('active');
             document.getElementById('app-content').style.display = 'block';
         }
 
-        function selectVip(minBalance, commRate, totalTasks) {
-            const currentBal = parseFloat(currentUserData ? currentUserData.balance : 0);
+        window.selectVip = function(minBalance, commRate, totalTasks) {
+            const currentBal = parseFloat(currentUser?.balance || 0);
             if(currentBal < minBalance) {
                 alert(`عذراً! يجب أن يمتلك حسابك ${minBalance} EGP على الأقل للدخول في هذا المستوى.`);
                 return;
@@ -397,16 +406,16 @@
             document.getElementById('vip-list').style.display = 'none';
             document.getElementById('active-task-area').style.display = 'block';
             loadRandomProduct();
-        }
+        };
 
-        function exitTaskArea() {
+        window.exitTaskArea = function() {
             document.getElementById('vip-list').style.display = 'grid';
             document.getElementById('active-task-area').style.display = 'none';
-        }
+        };
 
         function loadRandomProduct() {
             const prod = demoProducts[Math.floor(Math.random() * demoProducts.length)];
-            const currentBal = parseFloat(currentUserData ? currentUserData.balance : 0);
+            const currentBal = parseFloat(currentUser?.balance || 0);
             const comm = ((currentBal * activeVipRate) / 100).toFixed(2);
 
             document.getElementById('task-img').src = prod.img;
@@ -416,7 +425,7 @@
             document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
         }
 
-        async function submitTask() {
+        window.submitTask = function() {
             if(activeCompletedTasks >= activeMaxTasks) {
                 alert('لقد أكملت جميع طلبات هذا الاشتراك اليوم!');
                 return;
@@ -428,29 +437,21 @@
             activeTaskPending = true;
 
             setTimeout(async () => {
-                const currentBal = parseFloat(currentUserData ? currentUserData.balance : 0);
+                const currentBal = parseFloat(currentUser?.balance || 0);
                 const comm = parseFloat((currentBal * activeVipRate) / 100);
                 const newBal = currentBal + comm;
 
-                const { error } = await supabaseClient
-                    .from('users')
-                    .update({ balance: newBal })
-                    .eq('phone', currentUserData.phone);
-
-                if (error) {
-                    alert('حدث خطأ في حفظ بياناتك: ' + error.message);
-                    btn.disabled = false;
-                    btn.innerText = 'إكمال الطلب';
-                    return;
-                }
+                // تحديث الرصيد في Firebase
+                const userRef = doc(db, "users", currentUser.phone);
+                await updateDoc(userRef, { balance: newBal });
 
                 activeCompletedTasks++;
                 activeTaskPending = false;
+
                 btn.disabled = false;
                 btn.innerText = 'إكمال الطلب';
 
                 alert(`تم إكمال الطلب بنجاح وتم إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
-                await initApp();
 
                 if(activeCompletedTasks < activeMaxTasks) {
                     loadRandomProduct();
@@ -459,36 +460,42 @@
                     alert('تهانينا! لقد أكملت كافة المهام المتاحة!');
                 }
             }, 5000);
-        }
+        };
 
-        function openWithdrawModal() { 
+        window.openWithdrawModal = function() {
             if(activeTaskPending) {
                 alert('لا يمكنك طلب السحب أثناء وجود طلب قيد الإكمال!');
                 return;
             }
             document.getElementById('withdraw-modal').classList.add('active'); 
-        }
-        function closeWithdrawModal() { document.getElementById('withdraw-modal').classList.remove('active'); }
+        };
 
-        async function processWithdraw() {
-            const wallet = document.getElementById('w-wallet').value;
+        window.closeWithdrawModal = function() { 
+            document.getElementById('withdraw-modal').classList.remove('active'); 
+        };
+
+        window.processWithdraw = async function() {
+            const wallet = document.getElementById('w-wallet').value.trim();
             const amount = parseFloat(document.getElementById('w-amount').value);
-            let currentBalance = parseFloat(currentUserData ? currentUserData.balance : 0);
+            const pass = document.getElementById('w-pass').value.trim();
+            let currentBalance = parseFloat(currentUser?.balance || 0);
 
             if(!wallet || !amount || amount <= 0) { alert('يرجى كتابة البيانات بشكل صحيح'); return; }
+            if(pass !== currentUser.password) { alert('كلمة المرور غير صحيحة'); return; }
             if(amount > currentBalance) { alert('الرصيد غير كافٍ للسحب'); return; }
 
             const newBalance = currentBalance - amount;
+            const userRef = doc(db, "users", currentUser.phone);
 
-            const { error } = await supabaseClient
-                .from('users')
-                .update({ balance: newBalance })
-                .eq('phone', currentUserData.phone);
-
-            if(error) {
-                alert('حدث خطأ أثناء السحب: ' + error.message);
-                return;
-            }
+            // تحديث الرصيد وحفظ المعاملة في Firebase
+            await updateDoc(userRef, { balance: newBalance });
+            await addDoc(collection(db, "withdrawals"), {
+                phone: currentUser.phone,
+                wallet: wallet,
+                amount: amount,
+                status: "Pending",
+                createdAt: new Date().toISOString()
+            });
 
             const txList = document.getElementById('tx-list');
             if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
@@ -496,19 +503,25 @@
 
             alert('تم تقديم طلب السحب بنجاح!');
             closeWithdrawModal();
-            await initApp();
-        }
+        };
 
-        function switchTab(tab, el) {
+        window.switchTab = function(tab, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('view-' + tab).classList.add('active');
             el.classList.add('active');
+        };
+
+        window.logout = function() { 
+            localStorage.clear(); 
+            location.reload(); 
+        };
+
+        // التحقق من وجود جلسة سابقة
+        const savedPhone = localStorage.getItem('user_phone');
+        if(savedPhone) {
+            listenToUserData(savedPhone);
         }
-
-        function logout() { localStorage.clear(); location.reload(); }
-
-        if(localStorage.getItem('user_phone')) { initApp(); }
     </script>
 </body>
 </html>
