@@ -21,41 +21,13 @@
         .view { display: none; padding: 15px; }
         .view.active { display: block; }
 
-        /* App Header */
         .app-header { text-align: center; font-weight: 800; font-size: 1.1rem; padding: 10px 0; letter-spacing: 1px; color: #fff; }
 
-        /* Image Slider */
-        .slider-container {
-            width: 100%;
-            height: 160px;
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .slide {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* Slider */
+        .slider-container { width: 100%; height: 160px; border-radius: 16px; overflow: hidden; position: relative; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .slide { width: 100%; height: 100%; position: absolute; opacity: 0; transition: opacity 0.8s ease-in-out; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
         .slide.active { opacity: 1; }
-        .slide-dots {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 6px;
-            z-index: 10;
-        }
+        .slide-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10; }
         .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; }
         .dot.active { background: #fff; width: 18px; border-radius: 10px; }
 
@@ -80,18 +52,30 @@
         .btn-deposit { background: var(--primary-green); color: #000; }
         .btn-withdraw { background: #142018; color: var(--primary-green); border: 1px solid var(--primary-green); }
 
-        /* SVG Icons */
-        .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        /* VIP Task Grid */
+        .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .vip-card { background: var(--card-bg); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); text-align: center; cursor: pointer; transition: transform 0.2s; }
+        .vip-card:active { transform: scale(0.98); }
+        .vip-img { width: 100%; height: 110px; object-fit: cover; background: #222; }
+        .vip-body { padding: 10px; }
+        .vip-limit { font-size: 0.8rem; color: var(--text-sub); }
+        .vip-price { font-size: 1.1rem; font-weight: bold; margin: 3px 0; }
+        .vip-badge { display: inline-block; background: rgba(32, 224, 112, 0.15); color: var(--primary-green); font-weight: bold; font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; margin-top: 4px; }
 
-        /* Modal Popup */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 14px; width: 90%; max-width: 350px; border: 1px solid var(--border-color); }
+        /* Active Task Area */
+        .task-box { background: var(--card-bg); border-radius: 14px; padding: 15px; border: 1px solid var(--border-color); margin-top: 15px; }
+        .task-product-img { width: 100%; height: 160px; object-fit: contain; background: #fff; border-radius: 10px; margin-bottom: 10px; }
 
         /* Navbar */
+        .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0f0f0f; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1f1f1f; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.72rem; cursor: pointer; gap: 4px; }
         .nav-item.active { color: var(--primary-green); }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 14px; width: 90%; max-width: 350px; border: 1px solid var(--border-color); }
     </style>
 </head>
 <body>
@@ -126,9 +110,7 @@
                     <h2 style="color:#ff9900; background:rgba(0,0,0,0.6); padding:5px 15px; border-radius:8px;">JUMIA</h2>
                 </div>
                 <div class="slide-dots">
-                    <div class="dot active"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
+                    <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
                 </div>
             </div>
 
@@ -138,7 +120,7 @@
                         <div class="avatar">👤</div>
                         <div>
                             <div id="user-phone-disp" style="font-weight:bold; font-size:1rem;">-</div>
-                            <span style="background:var(--primary-green); color:#000; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">VIP2</span>
+                            <span style="background:var(--primary-green); color:#000; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">VIP</span>
                         </div>
                     </div>
                     <div class="credit-ring">100</div>
@@ -156,8 +138,75 @@
         </div>
 
         <div id="view-task" class="view">
-            <h3>قائمة المهام والاشتراكات</h3>
-            <p style="color:var(--text-sub); margin-top:10px;">في انتظار قائمة الاشتراكات الخاصة بك...</p>
+            <h3 style="margin-bottom:15px;">قائمة الاشتراكات والمهام</h3>
+            
+            <div id="vip-list" class="vip-grid">
+                <div class="vip-card" onclick="selectVip(170, 3.6, 10)">
+                    <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400" class="vip-img">
+                    <div class="vip-body">
+                        <div class="vip-limit">حد الرصيد</div>
+                        <div class="vip-price">EGP 170</div>
+                        <span class="vip-badge">نسبة العمولة 3.6%</span>
+                    </div>
+                </div>
+
+                <div class="vip-card" onclick="selectVip(200, 5.4, 10)">
+                    <img src="https://images.unsplash.com/photo-1517649763962-0c623266010b?w=400" class="vip-img">
+                    <div class="vip-body">
+                        <div class="vip-limit">حد الرصيد</div>
+                        <div class="vip-price">EGP 200</div>
+                        <span class="vip-badge">نسبة العمولة 5.4%</span>
+                    </div>
+                </div>
+
+                <div class="vip-card" onclick="selectVip(500, 6.6, 10)">
+                    <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400" class="vip-img">
+                    <div class="vip-body">
+                        <div class="vip-limit">حد الرصيد</div>
+                        <div class="vip-price">EGP 500</div>
+                        <span class="vip-badge">نسبة العمولة 6.6%</span>
+                    </div>
+                </div>
+
+                <div class="vip-card" onclick="selectVip(1000, 7.2, 10)">
+                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400" class="vip-img">
+                    <div class="vip-body">
+                        <div class="vip-limit">حد الرصيد</div>
+                        <div class="vip-price">EGP 1000</div>
+                        <span class="vip-badge">نسبة العمولة 7.2%</span>
+                    </div>
+                </div>
+
+                <div class="vip-card" onclick="selectVip(3000, 8.6, 10)">
+                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400" class="vip-img">
+                    <div class="vip-body">
+                        <div class="vip-limit">حد الرصيد</div>
+                        <div class="vip-price">EGP 3000</div>
+                        <span class="vip-badge">نسبة العمولة 8.6%</span>
+                    </div>
+                </div>
+
+                <div class="vip-card" onclick="selectVip(5000, 9.4, 10)">
+                    <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400" class="vip-img">
+                    <div class="vip-body">
+                        <div class="vip-limit">حد الرصيد</div>
+                        <div class="vip-price">EGP 5000</div>
+                        <span class="vip-badge">نسبة العمولة 9.4%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="active-task-area" style="display:none;" class="task-box">
+                <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem;">
+                    <span>الطلبات المكتملة: <b id="task-progress">0/10</b></span>
+                    <span>العمولة المقدرة: <b id="task-comm" style="color:var(--primary-green);">0 EGP</b></span>
+                </div>
+                <img id="task-img" src="" class="task-product-img">
+                <h4 id="task-title" style="margin-bottom:5px;">-</h4>
+                <p id="task-price-info" style="color:var(--text-sub); font-size:0.85rem; margin-bottom:15px;">-</p>
+                <button id="btn-complete-task" class="btn-submit" onclick="submitTask()">إكمال الطلب</button>
+            </div>
         </div>
 
         <div id="view-transactions" class="view">
@@ -169,7 +218,9 @@
 
         <div id="view-orders" class="view">
             <h3>الطلبات</h3>
-            <p style="color:var(--text-sub); margin-top:10px;">لا توجد طلبات حالية</p>
+            <div id="orders-list" style="margin-top:15px; font-size:0.85rem; color:var(--text-sub);">
+                لا توجد طلبات معلقة
+            </div>
         </div>
 
         <div id="view-profile" class="view">
@@ -220,12 +271,22 @@
 
     <script>
         let isSignup = false;
+        let activeVipRate = 0;
+        let activeMaxTasks = 10;
+        let activeCompletedTasks = 0;
+        let activeTaskPending = false;
 
-        // Auto Slider Script
+        const demoProducts = [
+            { name: "قميص صيفي أنيق SHEIN", img: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400" },
+            { name: "حذاء رياضي عصري", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" },
+            { name: "ساعة يد كلاسيكية", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" },
+            { name: "نظارات شمسية أنيقة", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400" }
+        ];
+
+        // Slider logic
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
-
         function nextSlide() {
             if(slides.length === 0) return;
             slides[currentSlide].classList.remove('active');
@@ -246,7 +307,6 @@
             e.preventDefault();
             const phone = document.getElementById('auth-phone').value;
             localStorage.setItem('user_phone', phone);
-            
             if(!localStorage.getItem('user_balance')) {
                 localStorage.setItem('user_balance', '50.00');
             }
@@ -267,7 +327,83 @@
             document.getElementById('app-content').style.display = 'block';
         }
 
-        function openWithdrawModal() { document.getElementById('withdraw-modal').classList.add('active'); }
+        // VIP Task Handler
+        function selectVip(minBalance, commRate, totalTasks) {
+            const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
+            if(currentBal < minBalance) {
+                alert(`عذراً! يجب أن يمتلك حسابك ${minBalance} EGP على الأقل للدخول في هذا المستوى.`);
+                return;
+            }
+
+            activeVipRate = commRate;
+            activeMaxTasks = totalTasks;
+            activeCompletedTasks = 0;
+
+            document.getElementById('vip-list').style.display = 'none';
+            document.getElementById('active-task-area').style.display = 'block';
+            loadRandomProduct();
+        }
+
+        function exitTaskArea() {
+            document.getElementById('vip-list').style.display = 'grid';
+            document.getElementById('active-task-area').style.display = 'none';
+        }
+
+        function loadRandomProduct() {
+            const prod = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+            const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
+            const comm = ((currentBal * activeVipRate) / 100).toFixed(2);
+
+            document.getElementById('task-img').src = prod.img;
+            document.getElementById('task-title').innerText = prod.name;
+            document.getElementById('task-price-info').innerText = `قيمة العقد: EGP ${currentBal.toFixed(2)} | العائد: EGP ${comm}`;
+            document.getElementById('task-comm').innerText = comm + ' EGP';
+            document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
+        }
+
+        function submitTask() {
+            if(activeCompletedTasks >= activeMaxTasks) {
+                alert('لقد أكملت جميع طلبات هذا الاشتراك اليوم!');
+                return;
+            }
+
+            const btn = document.getElementById('btn-complete-task');
+            btn.disabled = true;
+            btn.innerText = 'جاري المعالجة وإكمال الطلب... (5 ثوانٍ)';
+            activeTaskPending = true;
+
+            setTimeout(() => {
+                const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
+                const comm = parseFloat((currentBal * activeVipRate) / 100);
+                const newBal = currentBal + comm;
+
+                localStorage.setItem('user_balance', newBal.toFixed(2));
+                activeCompletedTasks++;
+                activeTaskPending = false;
+
+                btn.disabled = false;
+                btn.innerText = 'إكمال الطلب';
+
+                alert(`تم إكمال الطلب بنجاح وتم إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
+                initApp();
+
+                if(activeCompletedTasks < activeMaxTasks) {
+                    loadRandomProduct();
+                } else {
+                    document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
+                    alert('تهانينا! لقد أكملت كافة المهام المتاحة!');
+                }
+            }, 5000);
+        }
+
+        // Withdraw logic
+        function openWithdrawModal() { 
+            if(activeTaskPending) {
+                alert('لا يمكنك طلب السحب أثناء وجود طلب قيد الإكمال!');
+                return;
+            }
+            document.getElementById('withdraw-modal').classList.add('active'); 
+        }
         function closeWithdrawModal() { document.getElementById('withdraw-modal').classList.remove('active'); }
 
         function processWithdraw() {
