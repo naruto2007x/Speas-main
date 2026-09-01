@@ -6,19 +6,58 @@
     <title>CENTRO COMERCIAL</title>
     <style>
         :root {
-            --bg-main: #0d0d0d;
-            --card-bg: #181818;
-            --primary-green: #00e676;
+            --bg-main: #0a0a0a;
+            --card-bg: #161616;
+            --primary-green: #20e070;
+            --dark-green: #158040;
             --text-main: #ffffff;
             --text-sub: #a0a0a0;
             --border-color: #262626;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 80px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 75px; }
 
         .view { display: none; padding: 15px; }
         .view.active { display: block; }
+
+        /* App Header */
+        .app-header { text-align: center; font-weight: 800; font-size: 1.1rem; padding: 10px 0; letter-spacing: 1px; color: #fff; }
+
+        /* Image Slider */
+        .slider-container {
+            width: 100%;
+            height: 160px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide.active { opacity: 1; }
+        .slide-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.4); border-radius: 50%; }
+        .dot.active { background: #fff; width: 18px; border-radius: 10px; }
 
         /* Auth */
         .auth-container { max-width: 400px; margin: 40px auto; background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); }
@@ -27,22 +66,31 @@
         .form-group input { width: 100%; padding: 10px; background: #222; border: 1px solid var(--border-color); border-radius: 6px; color: #fff; }
         .btn-submit { width: 100%; padding: 12px; background: var(--primary-green); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        /* Cards & Layout */
-        .user-card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        /* User Card */
+        .user-card { background: linear-gradient(145deg, #18221b, #121814); border-radius: 14px; padding: 15px; margin-bottom: 15px; border: 1px solid #223326; }
+        .user-info-row { display: flex; justify-content: space-between; align-items: center; }
+        .user-avatar-box { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background: #334; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .credit-ring { width: 45px; height: 45px; border-radius: 50%; border: 3px solid var(--primary-green); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary-green); font-size: 0.85rem; }
         .balance-amount { font-size: 1.4rem; font-weight: bold; color: var(--primary-green); margin-top: 5px; }
-        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .btn-action { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+
+        /* Actions */
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .btn-action { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
         .btn-deposit { background: var(--primary-green); color: #000; }
-        .btn-withdraw { background: #1f2923; color: var(--primary-green); border: 1px solid var(--primary-green); }
+        .btn-withdraw { background: #142018; color: var(--primary-green); border: 1px solid var(--primary-green); }
+
+        /* SVG Icons */
+        .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
         /* Modal Popup */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
-        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; border: 1px solid var(--border-color); }
+        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 14px; width: 90%; max-width: 350px; border: 1px solid var(--border-color); }
 
         /* Navbar */
-        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #121212; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-color); z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.7rem; cursor: pointer; gap: 3px; }
+        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0f0f0f; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1f1f1f; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.72rem; cursor: pointer; gap: 4px; }
         .nav-item.active { color: var(--primary-green); }
     </style>
 </head>
@@ -65,15 +113,45 @@
     <div id="app-content" style="display:none;">
 
         <div id="view-home" class="view active">
-            <h3 style="text-align:center; margin-bottom:15px;">CENTRO COMERCIAL</h3>
-            <div class="user-card">
-                <div>رقم الحساب: <b id="user-phone-disp">-</b></div>
-                <div style="margin-top:10px; font-size:0.8rem; color:var(--text-sub);">رصيد الحساب</div>
-                <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
+            <div class="app-header">CENTRO COMERCIAL</div>
+            
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800');">
+                    <h2 style="color:#fff; background:rgba(0,0,0,0.6); padding:5px 15px; border-radius:8px;">SHEIN</h2>
+                </div>
+                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800');">
+                    <h2 style="color:#ffcc00; background:rgba(0,0,0,0.6); padding:5px 15px; border-radius:8px;">noon</h2>
+                </div>
+                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800');">
+                    <h2 style="color:#ff9900; background:rgba(0,0,0,0.6); padding:5px 15px; border-radius:8px;">JUMIA</h2>
+                </div>
+                <div class="slide-dots">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
             </div>
+
+            <div class="user-card">
+                <div class="user-info-row">
+                    <div class="user-avatar-box">
+                        <div class="avatar">👤</div>
+                        <div>
+                            <div id="user-phone-disp" style="font-weight:bold; font-size:1rem;">-</div>
+                            <span style="background:var(--primary-green); color:#000; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">VIP2</span>
+                        </div>
+                    </div>
+                    <div class="credit-ring">100</div>
+                </div>
+                <div style="margin-top:12px;">
+                    <div style="font-size:0.75rem; color:var(--text-sub);">رصيد الحساب</div>
+                    <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
+                </div>
+            </div>
+
             <div class="actions-grid">
-                <button class="btn-action btn-deposit" onclick="alert('تواصل مع خدمة العملاء للإيداع')">إيداع</button>
-                <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">سحب</button>
+                <button class="btn-action btn-deposit" onclick="alert('تواصل مع خدمة العملاء للإيداع')">📥 إيداع</button>
+                <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
             </div>
         </div>
 
@@ -106,11 +184,26 @@
         </div>
 
         <div class="navbar">
-            <div class="nav-item active" onclick="switchTab('home', this)"><span>🏠</span><span>الرئيسية</span></div>
-            <div class="nav-item" onclick="switchTab('task', this)"><span>💼</span><span>مهمة</span></div>
-            <div class="nav-item" onclick="switchTab('transactions', this)"><span>📊</span><span>المعاملات</span></div>
-            <div class="nav-item" onclick="switchTab('orders', this)"><span>📋</span><span>الطلبات</span></div>
-            <div class="nav-item" onclick="switchTab('profile', this)"><span>👤</span><span>حسابي</span></div>
+            <div class="nav-item active" onclick="switchTab('home', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <span>الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('task', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                <span>مهمة</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('transactions', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <span>المعاملات</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('orders', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span>الطلبات</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('profile', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>حسابي</span>
+            </div>
         </div>
     </div>
 
@@ -128,6 +221,21 @@
     <script>
         let isSignup = false;
 
+        // Auto Slider Script
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+
+        function nextSlide() {
+            if(slides.length === 0) return;
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, 3000);
+
         function toggleAuth() {
             isSignup = !isSignup;
             document.getElementById('auth-title').innerText = isSignup ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
@@ -140,7 +248,7 @@
             localStorage.setItem('user_phone', phone);
             
             if(!localStorage.getItem('user_balance')) {
-                localStorage.setItem('user_balance', '50.00'); // 50 EGP bonus for new user
+                localStorage.setItem('user_balance', '50.00');
             }
             localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
             initApp();
@@ -173,7 +281,6 @@
             currentBalance -= amount;
             localStorage.setItem('user_balance', currentBalance.toFixed(2));
             
-            // Add to Transactions
             const txList = document.getElementById('tx-list');
             if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
             txList.innerHTML = `<div style="background:#222; padding:8px; border-radius:5px; margin-bottom:5px;">سحب إلى ${wallet}: -${amount} EGP (قيد الانتظار)</div>` + txList.innerHTML;
