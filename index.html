@@ -84,13 +84,13 @@
     <div id="view-auth" class="view active">
         <div class="auth-container">
             <h2 id="auth-title" style="color:var(--primary-green); text-align:center; margin-bottom:15px;">تسجيل الدخول</h2>
-            <form onsubmit="handleAuth(event)">
+            <form onsubmit="window.handleAuth(event)">
                 <div class="form-group"><label>رقم الهاتف</label><input type="text" id="auth-phone" required placeholder="01xxxxxxxxx"></div>
                 <div class="form-group"><label>كلمة المرور</label><input type="password" id="auth-pass" required></div>
                 <button type="submit" class="btn-submit" id="auth-btn">دخول</button>
             </form>
             <p style="text-align:center; margin-top:15px; font-size:0.85rem; color:var(--text-sub);">
-                <span id="auth-toggle" onclick="toggleAuth()" style="color:var(--primary-green); cursor:pointer;">ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)</span>
+                <span id="auth-toggle" onclick="window.toggleAuth()" style="color:var(--primary-green); cursor:pointer;">ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)</span>
             </p>
         </div>
     </div>
@@ -136,7 +136,7 @@
 
             <div class="actions-grid">
                 <button class="btn-action btn-deposit" onclick="alert('تواصل مع خدمة العملاء للإيداع')">📥 إيداع</button>
-                <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
+                <button class="btn-action btn-withdraw" onclick="window.openWithdrawModal()">🏧 سحب</button>
             </div>
         </div>
 
@@ -145,7 +145,7 @@
             <h3 style="margin-bottom:15px;">قائمة الاشتراكات والمهام</h3>
             
             <div id="vip-list" class="vip-grid">
-                <div class="vip-card" onclick="selectVip(170, 3.6, 10)">
+                <div class="vip-card" onclick="window.selectVip(170, 3.6, 10)">
                     <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500" class="vip-img" alt="ملابس">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -154,7 +154,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="selectVip(200, 5.4, 10)">
+                <div class="vip-card" onclick="window.selectVip(200, 5.4, 10)">
                     <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="vip-img" alt="أحذية رياضية">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -163,7 +163,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="selectVip(500, 6.6, 10)">
+                <div class="vip-card" onclick="window.selectVip(500, 6.6, 10)">
                     <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="vip-img" alt="ساعات فاخرة">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -172,7 +172,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="selectVip(1000, 7.2, 10)">
+                <div class="vip-card" onclick="window.selectVip(1000, 7.2, 10)">
                     <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" class="vip-img" alt="إلكترونيات">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -181,7 +181,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="selectVip(3000, 8.6, 10)">
+                <div class="vip-card" onclick="window.selectVip(3000, 8.6, 10)">
                     <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=500" class="vip-img" alt="سيارات رياضية">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -190,7 +190,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="selectVip(5000, 9.4, 10)">
+                <div class="vip-card" onclick="window.selectVip(5000, 9.4, 10)">
                     <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" class="vip-img" alt="سيارات فاخرة">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -202,7 +202,7 @@
 
             <!-- Task Exec Area -->
             <div id="active-task-area" style="display:none;" class="task-box">
-                <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
+                <button onclick="window.exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem;">
                     <span>الطلبات المكتملة: <b id="task-progress">0/10</b></span>
                     <span>العمولة المقدرة: <b id="task-comm" style="color:var(--primary-green);">0 EGP</b></span>
@@ -210,7 +210,7 @@
                 <img id="task-img" src="" class="task-product-img">
                 <h4 id="task-title" style="margin-bottom:5px;">-</h4>
                 <p id="task-price-info" style="color:var(--text-sub); font-size:0.85rem; margin-bottom:15px;">-</p>
-                <button id="btn-complete-task" class="btn-submit" onclick="submitTask()">إكمال الطلب</button>
+                <button id="btn-complete-task" class="btn-submit" onclick="window.submitTask()">إكمال الطلب</button>
             </div>
         </div>
 
@@ -239,28 +239,28 @@
             <p style="font-size:0.85rem; color:var(--text-sub);">رابط الدعوة الخاص بك:</p>
             <div id="ref-link" style="background:#222; padding:8px; border-radius:5px; font-size:0.75rem; margin-top:5px; word-break:break-all; border:1px dashed var(--primary-green);"></div>
             <br>
-            <button onclick="logout()" style="width:100%; padding:10px; background:#ff3333; color:#fff; border:none; border-radius:6px; font-weight:bold;">تسجيل الخروج</button>
+            <button onclick="window.logout()" style="width:100%; padding:10px; background:#ff3333; color:#fff; border:none; border-radius:6px; font-weight:bold;">تسجيل الخروج</button>
         </div>
 
         <!-- NAVBAR -->
         <div class="navbar">
-            <div class="nav-item active" onclick="switchTab('home', this)">
+            <div class="nav-item active" onclick="window.switchTab('home', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
                 <span>الرئيسية</span>
             </div>
-            <div class="nav-item" onclick="switchTab('task', this)">
+            <div class="nav-item" onclick="window.switchTab('task', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
                 <span>مهمة</span>
             </div>
-            <div class="nav-item" onclick="switchTab('transactions', this)">
+            <div class="nav-item" onclick="window.switchTab('transactions', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                 <span>المعاملات</span>
             </div>
-            <div class="nav-item" onclick="switchTab('orders', this)">
+            <div class="nav-item" onclick="window.switchTab('orders', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                 <span>الطلبات</span>
             </div>
-            <div class="nav-item" onclick="switchTab('profile', this)">
+            <div class="nav-item" onclick="window.switchTab('profile', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <span>حسابي</span>
             </div>
@@ -274,8 +274,8 @@
             <div class="form-group"><label>رقم المحفظة (فودافون كاش / غيرها)</label><input type="text" id="w-wallet" placeholder="01xxxxxxxxx"></div>
             <div class="form-group"><label>المبلغ المراد سحبه</label><input type="number" id="w-amount" placeholder="0.00"></div>
             <div class="form-group"><label>كلمة المرور</label><input type="password" id="w-pass"></div>
-            <button class="btn-submit" onclick="processWithdraw()">تأكيد السحب</button>
-            <button onclick="closeWithdrawModal()" style="width:100%; padding:8px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer;">إلغاء</button>
+            <button class="btn-submit" onclick="window.processWithdraw()">تأكيد السحب</button>
+            <button onclick="window.closeWithdrawModal()" style="width:100%; padding:8px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer;">إلغاء</button>
         </div>
     </div>
 
@@ -284,7 +284,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // إعدادات Firebase الخاصة بمشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyCmS3U5IdiEIZWXhSQ1Numy3zI4sNFH1I4",
             authDomain: "naruto-44f7d.firebaseapp.com",
@@ -295,8 +294,13 @@
             measurementId: "G-HXE6W6C7LK"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        let db;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+        } catch(e) {
+            alert("خطأ في الاتصال بالسيرفر: " + e.message);
+        }
 
         let currentUser = null;
         let isSignup = false;
@@ -328,10 +332,12 @@
         }
         setInterval(nextSlide, 3000);
 
+        // جعل الدوال متاحة للـ HTML من الأيفون
         window.toggleAuth = function() {
             isSignup = !isSignup;
             document.getElementById('auth-title').innerText = isSignup ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
             document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
+            document.getElementById('auth-toggle').innerText = isSignup ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)';
         };
 
         window.handleAuth = async function(e) {
@@ -341,31 +347,36 @@
 
             if(!phone || !pass) return alert("يرجى إدخال البيانات كاملة");
 
-            const userRef = doc(db, "users", phone);
-            const userSnap = await getDoc(userRef);
+            try {
+                const userRef = doc(db, "users", phone);
+                const userSnap = await getDoc(userRef);
 
-            if(isSignup) {
-                if(userSnap.exists()) {
-                    alert("هذا الرقم مسجل بالفعل، يرجى تسجيل الدخول.");
-                    return;
+                if(isSignup) {
+                    if(userSnap.exists()) {
+                        alert("هذا الرقم مسجل بالفعل، يرجى تسجيل الدخول.");
+                        return;
+                    }
+                    const newUser = {
+                        phone: phone,
+                        password: pass,
+                        balance: 50.00,
+                        ref: 'REF' + Math.floor(1000 + Math.random() * 9000),
+                        createdAt: new Date().toISOString()
+                    };
+                    await setDoc(userRef, newUser);
+                    alert("تم إنشاء الحساب بنجاح! مبروك الحصول على بونص 50 EGP");
+                    localStorage.setItem('user_phone', phone);
+                    listenToUserData(phone);
+                } else {
+                    if(!userSnap.exists() || userSnap.data().password !== pass) {
+                        alert("رقم الهاتف أو كلمة المرور غير صحيحة!");
+                        return;
+                    }
+                    localStorage.setItem('user_phone', phone);
+                    listenToUserData(phone);
                 }
-                const newUser = {
-                    phone: phone,
-                    password: pass,
-                    balance: 50.00,
-                    ref: 'REF' + Math.floor(1000 + Math.random() * 9000),
-                    createdAt: new Date().toISOString()
-                };
-                await setDoc(userRef, newUser);
-                localStorage.setItem('user_phone', phone);
-                listenToUserData(phone);
-            } else {
-                if(!userSnap.exists() || userSnap.data().password !== pass) {
-                    alert("رقم الهاتف أو كلمة المرور غير صحيحة!");
-                    return;
-                }
-                localStorage.setItem('user_phone', phone);
-                listenToUserData(phone);
+            } catch(err) {
+                alert("سبب توقف التسجيل: " + err.message);
             }
         };
 
@@ -376,6 +387,8 @@
                     currentUser = docSnap.data();
                     initAppUI();
                 }
+            }, (error) => {
+                alert("خطأ في جلب البيانات: " + error.message);
             });
         }
 
@@ -433,31 +446,36 @@
 
             const btn = document.getElementById('btn-complete-task');
             btn.disabled = true;
-            btn.innerText = 'جاري المعالجة وإكمال الطلب... (5 ثوانٍ)';
+            btn.innerText = 'جاري المعالجة... (5 ثوانٍ)';
             activeTaskPending = true;
 
             setTimeout(async () => {
-                const currentBal = parseFloat(currentUser?.balance || 0);
-                const comm = parseFloat((currentBal * activeVipRate) / 100);
-                const newBal = currentBal + comm;
+                try {
+                    const currentBal = parseFloat(currentUser?.balance || 0);
+                    const comm = parseFloat((currentBal * activeVipRate) / 100);
+                    const newBal = currentBal + comm;
 
-                // تحديث الرصيد في Firebase
-                const userRef = doc(db, "users", currentUser.phone);
-                await updateDoc(userRef, { balance: newBal });
+                    const userRef = doc(db, "users", currentUser.phone);
+                    await updateDoc(userRef, { balance: newBal });
 
-                activeCompletedTasks++;
-                activeTaskPending = false;
+                    activeCompletedTasks++;
+                    activeTaskPending = false;
 
-                btn.disabled = false;
-                btn.innerText = 'إكمال الطلب';
+                    btn.disabled = false;
+                    btn.innerText = 'إكمال الطلب';
 
-                alert(`تم إكمال الطلب بنجاح وتم إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
+                    alert(`تم إكمال الطلب بنجاح وتم إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
 
-                if(activeCompletedTasks < activeMaxTasks) {
-                    loadRandomProduct();
-                } else {
-                    document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
-                    alert('تهانينا! لقد أكملت كافة المهام المتاحة!');
+                    if(activeCompletedTasks < activeMaxTasks) {
+                        loadRandomProduct();
+                    } else {
+                        document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
+                        alert('تهانينا! لقد أكملت كافة المهام المتاحة!');
+                    }
+                } catch(e) {
+                    alert("خطأ في تحديث المهمة: " + e.message);
+                    btn.disabled = false;
+                    btn.innerText = 'إكمال الطلب';
                 }
             }, 5000);
         };
@@ -484,25 +502,28 @@
             if(pass !== currentUser.password) { alert('كلمة المرور غير صحيحة'); return; }
             if(amount > currentBalance) { alert('الرصيد غير كافٍ للسحب'); return; }
 
-            const newBalance = currentBalance - amount;
-            const userRef = doc(db, "users", currentUser.phone);
+            try {
+                const newBalance = currentBalance - amount;
+                const userRef = doc(db, "users", currentUser.phone);
 
-            // تحديث الرصيد وحفظ المعاملة في Firebase
-            await updateDoc(userRef, { balance: newBalance });
-            await addDoc(collection(db, "withdrawals"), {
-                phone: currentUser.phone,
-                wallet: wallet,
-                amount: amount,
-                status: "Pending",
-                createdAt: new Date().toISOString()
-            });
+                await updateDoc(userRef, { balance: newBalance });
+                await addDoc(collection(db, "withdrawals"), {
+                    phone: currentUser.phone,
+                    wallet: wallet,
+                    amount: amount,
+                    status: "Pending",
+                    createdAt: new Date().toISOString()
+                });
 
-            const txList = document.getElementById('tx-list');
-            if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
-            txList.innerHTML = `<div style="background:#222; padding:8px; border-radius:5px; margin-bottom:5px;">سحب إلى ${wallet}: -${amount} EGP (قيد الانتظار)</div>` + txList.innerHTML;
+                const txList = document.getElementById('tx-list');
+                if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
+                txList.innerHTML = `<div style="background:#222; padding:8px; border-radius:5px; margin-bottom:5px;">سحب إلى ${wallet}: -${amount} EGP (قيد الانتظار)</div>` + txList.innerHTML;
 
-            alert('تم تقديم طلب السحب بنجاح!');
-            closeWithdrawModal();
+                alert('تم تقديم طلب السحب بنجاح!');
+                window.closeWithdrawModal();
+            } catch(e) {
+                alert("حدث خطأ أثناء السحب: " + e.message);
+            }
         };
 
         window.switchTab = function(tab, el) {
@@ -517,7 +538,6 @@
             location.reload(); 
         };
 
-        // التحقق من وجود جلسة سابقة
         const savedPhone = localStorage.getItem('user_phone');
         if(savedPhone) {
             listenToUserData(savedPhone);
