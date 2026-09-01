@@ -282,10 +282,13 @@
     </div>
 
     <script>
-        // مفاتيح Supabase المحدثة بالأفكار الجديدة
+        // إعدادات المتغيرات وتفعيل التوافق مع Publishable Keys الجديدة
         const SUPABASE_URL = "https://njmehwvnwdzqzjscbqkd.supabase.co";
-        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qbWVod3Zud2R6cXpqc2NicWtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMzE5MjEsImV4cCI6MjEwMzgwNzkyMX0.LKLUeMYXk4EXHB85u1tki9gJeLSSOC6WPB38qG0tqg8";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = "sb_publishable_rPwcM-4kv4IYo_1JMXVIRw_8WQ0ZlP6";
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { persistSession: false }
+        });
 
         let isSignup = false;
         let activeVipRate = 0;
@@ -336,7 +339,7 @@
                     .select();
 
                 if (error) {
-                    alert('خطأ أثناء التسجيل: ' + error.message);
+                    alert('خطأ أثناء التسجيل: ' + (error.message || JSON.stringify(error)));
                     return;
                 }
                 localStorage.setItem('user_phone', phone);
