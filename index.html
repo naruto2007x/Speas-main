@@ -282,7 +282,7 @@
     <!-- FIREBASE SDK & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCmS3U5IdiEIZWXhSQ1Numy3zI4sNFH1I4",
@@ -297,7 +297,10 @@
         let db;
         try {
             const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
+            // تحويل طريقة الاتصال للتوافق مع شبكات 4G متصفح Safari على الأيفون
+            db = initializeFirestore(app, {
+                experimentalForceLongPolling: true
+            });
         } catch(e) {
             alert("خطأ في الاتصال بالسيرفر: " + e.message);
         }
@@ -332,7 +335,6 @@
         }
         setInterval(nextSlide, 3000);
 
-        // جعل الدوال متاحة للـ HTML من الأيفون
         window.toggleAuth = function() {
             isSignup = !isSignup;
             document.getElementById('auth-title').innerText = isSignup ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
