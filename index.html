@@ -297,7 +297,7 @@
         let db;
         try {
             const app = initializeApp(firebaseConfig);
-            // تحويل طريقة الاتصال للتوافق مع شبكات 4G متصفح Safari على الأيفون
+            // إجبار النظام على استخدام Long Polling لتفادي مشاكل الـ Offline على شبكة 4G
             db = initializeFirestore(app, {
                 experimentalForceLongPolling: true
             });
@@ -342,6 +342,7 @@
             document.getElementById('auth-toggle').innerText = isSignup ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)';
         };
 
+        // دالة إنشاء وتسجيل الحساب المعدلة للعمل المباشر
         window.handleAuth = async function(e) {
             e.preventDefault();
             const phone = document.getElementById('auth-phone').value.trim();
@@ -349,15 +350,11 @@
 
             if(!phone || !pass) return alert("يرجى إدخال البيانات كاملة");
 
-            try {
-                const userRef = doc(db, "users", phone);
-                const userSnap = await getDoc(userRef);
+            const userRef = doc(db, "users", phone);
 
-                if(isSignup) {
-                    if(userSnap.exists()) {
-                        alert("هذا الرقم مسجل بالفعل، يرجى تسجيل الدخول.");
-                        return;
-                    }
+            if(isSignup) {
+                // إنشاء الحساب مباشرة باستخدام setDoc وتفادي القراءة المسبقة
+                try {
                     const newUser = {
                         phone: phone,
                         password: pass,
@@ -369,16 +366,22 @@
                     alert("تم إنشاء الحساب بنجاح! مبروك الحصول على بونص 50 EGP");
                     localStorage.setItem('user_phone', phone);
                     listenToUserData(phone);
-                } else {
+                } catch(err) {
+                    alert("خطأ في الاتصال بالسيرفر: " + err.message);
+                }
+            } else {
+                // تسجيل الدخول
+                try {
+                    const userSnap = await getDoc(userRef);
                     if(!userSnap.exists() || userSnap.data().password !== pass) {
                         alert("رقم الهاتف أو كلمة المرور غير صحيحة!");
                         return;
                     }
                     localStorage.setItem('user_phone', phone);
                     listenToUserData(phone);
+                } catch(err) {
+                    alert("خطأ في الدخول: " + err.message);
                 }
-            } catch(err) {
-                alert("سبب توقف التسجيل: " + err.message);
             }
         };
 
