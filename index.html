@@ -9,512 +9,190 @@
             --bg-main: #0d0d0d;
             --card-bg: #181818;
             --primary-green: #00e676;
-            --dark-green: #00a854;
             --text-main: #ffffff;
             --text-sub: #a0a0a0;
             --border-color: #262626;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 80px; }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            padding-bottom: 75px;
-        }
+        .view { display: none; padding: 15px; }
+        .view.active { display: block; }
 
-        /* Views management */
-        .view {
-            display: none;
-            padding: 15px;
-        }
+        /* Auth */
+        .auth-container { max-width: 400px; margin: 40px auto; background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-sub); margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 10px; background: #222; border: 1px solid var(--border-color); border-radius: 6px; color: #fff; }
+        .btn-submit { width: 100%; padding: 12px; background: var(--primary-green); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        .view.active {
-            display: block;
-        }
+        /* Cards & Layout */
+        .user-card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        .balance-amount { font-size: 1.4rem; font-weight: bold; color: var(--primary-green); margin-top: 5px; }
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-action { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-deposit { background: var(--primary-green); color: #000; }
+        .btn-withdraw { background: #1f2923; color: var(--primary-green); border: 1px solid var(--primary-green); }
 
-        /* Auth Form Styles */
-        .auth-container {
-            max-width: 400px;
-            margin: 50px auto;
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
+        /* Modal Popup */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; border: 1px solid var(--border-color); }
 
-        .auth-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--primary-green);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-sub);
-            margin-bottom: 5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: #222;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary-green);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .auth-switch {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--text-sub);
-        }
-
-        .auth-switch span {
-            color: var(--primary-green);
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Header Banner */
-        .header-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-        }
-
-        .banner-box {
-            width: 100%;
-            height: 140px;
-            background: linear-gradient(135deg, #1f1f1f, #2d2d2d);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #eee;
-            margin-bottom: 15px;
-        }
-
-        /* User Info Card */
-        .user-card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-        }
-
-        .user-card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .badge-vip {
-            background: var(--primary-green);
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .credit-score {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 3px solid var(--primary-green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .balance-section {
-            margin-top: 15px;
-            background: rgba(0, 230, 118, 0.05);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .balance-amount {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--primary-green);
-        }
-
-        /* Action Grid */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .btn-action {
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-deposit {
-            background: var(--primary-green);
-            color: #000;
-        }
-
-        .btn-withdraw {
-            background: #1f2923;
-            color: var(--primary-green);
-            border: 1px solid var(--primary-green);
-        }
-
-        /* Product & Task Items */
-        .section-title {
-            font-size: 1rem;
-            margin-bottom: 12px;
-            font-weight: bold;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .product-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .product-img {
-            width: 100%;
-            height: 100px;
-            background: #252525;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            object-fit: cover;
-        }
-
-        .product-title {
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .product-price {
-            color: var(--primary-green);
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        /* Menu Links */
-        .menu-list {
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        .menu-item {
-            padding: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Navigation Bar */
-        .navbar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 65px;
-            background: #121212;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            z-index: 1000;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-sub);
-            font-size: 0.75rem;
-            text-decoration: none;
-            gap: 4px;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: var(--primary-green);
-        }
-
-        .referral-box {
-            background: #222;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            word-break: break-all;
-            font-size: 0.8rem;
-            border: 1px dashed var(--primary-green);
-        }
+        /* Navbar */
+        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #121212; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-color); z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.7rem; cursor: pointer; gap: 3px; }
+        .nav-item.active { color: var(--primary-green); }
     </style>
 </head>
 <body>
 
-    <!-- AUTH VIEW -->
     <div id="view-auth" class="view active">
         <div class="auth-container">
-            <h2 id="auth-title">تسجيل الدخول</h2>
-            <form id="auth-form" onsubmit="handleAuth(event)">
-                <div class="form-group">
-                    <label>رقم الهاتف / البريد</label>
-                    <input type="text" id="auth-input" required placeholder="ادخل رقم الهاتف">
-                </div>
-                <div class="form-group">
-                    <label>كلمة المرور</label>
-                    <input type="password" id="auth-pass" required placeholder="ادخل كلمة المرور">
-                </div>
-                <div class="form-group" id="ref-group" style="display: none;">
-                    <label>كود الدعوة (اختياري)</label>
-                    <input type="text" id="auth-ref" placeholder="كود الدعوة">
-                </div>
+            <h2 id="auth-title" style="color:var(--primary-green); text-align:center; margin-bottom:15px;">تسجيل الدخول</h2>
+            <form onsubmit="handleAuth(event)">
+                <div class="form-group"><label>رقم الهاتف</label><input type="text" id="auth-phone" required placeholder="01xxxxxxxxx"></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" id="auth-pass" required></div>
                 <button type="submit" class="btn-submit" id="auth-btn">دخول</button>
             </form>
-            <div class="auth-switch">
-                <span id="auth-toggle" onclick="toggleAuthMode()">ليس لديك حساب؟ إنشاء حساب جديد</span>
-            </div>
+            <p style="text-align:center; margin-top:15px; font-size:0.85rem; color:var(--text-sub);">
+                <span id="auth-toggle" onclick="toggleAuth()" style="color:var(--primary-green); cursor:pointer;">ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)</span>
+            </p>
         </div>
     </div>
 
-    <!-- MAIN APP VIEWS -->
-    <div id="app-content" style="display: none;">
+    <div id="app-content" style="display:none;">
 
-        <!-- 1. HOME VIEW -->
         <div id="view-home" class="view active">
-            <div class="header-title">CENTRO COMERCIAL</div>
-            <div class="banner-box">SHEIN</div>
-
+            <h3 style="text-align:center; margin-bottom:15px;">CENTRO COMERCIAL</h3>
             <div class="user-card">
-                <div class="user-card-top">
-                    <div class="user-profile">
-                        <div class="avatar">👤</div>
-                        <div>
-                            <div id="home-phone" style="font-weight: bold;">01147298536</div>
-                            <span class="badge-vip">VIP2</span>
-                        </div>
-                    </div>
-                    <div class="credit-score">100</div>
-                </div>
-                <div class="balance-section">
-                    <div style="font-size: 0.75rem; color: var(--text-sub);">رصيد الحساب</div>
-                    <div class="balance-amount">EGP <span class="val-balance">258.13</span></div>
-                </div>
+                <div>رقم الحساب: <b id="user-phone-disp">-</b></div>
+                <div style="margin-top:10px; font-size:0.8rem; color:var(--text-sub);">رصيد الحساب</div>
+                <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
             </div>
-
             <div class="actions-grid">
-                <button class="btn-action btn-deposit">إيداع</button>
-                <button class="btn-action btn-withdraw">سحب</button>
-            </div>
-
-            <div class="section-title">المنتجات الأكثر مبيعاً اليوم</div>
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-img"></div>
-                    <div class="product-title">كيبل شحن ونقل بيانات</div>
-                    <div class="product-price">EGP 7.04</div>
-                </div>
-                <div class="product-card">
-                    <div class="product-img"></div>
-                    <div class="product-title">نظارة شمسية قطبية</div>
-                    <div class="product-price">EGP 45.55</div>
-                </div>
+                <button class="btn-action btn-deposit" onclick="alert('تواصل مع خدمة العملاء للإيداع')">إيداع</button>
+                <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">سحب</button>
             </div>
         </div>
 
-        <!-- 2. TASK VIEW -->
         <div id="view-task" class="view">
-            <div class="section-title">مستويات VIP والمهام</div>
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-title">حد الرصيد: EGP 170</div>
-                    <div class="product-price">عمولة 3.6%</div>
-                </div>
-                <div class="product-card">
-                    <div class="product-title">حد الرصيد: EGP 500</div>
-                    <div class="product-price">عمولة 6.6%</div>
-                </div>
+            <h3>قائمة المهام والاشتراكات</h3>
+            <p style="color:var(--text-sub); margin-top:10px;">في انتظار قائمة الاشتراكات الخاصة بك...</p>
+        </div>
+
+        <div id="view-transactions" class="view">
+            <h3>سجل المعاملات</h3>
+            <div id="tx-list" style="margin-top:15px; font-size:0.85rem;">
+                <p style="color:var(--text-sub);">لا توجد معاملات بعد</p>
             </div>
         </div>
 
-        <!-- 3. PROFILE VIEW -->
+        <div id="view-orders" class="view">
+            <h3>الطلبات</h3>
+            <p style="color:var(--text-sub); margin-top:10px;">لا توجد طلبات حالية</p>
+        </div>
+
         <div id="view-profile" class="view">
             <div class="user-card">
-                <div class="user-profile">
-                    <div class="avatar">👤</div>
-                    <div>
-                        <div id="profile-phone" style="font-weight: bold;">-</div>
-                        <span class="badge-vip">VIP2</span>
-                    </div>
-                </div>
-                <div class="balance-section">
-                    <div style="font-size: 0.75rem; color: var(--text-sub);">رصيد الحساب</div>
-                    <div class="balance-amount">EGP <span class="val-balance">258.13</span></div>
-                </div>
+                <div>الحساب: <b id="prof-phone-disp">-</b></div>
+                <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
             </div>
-
-            <div class="section-title">رابط الدعوة الخاص بك</div>
-            <div class="referral-box" id="ref-link-display">جاري التحميل...</div>
-
+            <p style="font-size:0.85rem; color:var(--text-sub);">رابط الدعوة الخاص بك:</p>
+            <div id="ref-link" style="background:#222; padding:8px; border-radius:5px; font-size:0.75rem; margin-top:5px; word-break:break-all; border:1px dashed var(--primary-green);"></div>
             <br>
-            <div class="menu-list">
-                <div class="menu-item">المعلومات الشخصية <span>›</span></div>
-                <div class="menu-item">تفاصيل الأموال <span>›</span></div>
-                <div class="menu-item">تغيير كلمة المرور <span>›</span></div>
-                <div class="menu-item" onclick="logout()" style="color: #ff5252;">تسجيل الخروج</div>
-            </div>
+            <button onclick="logout()" style="width:100%; padding:10px; background:#ff3333; color:#fff; border:none; border-radius:6px; font-weight:bold;">تسجيل الخروج</button>
         </div>
 
-        <!-- BOTTOM NAV -->
         <div class="navbar">
-            <div class="nav-item active" onclick="switchTab('home', this)">
-                <span>🏠</span>
-                <span>الرئيسية</span>
-            </div>
-            <div class="nav-item" onclick="switchTab('task', this)">
-                <span>💼</span>
-                <span>مهمة</span>
-            </div>
-            <div class="nav-item" onclick="switchTab('profile', this)">
-                <span>👤</span>
-                <span>حسابي</span>
-            </div>
+            <div class="nav-item active" onclick="switchTab('home', this)"><span>🏠</span><span>الرئيسية</span></div>
+            <div class="nav-item" onclick="switchTab('task', this)"><span>💼</span><span>مهمة</span></div>
+            <div class="nav-item" onclick="switchTab('transactions', this)"><span>📊</span><span>المعاملات</span></div>
+            <div class="nav-item" onclick="switchTab('orders', this)"><span>📋</span><span>الطلبات</span></div>
+            <div class="nav-item" onclick="switchTab('profile', this)"><span>👤</span><span>حسابي</span></div>
         </div>
+    </div>
 
+    <div id="withdraw-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px; color:var(--primary-green);">طلب سحب أموال</h3>
+            <div class="form-group"><label>رقم المحفظة (فودافون كاش / غيرها)</label><input type="text" id="w-wallet" placeholder="01xxxxxxxxx"></div>
+            <div class="form-group"><label>المبلغ المراد سحبه</label><input type="number" id="w-amount" placeholder="0.00"></div>
+            <div class="form-group"><label>كلمة المرور</label><input type="password" id="w-pass"></div>
+            <button class="btn-submit" onclick="processWithdraw()">تأكيد السحب</button>
+            <button onclick="closeWithdrawModal()" style="width:100%; padding:8px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer;">إلغاء</button>
+        </div>
     </div>
 
     <script>
         let isSignup = false;
 
-        function toggleAuthMode() {
+        function toggleAuth() {
             isSignup = !isSignup;
             document.getElementById('auth-title').innerText = isSignup ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
-            document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل' : 'دخول';
-            document.getElementById('ref-group').style.display = isSignup ? 'block' : 'none';
-            document.getElementById('auth-toggle').innerText = isSignup ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب جديد';
+            document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
         }
 
         function handleAuth(e) {
             e.preventDefault();
-            const phone = document.getElementById('auth-input').value;
-            const refCode = isSignup ? (document.getElementById('auth-ref').value || 'DEF123') : '';
-
-            // Simulating DB Storage
+            const phone = document.getElementById('auth-phone').value;
             localStorage.setItem('user_phone', phone);
+            
+            if(!localStorage.getItem('user_balance')) {
+                localStorage.setItem('user_balance', '50.00'); // 50 EGP bonus for new user
+            }
             localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
+            initApp();
+        }
 
-            loadUserData();
+        function initApp() {
+            const phone = localStorage.getItem('user_phone');
+            const balance = parseFloat(localStorage.getItem('user_balance') || '50.00').toFixed(2);
+            
+            document.getElementById('user-phone-disp').innerText = phone;
+            document.getElementById('prof-phone-disp').innerText = phone;
+            document.querySelectorAll('.val-balance').forEach(el => el.innerText = balance);
+            document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + localStorage.getItem('user_ref');
+
             document.getElementById('view-auth').classList.remove('active');
             document.getElementById('app-content').style.display = 'block';
         }
 
-        function loadUserData() {
-            const phone = localStorage.getItem('user_phone') || '01147298536';
-            const ref = localStorage.getItem('user_ref') || 'REF8821';
+        function openWithdrawModal() { document.getElementById('withdraw-modal').classList.add('active'); }
+        function closeWithdrawModal() { document.getElementById('withdraw-modal').classList.remove('active'); }
+
+        function processWithdraw() {
+            const wallet = document.getElementById('w-wallet').value;
+            const amount = parseFloat(document.getElementById('w-amount').value);
+            let currentBalance = parseFloat(localStorage.getItem('user_balance') || '50.00');
+
+            if(!wallet || !amount || amount <= 0) { alert('يرجى كتابة البيانات بشكل صحيح'); return; }
+            if(amount > currentBalance) { alert('الرصيد غير كافٍ للسحب'); return; }
+
+            currentBalance -= amount;
+            localStorage.setItem('user_balance', currentBalance.toFixed(2));
             
-            document.getElementById('home-phone').innerText = phone;
-            document.getElementById('profile-phone').innerText = phone;
-            document.getElementById('ref-link-display').innerText = window.location.origin + '?ref=' + ref;
+            // Add to Transactions
+            const txList = document.getElementById('tx-list');
+            if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
+            txList.innerHTML = `<div style="background:#222; padding:8px; border-radius:5px; margin-bottom:5px;">سحب إلى ${wallet}: -${amount} EGP (قيد الانتظار)</div>` + txList.innerHTML;
+
+            alert('تم تقديم طلب السحب بنجاح!');
+            closeWithdrawModal();
+            initApp();
         }
 
-        function switchTab(tabName, el) {
+        function switchTab(tab, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById('view-' + tabName).classList.add('active');
+            document.getElementById('view-' + tab).classList.add('active');
             el.classList.add('active');
         }
 
-        function logout() {
-            localStorage.clear();
-            location.reload();
-        }
+        function logout() { localStorage.clear(); location.reload(); }
 
-        // Check login state
-        if (localStorage.getItem('user_phone')) {
-            loadUserData();
-            document.getElementById('view-auth').classList.remove('active');
-            document.getElementById('app-content').style.display = 'block';
-        }
+        if(localStorage.getItem('user_phone')) { initApp(); }
     </script>
 </body>
 </html>
