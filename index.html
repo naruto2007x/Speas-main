@@ -41,7 +41,7 @@
         .auth-switch-text { text-align: center; margin-top: 20px; font-size: 0.85rem; color: #aaa; }
         .auth-switch-text span { color: var(--primary-green); cursor: pointer; font-weight: bold; }
 
-        /* UI Styles */
+        /* Original App UI Styles */
         .app-header { text-align: center; font-weight: 800; font-size: 1.1rem; padding: 15px 0; letter-spacing: 1px; color: #fff; }
         .slider-container { width: 100%; height: 160px; border-radius: 16px; overflow: hidden; position: relative; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .slide { width: 100%; height: 100%; position: absolute; opacity: 0; transition: opacity 0.8s ease-in-out; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
@@ -62,7 +62,7 @@
         .btn-deposit { background: var(--primary-green); color: #000; }
         .btn-withdraw { background: #101c13; color: var(--primary-green); border: 1px solid var(--primary-green); }
 
-        /* Top Selling Products */
+        /* Top Selling Products Section Styles */
         .section-title { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .section-title::before { content: ''; display: inline-block; width: 6px; height: 18px; background-color: var(--primary-green); border-radius: 3px; }
         .products-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
@@ -87,7 +87,10 @@
         .vip-price { font-size: 1.1rem; font-weight: bold; margin: 3px 0; }
         .vip-badge { display: inline-block; background: rgba(55, 235, 116, 0.15); color: var(--primary-green); font-weight: bold; font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; margin-top: 4px; }
 
-        /* Transactions Custom UI (Matched to Image) */
+        .task-box { background: var(--card-bg); border-radius: 14px; padding: 15px; border: 1px solid var(--border-color); margin-top: 15px; }
+        .task-product-img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+
+        /* Transactions Custom UI (Image Match) */
         .tx-hero-card { background: linear-gradient(135deg, #0b1d12 0%, #050a07 100%); border: 1px solid #1a3322; border-radius: 16px; padding: 20px; position: relative; margin-bottom: 15px; }
         .tx-hero-card .wallet-icon { position: absolute; left: 20px; top: 20px; opacity: 0.15; font-size: 4rem; }
         .tx-balance-title { color: #888; font-size: 0.85rem; margin-bottom: 5px; }
@@ -107,13 +110,13 @@
         .tx-stat-num { font-size: 1.4rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
         .tx-stat-label { color: #666; font-size: 0.75rem; }
 
-        /* Progress Bar Styling */
+        /* Animated Progress Bar */
         .progress-container { display: none; width: 100%; margin-top: 15px; background: #151515; border-radius: 20px; overflow: hidden; border: 1px solid #222; height: 26px; position: relative; }
         .progress-bar { width: 0%; height: 100%; background: var(--btn-gradient); transition: width 0.1s linear; }
         .progress-text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; color: #000; }
 
         .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #080808; display: flex; justify-around: space-around; align-items: center; border-top: 1px solid #1a1a1a; z-index: 1000; }
+        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #080808; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1a1a1a; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.72rem; cursor: pointer; gap: 4px; }
         .nav-item.active { color: var(--primary-green); }
 
@@ -134,9 +137,11 @@
                 <div class="flag-icon">
                     <img src="https://flagcdn.com/w40/eg.png" alt="Egypt">
                 </div>
+                
                 <div class="brand-logo-box" id="auth-logo-box">
                     <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300" alt="noon">
                 </div>
+
                 <div class="auth-subtitle" id="auth-hero-title">تسجيل الدخول إلى حسابك</div>
             </div>
 
@@ -230,17 +235,134 @@
                     <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
                 </div>
 
+                <!-- TOP SELLING PRODUCTS SECTION -->
                 <div class="section-title">المنتجات الأكثر مبيعا اليوم</div>
                 
                 <div class="products-list">
+                    <!-- Product 1 -->
                     <div class="product-card">
-                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300" alt="كيبل شحن"></div>
+                        <div class="product-img-box">
+                            <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300" alt="كيبل شحن">
+                        </div>
                         <div class="product-details">
                             <div class="product-title">كيبل شحن ونقل بيانات</div>
-                            <div class="product-info-row"><span class="label">المبيعات اليومية:</span><span class="val-sales">5145</span></div>
-                            <div class="product-info-row"><span class="label">معدل نمو المبيعات:</span><span class="val-growth">167%</span></div>
+                            <div class="product-info-row">
+                                <span class="label">المبيعات اليومية:</span>
+                                <span class="val-sales">5145</span>
+                            </div>
+                            <div class="product-info-row">
+                                <span class="label">معدل نمو المبيعات:</span>
+                                <span class="val-growth">167%</span>
+                            </div>
                         </div>
-                        <div class="product-price-box"><div class="product-price"><span>EGP</span> 7.04</div></div>
+                        <div class="product-price-box">
+                            <div class="product-price"><span>EGP</span> 7.04</div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card">
+                        <div class="product-img-box">
+                            <img src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=300" alt="سيت قراصات">
+                        </div>
+                        <div class="product-details">
+                            <div class="product-title">سيت قراصات نجوم 8 قطع</div>
+                            <div class="product-info-row">
+                                <span class="label">المبيعات اليومية:</span>
+                                <span class="val-sales">1940</span>
+                            </div>
+                            <div class="product-info-row">
+                                <span class="label">معدل نمو المبيعات:</span>
+                                <span class="val-growth">93%</span>
+                            </div>
+                        </div>
+                        <div class="product-price-box">
+                            <div class="product-price"><span>EGP</span> 34.95</div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-card">
+                        <div class="product-img-box">
+                            <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300" alt="كيبل لايتنغ">
+                        </div>
+                        <div class="product-details">
+                            <div class="product-title">كيبل شحن لايتنغ</div>
+                            <div class="product-info-row">
+                                <span class="label">المبيعات اليومية:</span>
+                                <span class="val-sales">1713</span>
+                            </div>
+                            <div class="product-info-row">
+                                <span class="label">معدل نمو المبيعات:</span>
+                                <span class="val-growth">108%</span>
+                            </div>
+                        </div>
+                        <div class="product-price-box">
+                            <div class="product-price"><span>EGP</span> 15.98</div>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-card">
+                        <div class="product-img-box">
+                            <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=300" alt="كيبل شحن">
+                        </div>
+                        <div class="product-details">
+                            <div class="product-title">كيبل شحن</div>
+                            <div class="product-info-row">
+                                <span class="label">المبيعات اليومية:</span>
+                                <span class="val-sales">1418</span>
+                            </div>
+                            <div class="product-info-row">
+                                <span class="label">معدل نمو المبيعات:</span>
+                                <span class="val-growth">139%</span>
+                            </div>
+                        </div>
+                        <div class="product-price-box">
+                            <div class="product-price"><span>EGP</span> 17.04</div>
+                        </div>
+                    </div>
+
+                    <!-- Product 5 -->
+                    <div class="product-card">
+                        <div class="product-img-box">
+                            <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300" alt="كيبل شحن ونقل بيانات">
+                        </div>
+                        <div class="product-details">
+                            <div class="product-title">كيبل شحن ونقل بيانات</div>
+                            <div class="product-info-row">
+                                <span class="label">المبيعات اليومية:</span>
+                                <span class="val-sales">1112</span>
+                            </div>
+                            <div class="product-info-row">
+                                <span class="label">معدل نمو المبيعات:</span>
+                                <span class="val-growth">146%</span>
+                            </div>
+                        </div>
+                        <div class="product-price-box">
+                            <div class="product-price"><span>EGP</span> 19.79</div>
+                        </div>
+                    </div>
+
+                    <!-- Product 6 -->
+                    <div class="product-card">
+                        <div class="product-img-box">
+                            <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300" alt="قلادة">
+                        </div>
+                        <div class="product-details">
+                            <div class="product-title">قلادة آكلي الموتى - هاري بوتر</div>
+                            <div class="product-info-row">
+                                <span class="label">المبيعات اليومية:</span>
+                                <span class="val-sales">977</span>
+                            </div>
+                            <div class="product-info-row">
+                                <span class="label">معدل نمو المبيعات:</span>
+                                <span class="val-growth">139%</span>
+                            </div>
+                        </div>
+                        <div class="product-price-box">
+                            <div class="product-price"><span>EGP</span> 23.75</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -248,27 +370,65 @@
             <!-- TASK VIEW -->
             <div id="view-task" class="view">
                 <h3 style="margin-bottom:15px;">قائمة الاشتراكات والمهام</h3>
+                
                 <div id="vip-list" class="vip-grid">
                     <div class="vip-card" onclick="selectVip(170, 3.6, 10)">
-                        <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500" class="vip-img">
+                        <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500" class="vip-img" alt="ملابس">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
                             <div class="vip-price">EGP 170</div>
                             <span class="vip-badge">نسبة العمولة 3.6%</span>
                         </div>
                     </div>
+
                     <div class="vip-card" onclick="selectVip(200, 5.4, 10)">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="vip-img">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="vip-img" alt="أحذية">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
                             <div class="vip-price">EGP 200</div>
                             <span class="vip-badge">نسبة العمولة 5.4%</span>
                         </div>
                     </div>
+
+                    <div class="vip-card" onclick="selectVip(500, 6.6, 10)">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="vip-img" alt="ساعات">
+                        <div class="vip-body">
+                            <div class="vip-limit">حد الرصيد</div>
+                            <div class="vip-price">EGP 500</div>
+                            <span class="vip-badge">نسبة العمولة 6.6%</span>
+                        </div>
+                    </div>
+
+                    <div class="vip-card" onclick="selectVip(1000, 7.2, 10)">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" class="vip-img" alt="إلكترونيات">
+                        <div class="vip-body">
+                            <div class="vip-limit">حد الرصيد</div>
+                            <div class="vip-price">EGP 1000</div>
+                            <span class="vip-badge">نسبة العمولة 7.2%</span>
+                        </div>
+                    </div>
+
+                    <div class="vip-card" onclick="selectVip(3000, 8.6, 10)">
+                        <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=500" class="vip-img" alt="سيارات">
+                        <div class="vip-body">
+                            <div class="vip-limit">حد الرصيد</div>
+                            <div class="vip-price">EGP 3000</div>
+                            <span class="vip-badge">نسبة العمولة 8.6%</span>
+                        </div>
+                    </div>
+
+                    <div class="vip-card" onclick="selectVip(5000, 9.4, 10)">
+                        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" class="vip-img" alt="سيارات فاخرة">
+                        <div class="vip-body">
+                            <div class="vip-limit">حد الرصيد</div>
+                            <div class="vip-price">EGP 5000</div>
+                            <span class="vip-badge">نسبة العمولة 9.4%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- TRANSACTIONS VIEW (MATCHED EXACTLY TO THE IMAGE) -->
+            <!-- TRANSACTIONS VIEW -->
             <div id="view-transactions" class="view">
                 <div class="tx-hero-card">
                     <div class="wallet-icon">👛</div>
@@ -306,7 +466,7 @@
                         <span class="tx-task-value" style="color:#ffcc00;" id="tx-status">بانتظار الإرسال</span>
                     </div>
 
-                    <!-- Progress Bar Component -->
+                    <!-- Dynamic Progress Bar -->
                     <div class="progress-container" id="progress-container">
                         <div class="progress-bar" id="progress-bar"></div>
                         <div class="progress-text" id="progress-text">جاري المعالجة 0%</div>
@@ -330,7 +490,9 @@
             <!-- ORDERS VIEW -->
             <div id="view-orders" class="view">
                 <h3>الطلبات</h3>
-                <div id="orders-list" style="margin-top:15px; font-size:0.85rem; color:var(--text-sub);">لا توجد طلبات معلقة</div>
+                <div id="orders-list" style="margin-top:15px; font-size:0.85rem; color:var(--text-sub);">
+                    لا توجد طلبات معلقة
+                </div>
             </div>
 
             <!-- PROFILE VIEW -->
@@ -339,6 +501,9 @@
                     <div>الحساب: <b id="prof-phone-disp">-</b></div>
                     <div class="balance-amount">EGP <span class="val-balance">0.00</span></div>
                 </div>
+                <p style="font-size:0.85rem; color:var(--text-sub);">رابط الدعوة الخاص بك:</p>
+                <div id="ref-link" style="background:#111; padding:10px; border-radius:8px; font-size:0.75rem; margin-top:5px; word-break:break-all; border:1px dashed var(--primary-green);"></div>
+                <br>
                 <button onclick="logout()" style="width:100%; padding:12px; background:#ff3333; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">تسجيل الخروج</button>
             </div>
         </div>
@@ -387,19 +552,20 @@
         let activeVipRate = 3.6;
         let activeMaxTasks = 10;
         let activeCompletedTasks = 0;
-        let totalCommissionProfit = 0;
+        let totalCommissionProfit = 108.13;
         let activeTaskPending = false;
 
         const demoProducts = [
             { name: "كيبل شحن لايتننك", price: 1556.13, diff: 1298 },
             { name: "سيارة بورش رياضية Porsche 911", price: 3200.00, diff: 1500 },
             { name: "ساعة يد كلاسيكية فاخرة", price: 850.50, diff: 400 },
-            { name: "جاكيت جلد أنيق - SHEIN", price: 1200.00, diff: 650 }
+            { name: "جاكيت جلد أنيق - SHEIN", price: 1200.00, diff: 650 },
+            { name: "حذاء رياضي عصري", price: 950.00, diff: 300 }
         ];
 
         let currentProduct = demoProducts[0];
 
-        // Slider Animation
+        // Slide Animation
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
@@ -417,7 +583,10 @@
             isSignupMode = !isSignupMode;
             document.getElementById('auth-hero-title').innerText = isSignupMode ? 'قم بتسجيل حسابك' : 'تسجيل الدخول إلى حسابك';
             document.getElementById('auth-btn').innerText = isSignupMode ? 'تسجيل' : 'تسجيل الدخول';
-            document.getElementById('auth-toggle-link').innerHTML = isSignupMode ? 'اذهب لتسجيل الدخول <span>هل لديك حساب؟</span>' : 'اذهب للتسجيل <span>ليس لديك حساب؟</span>';
+            document.getElementById('auth-toggle-link').innerHTML = isSignupMode 
+                ? 'اذهب لتسجيل الدخول <span>هل لديك حساب؟</span>' 
+                : 'اذهب للتسجيل <span>ليس لديك حساب؟</span>';
+
             document.getElementById('group-confirm-pass').style.display = isSignupMode ? 'block' : 'none';
             document.getElementById('group-invite-code').style.display = isSignupMode ? 'block' : 'none';
         }
@@ -432,9 +601,23 @@
             const rawPhone = document.getElementById('auth-phone').value.trim();
             const phone = rawPhone.replace(/[^0-9]/g, '');
 
-            if (!phone) { alert('يرجى إدخال رقم هاتف صحيح'); return; }
+            if (!phone) {
+                alert('يرجى إدخال رقم هاتف صحيح');
+                return;
+            }
+
+            if (isSignupMode) {
+                const pass = document.getElementById('auth-pass').value;
+                const confirmPass = document.getElementById('auth-confirm-pass').value;
+                if(pass !== confirmPass) {
+                    alert('كلمات المرور غير متطابقة!');
+                    return;
+                }
+            }
 
             localStorage.setItem('user_phone', phone);
+            localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
+
             if (phone === ADMIN_PHONE) {
                 localStorage.setItem('user_balance_' + phone, '10000.00');
             } else if (isSignupMode && !localStorage.getItem('user_balance_' + phone)) {
@@ -446,6 +629,11 @@
 
         function initApp() {
             const phone = localStorage.getItem('user_phone') || '01000000000';
+            
+            if (phone === ADMIN_PHONE && !localStorage.getItem('user_balance_' + phone)) {
+                localStorage.setItem('user_balance_' + phone, '10000.00');
+            }
+
             const savedBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '258.13');
 
             document.getElementById('user-phone-disp').innerText = phone;
@@ -453,12 +641,16 @@
             
             if (phone === ADMIN_PHONE) {
                 const roleBadge = document.getElementById('user-role-badge');
-                if (roleBadge) { roleBadge.innerText = 'ADMIN'; roleBadge.style.background = '#ffcc00'; }
+                if (roleBadge) {
+                    roleBadge.innerText = 'ADMIN';
+                    roleBadge.style.background = '#ffcc00';
+                }
             }
 
             updateBalance(savedBal);
             renderTransactionsData();
 
+            document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + localStorage.getItem('user_ref');
             document.getElementById('view-auth').classList.remove('active');
             document.getElementById('app-content').style.display = 'block';
         }
@@ -492,7 +684,7 @@
             const comm = ((currentBal * activeVipRate) / 100).toFixed(2);
 
             document.getElementById('tx-prod-name').innerText = currentProduct.name;
-            document.getElementById('tx-task-progress').innerText = `(${activeCompletedTasks}/${activeMaxTasks})`;
+            document.getElementById('tx-task-progress').innerText = `(${activeCompletedTasks + 1}/${activeMaxTasks})`;
             document.getElementById('tx-order-price').innerText = currentProduct.price.toFixed(2);
             document.getElementById('tx-comm-price').innerText = comm;
             document.getElementById('tx-diff-price').innerText = currentProduct.diff;
@@ -501,7 +693,6 @@
             document.getElementById('tx-total-comm').innerText = totalCommissionProfit.toFixed(2);
         }
 
-        // Submission with Animated Progress Bar
         function submitTxTask() {
             if(activeTaskPending) return;
 
@@ -534,7 +725,7 @@
             document.getElementById('tx-status').style.color = '#ff9800';
 
             let progress = 0;
-            const duration = 5000; // 5 Seconds
+            const duration = 5000;
             const intervalTime = 50;
             const step = 100 / (duration / intervalTime);
 
@@ -544,7 +735,6 @@
                     progress = 100;
                     clearInterval(timer);
 
-                    // Finalize transaction logic
                     const latestBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
                     const comm = parseFloat((latestBal * activeVipRate) / 100);
                     const newBal = latestBal + comm;
@@ -555,14 +745,12 @@
                     activeCompletedTasks++;
                     activeTaskPending = false;
 
-                    // Reset UI Elements
                     progressContainer.style.display = 'none';
                     progressBar.style.width = '0%';
                     btn.style.display = 'block';
                     document.getElementById('tx-status').innerText = 'تم الإكتمال بنجاح';
                     document.getElementById('tx-status').style.color = 'var(--primary-green)';
 
-                    // Rotate Product
                     currentProduct = demoProducts[Math.floor(Math.random() * demoProducts.length)];
                     renderTransactionsData();
 
@@ -574,7 +762,14 @@
             }, intervalTime);
         }
 
-        function openWithdrawModal() { document.getElementById('withdraw-modal').classList.add('active'); }
+        function openWithdrawModal() { 
+            if(activeTaskPending) {
+                alert('لا يمكنك طلب السحب أثناء وجود طلب قيد الإكمال!');
+                return;
+            }
+            document.getElementById('withdraw-modal').classList.add('active'); 
+        }
+
         function closeWithdrawModal() { document.getElementById('withdraw-modal').classList.remove('active'); }
 
         function processWithdraw() {
@@ -586,7 +781,9 @@
             if(!wallet || !amount || amount <= 0) { alert('يرجى كتابة البيانات بشكل صحيح'); return; }
             if(amount > currentBalance) { alert('الرصيد غير كافٍ للسحب'); return; }
 
-            updateBalance(currentBalance - amount);
+            const newBalance = currentBalance - amount;
+            updateBalance(newBalance);
+
             alert('تم تقديم طلب السحب بنجاح!');
             closeWithdrawModal();
         }
