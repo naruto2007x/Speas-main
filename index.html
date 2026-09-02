@@ -64,10 +64,10 @@
         .section-title { font-size: 0.95rem; font-weight: bold; color: #ffffff; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
         .section-title::before { content: ''; display: inline-block; width: 4px; height: 14px; background-color: var(--primary-green); border-radius: 2px; }
 
-        /* ORIGINAL HOMEPAGE PRODUCTS (Restored exact size and styling) */
+        /* ORIGINAL HOMEPAGE PRODUCTS LIST DESIGN */
         .products-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         .product-card { background-color: #0d120f; border: 1px solid #18261d; border-radius: 10px; padding: 10px; display: flex; align-items: center; justify-content: space-between; }
-        .product-img-box { width: 65px; height: 65px; background: #ffffff; border-radius: 8px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .product-img-box { width: 60px; height: 60px; background: #111; border-radius: 8px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #222; }
         .product-img-box img { width: 100%; height: 100%; object-fit: cover; }
         .product-details { flex: 1; padding: 0 10px; display: flex; flex-direction: column; gap: 4px; }
         .product-title { font-size: 0.82rem; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
@@ -75,7 +75,7 @@
         .product-info-row .label { color: #777777; margin-left: 4px; }
         .product-info-row .val-sales { color: #e53935; font-weight: bold; }
         .product-price-box { text-align: left; display: flex; flex-direction: column; align-items: flex-end; }
-        .product-price { font-size: 0.95rem; font-weight: bold; color: #ffffff; }
+        .product-price { font-size: 0.95rem; font-weight: bold; color: var(--primary-green); }
 
         /* VIP Grid */
         .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -237,7 +237,7 @@
                     <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
                 </div>
 
-                <!-- ORIGINAL RESTORED HOMEPAGE PRODUCTS LIST -->
+                <!-- RESTORED EXACT ORIGINAL HOMEPAGE PRODUCTS SECTION -->
                 <div class="section-title">المنتجات الأكثر مبيعا اليوم</div>
                 
                 <div class="products-list">
@@ -349,11 +349,9 @@
                 </div>
             </div>
 
-            <!-- TRANSACTIONS VIEW (ONLY ACCESSIBLE VIA SUBSCRIPTION) -->
+            <!-- TRANSACTIONS VIEW -->
             <div id="view-transactions" class="view">
-                <div id="tx-subscription-container">
-                    <!-- Dynamic rendering based on subscription -->
-                </div>
+                <div id="tx-subscription-container"></div>
             </div>
 
             <!-- ORDERS VIEW -->
@@ -487,7 +485,7 @@
             localStorage.setItem('user_phone', phone);
             localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
 
-            // Set welcome bonus to EXACTLY 50 EGP upon signup
+            // Set welcome bonus to EXACTLY 50 EGP
             if (phone === ADMIN_PHONE) {
                 localStorage.setItem('user_balance_' + phone, '10000.00');
             } else if (isSignupMode && !localStorage.getItem('user_balance_' + phone)) {
@@ -504,7 +502,6 @@
                 localStorage.setItem('user_balance_' + phone, '10000.00');
             }
 
-            // Default fallback balance to 50 EGP
             const savedBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '50.00');
 
             document.getElementById('user-phone-disp').innerText = phone;
