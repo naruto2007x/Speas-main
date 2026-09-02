@@ -23,7 +23,7 @@
         .view { display: none; }
         .view.active { display: block; }
 
-        /* Auth View Design Matched to UI Pictures */
+        /* Auth View Design */
         .auth-wrapper {
             min-height: 100vh;
             background: #000;
@@ -209,7 +209,7 @@
 </head>
 <body>
 
-    <!-- AUTH VIEW (Matched 100% to Screenshots) -->
+    <!-- AUTH VIEW -->
     <div id="view-auth" class="view active">
         <div class="auth-wrapper">
             <div class="auth-hero">
@@ -217,6 +217,7 @@
                     <img src="https://flagcdn.com/w40/eg.png" alt="Egypt">
                 </div>
                 
+                <!-- Logo Box Visible in both Login and Register -->
                 <div class="brand-logo-box" id="auth-logo-box">
                     <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300" alt="noon">
                 </div>
@@ -382,7 +383,7 @@
 
                 <!-- Active Task Execution Box -->
                 <div id="active-task-area" style="display:none;" class="task-box">
-                    <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للااشتراكات</button>
+                    <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
                     <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem;">
                         <span>الطلبات المكتملة: <b id="task-progress">0/10</b></span>
                         <span>العمولة المقدرة: <b id="task-comm" style="color:var(--primary-green);">0 EGP</b></span>
@@ -463,6 +464,7 @@
     <script>
         const ADMIN_PHONE = "01080633299";
         let isSignupMode = false;
+        let activeVipLimit = 0;
         let activeVipRate = 0;
         let activeMaxTasks = 10;
         let activeCompletedTasks = 0;
@@ -503,7 +505,6 @@
 
             document.getElementById('group-confirm-pass').style.display = isSignupMode ? 'block' : 'none';
             document.getElementById('group-invite-code').style.display = isSignupMode ? 'block' : 'none';
-            document.getElementById('auth-logo-box').style.display = isSignupMode ? 'none' : 'block';
         }
 
         // Toggle Password Visibility
@@ -587,6 +588,7 @@
                 return;
             }
 
+            activeVipLimit = minBalance;
             activeVipRate = commRate;
             activeMaxTasks = totalTasks;
             activeCompletedTasks = 0;
@@ -620,16 +622,28 @@
                 return;
             }
 
+            const phone = localStorage.getItem('user_phone');
+            const currentBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
+
+            // شرط باقة 170 عند المهمة الـ 4 (أي المكتملة 3 والآن سيتم إكمال الـ 4)
+            if (activeVipLimit === 170 && activeCompletedTasks === 3) {
+                const requiredBal = 820;
+                if (currentBal < requiredBal) {
+                    const diff = (requiredBal - currentBal).toFixed(2);
+                    alert(`عذراً! لتنفيذ الطلب 4/10 يجب أن يكون رصيدك ${requiredBal} EGP على الأقل.\n\nرصيدك الحالي: ${currentBal.toFixed(2)} EGP\nالمبلغ الناقص للإكمال: ${diff} EGP`);
+                    return;
+                }
+            }
+
             const btn = document.getElementById('btn-complete-task');
             btn.disabled = true;
             btn.innerText = 'جاري المعالجة وإكمال الطلب... (5 ثوانٍ)';
             activeTaskPending = true;
 
             setTimeout(() => {
-                const phone = localStorage.getItem('user_phone');
-                const currentBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
-                const comm = parseFloat((currentBal * activeVipRate) / 100);
-                const newBal = currentBal + comm;
+                const latestBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
+                const comm = parseFloat((latestBal * activeVipRate) / 100);
+                const newBal = latestBal + comm;
 
                 updateBalance(newBal);
 
