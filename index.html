@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CENTRO COMERCIAL</title>
+
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root {
             --bg-main: #0a0a0a;
@@ -130,7 +134,7 @@
                 </div>
                 <div style="margin-top:12px;">
                     <div style="font-size:0.75rem; color:var(--text-sub);">رصيد الحساب</div>
-                    <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
+                    <div class="balance-amount">EGP <span class="val-balance">0.00</span></div>
                 </div>
             </div>
 
@@ -202,7 +206,7 @@
 
             <!-- Task Exec Area -->
             <div id="active-task-area" style="display:none;" class="task-box">
-                <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
+                <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للااشتراكات</button>
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem;">
                     <span>الطلبات المكتملة: <b id="task-progress">0/10</b></span>
                     <span>العمولة المقدرة: <b id="task-comm" style="color:var(--primary-green);">0 EGP</b></span>
@@ -234,7 +238,7 @@
         <div id="view-profile" class="view">
             <div class="user-card">
                 <div>الحساب: <b id="prof-phone-disp">-</b></div>
-                <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
+                <div class="balance-amount">EGP <span class="val-balance">0.00</span></div>
             </div>
             <p style="font-size:0.85rem; color:var(--text-sub);">رابط الدعوة الخاص بك:</p>
             <div id="ref-link" style="background:#222; padding:8px; border-radius:5px; font-size:0.75rem; margin-top:5px; word-break:break-all; border:1px dashed var(--primary-green);"></div>
@@ -280,16 +284,15 @@
     </div>
 
     <script>
-        // === ZOHO API CONFIGURATION ===
-        const ZOHO_CONFIG = {
-            refreshToken: '1000.ecbc65770bacfec97eafdf6968b6729d.20adbcabb741cad37e0bacb971f4739c',
-            clientId: '1000.EOE64HHR20H8QCDNWJL2J2VC7VNPZV',
-            clientSecret: '86bbb9ca27973e3b4a5ccc3dcda056a5dcc868ba5b',
-            ownerName: 'anasmoza200',
-            appName: 'Naruto',
-            formName: 'Users'
-        };
+        // === SUPABASE CONFIGURATION ===
+        const SUPABASE_URL = 'https://njmehwvnwdzqzjscbqkd.supabase.co';
+        // ضع الـ anon public key الخاص بك من صفحة Settings -> Data API هنا
+        const SUPABASE_ANON_KEY = 'تأكد من إدراج مفتاح anon key الخاص بك هنا'; 
 
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let currentBalance = 0.00;
         let isSignup = false;
         let activeVipRate = 0;
         let activeMaxTasks = 10;
@@ -325,76 +328,89 @@
             document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
         }
 
-        // === ZOHO CREATOR INTEGRATION ===
-        async function getZohoAccessToken() {
-            const res = await fetch('https://accounts.zoho.com/oauth/v2/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    'refresh_token': ZOHO_CONFIG.refreshToken,
-                    'client_id': ZOHO_CONFIG.clientId,
-                    'client_secret': ZOHO_CONFIG.clientSecret,
-                    'grant_type': 'refresh_token'
-                })
-            });
-            const data = await res.json();
-            return data.access_token;
-        }
-
-        async function saveUserToZoho(phone) {
-            const token = await getZohoAccessToken();
-            const url = `https://creator.zoho.com/api/v2/${ZOHO_CONFIG.ownerName}/${ZOHO_CONFIG.appName}/form/${ZOHO_CONFIG.formName}`;
-            
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Zoho-oauthtoken ' + token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "data": {
-                        "Phone": phone,
-                        "Balance": 50.00
-                    }
-                })
-            });
-            return await res.json();
-        }
-
+        // === SUPABASE AUTH & DATA INTEGRATION ===
         async function handleAuth(e) {
             e.preventDefault();
             const phone = document.getElementById('auth-phone').value;
+            const pass = document.getElementById('auth-pass').value;
             const btn = document.getElementById('auth-btn');
+
+            // تحويل رقم الهاتف لإيميل وهمي مقبول من Supabase
+            const email = `${phone}@app.com`;
 
             btn.disabled = true;
             btn.innerText = 'جاري المعالجة...';
 
             try {
-                if(isSignup) {
-                    await saveUserToZoho(phone);
+                if (isSignup) {
+                    const { data, error } = await db.auth.signUp({
+                        email: email,
+                        password: pass
+                    });
+                    if (error) throw error;
+                    alert('تم إنشاء الحساب بنجاح والحصول على 50 EGP بونص!');
+                    currentUser = data.user;
+                } else {
+                    const { data, error } = await db.auth.signInWithPassword({
+                        email: email,
+                        password: pass
+                    });
+                    if (error) throw error;
+                    currentUser = data.user;
                 }
 
                 localStorage.setItem('user_phone', phone);
-                if(!localStorage.getItem('user_balance')) {
-                    localStorage.setItem('user_balance', '50.00');
-                }
                 localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
-                initApp();
+                
+                await fetchUserData();
             } catch (err) {
-                alert('حدث خطأ أثناء الاتصال بالخادم: ' + err.message);
+                alert('خطأ: ' + (err.message || 'فشل الاتصال'));
             } finally {
                 btn.disabled = false;
                 btn.innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
             }
         }
 
+        async function fetchUserData() {
+            const { data: { user } } = await db.auth.getUser();
+            if (!user) return;
+
+            currentUser = user;
+
+            // جلب الرصيد من جدول profiles في Supabase
+            let { data, error } = await db
+                .from('profiles')
+                .select('balance')
+                .eq('id', user.id)
+                .single();
+
+            if (data) {
+                currentBalance = parseFloat(data.balance || 0);
+                initApp();
+            }
+        }
+
+        async function updateBalanceOnServer(newBalance) {
+            currentBalance = newBalance;
+            document.querySelectorAll('.val-balance').forEach(el => el.innerText = newBalance.toFixed(2));
+
+            // تحديث قاعدة البيانات في Supabase
+            const { error } = await db
+                .from('profiles')
+                .update({ balance: newBalance })
+                .eq('id', currentUser.id);
+
+            if (error) {
+                console.error("Error updating balance:", error);
+            }
+        }
+
         function initApp() {
             const phone = localStorage.getItem('user_phone');
-            const balance = parseFloat(localStorage.getItem('user_balance') || '50.00').toFixed(2);
             
             document.getElementById('user-phone-disp').innerText = phone;
             document.getElementById('prof-phone-disp').innerText = phone;
-            document.querySelectorAll('.val-balance').forEach(el => el.innerText = balance);
+            document.querySelectorAll('.val-balance').forEach(el => el.innerText = currentBalance.toFixed(2));
             document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + localStorage.getItem('user_ref');
 
             document.getElementById('view-auth').classList.remove('active');
@@ -403,8 +419,7 @@
 
         // VIP Task Handler
         function selectVip(minBalance, commRate, totalTasks) {
-            const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
-            if(currentBal < minBalance) {
+            if(currentBalance < minBalance) {
                 alert(`عذراً! يجب أن يمتلك حسابك ${minBalance} EGP على الأقل للدخول في هذا المستوى.`);
                 return;
             }
@@ -425,12 +440,11 @@
 
         function loadRandomProduct() {
             const prod = demoProducts[Math.floor(Math.random() * demoProducts.length)];
-            const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
-            const comm = ((currentBal * activeVipRate) / 100).toFixed(2);
+            const comm = ((currentBalance * activeVipRate) / 100).toFixed(2);
 
             document.getElementById('task-img').src = prod.img;
             document.getElementById('task-title').innerText = prod.name;
-            document.getElementById('task-price-info').innerText = `قيمة العقد: EGP ${currentBal.toFixed(2)} | العائد: EGP ${comm}`;
+            document.getElementById('task-price-info').innerText = `قيمة العقد: EGP ${currentBalance.toFixed(2)} | العائد: EGP ${comm}`;
             document.getElementById('task-comm').innerText = comm + ' EGP';
             document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
         }
@@ -446,12 +460,12 @@
             btn.innerText = 'جاري المعالجة وإكمال الطلب... (5 ثوانٍ)';
             activeTaskPending = true;
 
-            setTimeout(() => {
-                const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
-                const comm = parseFloat((currentBal * activeVipRate) / 100);
-                const newBal = currentBal + comm;
+            setTimeout(async () => {
+                const comm = parseFloat((currentBalance * activeVipRate) / 100);
+                const newBal = currentBalance + comm;
 
-                localStorage.setItem('user_balance', newBal.toFixed(2));
+                await updateBalanceOnServer(newBal);
+
                 activeCompletedTasks++;
                 activeTaskPending = false;
 
@@ -459,7 +473,6 @@
                 btn.innerText = 'إكمال الطلب';
 
                 alert(`تم إكمال الطلب بنجاح وتم إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
-                initApp();
 
                 if(activeCompletedTasks < activeMaxTasks) {
                     loadRandomProduct();
@@ -480,16 +493,15 @@
         }
         function closeWithdrawModal() { document.getElementById('withdraw-modal').classList.remove('active'); }
 
-        function processWithdraw() {
+        async function processWithdraw() {
             const wallet = document.getElementById('w-wallet').value;
             const amount = parseFloat(document.getElementById('w-amount').value);
-            let currentBalance = parseFloat(localStorage.getItem('user_balance') || '50.00');
 
             if(!wallet || !amount || amount <= 0) { alert('يرجى كتابة البيانات بشكل صحيح'); return; }
             if(amount > currentBalance) { alert('الرصيد غير كافٍ للسحب'); return; }
 
-            currentBalance -= amount;
-            localStorage.setItem('user_balance', currentBalance.toFixed(2));
+            const newBalance = currentBalance - amount;
+            await updateBalanceOnServer(newBalance);
             
             const txList = document.getElementById('tx-list');
             if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
@@ -497,7 +509,6 @@
 
             alert('تم تقديم طلب السحب بنجاح!');
             closeWithdrawModal();
-            initApp();
         }
 
         function switchTab(tab, el) {
@@ -507,9 +518,18 @@
             el.classList.add('active');
         }
 
-        function logout() { localStorage.clear(); location.reload(); }
+        async function logout() { 
+            await db.auth.signOut();
+            localStorage.clear(); 
+            location.reload(); 
+        }
 
-        if(localStorage.getItem('user_phone')) { initApp(); }
+        // Check active session on page load
+        db.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                fetchUserData();
+            }
+        });
     </script>
 </body>
 </html>
