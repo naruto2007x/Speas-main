@@ -65,7 +65,7 @@
         .section-title { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .section-title::before { content: ''; display: inline-block; width: 6px; height: 18px; background-color: var(--primary-green); border-radius: 3px; }
 
-        /* Top Selling Products - Full Original List */
+        /* Original Homepage Products Layout */
         .products-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
         .product-card { background-color: #0b1510; border: 1px solid #1a3022; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; }
         .product-img-box { width: 80px; height: 80px; background: #ffffff; border-radius: 10px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -111,6 +111,8 @@
         .progress-bar { width: 0%; height: 100%; background: var(--btn-gradient); transition: width 0.1s linear; }
         .progress-text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; color: #000; }
 
+        .empty-subscription-box { text-align: center; padding: 40px 20px; background: #0a0f0c; border: 1px dashed #1b3322; border-radius: 16px; color: #888; margin-top: 20px; }
+
         /* Orders UI */
         .order-card { background: #0e1210; border: 1px solid #1a281e; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
         .order-header { display: flex; justify-content: space-between; border-bottom: 1px solid #1c231e; padding-bottom: 8px; margin-bottom: 8px; font-size: 0.8rem; color: #888; }
@@ -119,7 +121,7 @@
         .order-status { font-size: 0.75rem; color: var(--primary-green); background: rgba(55,235,116,0.1); padding: 2px 8px; border-radius: 4px; font-weight: bold; }
         .order-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; font-size: 0.8rem; color: #aaa; }
 
-        /* REDESIGNED MODERN NAVBAR */
+        /* Modern Navbar */
         .navbar { 
             position: fixed; 
             bottom: 0; 
@@ -290,7 +292,7 @@
                     <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
                 </div>
 
-                <!-- TOP SELLING PRODUCTS LIST (RESTORED FULL) -->
+                <!-- ORIGINAL TOP SELLING PRODUCTS -->
                 <div class="section-title">المنتجات الأكثر مبيعا اليوم</div>
                 
                 <div class="products-list">
@@ -341,12 +343,12 @@
                 </div>
             </div>
 
-            <!-- TASK VIEW (ALL VIP PACKAGES) -->
+            <!-- TASK VIEW -->
             <div id="view-task" class="view">
                 <h3 style="margin-bottom:15px;">قائمة الاشتراكات والمهام</h3>
                 
                 <div id="vip-list" class="vip-grid">
-                    <div class="vip-card" onclick="selectVip(170, 3.6, 10)">
+                    <div class="vip-card" onclick="subscribeVip(170, 3.6, 10)">
                         <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -355,7 +357,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="selectVip(200, 5.4, 10)">
+                    <div class="vip-card" onclick="subscribeVip(200, 5.4, 10)">
                         <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -364,7 +366,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="selectVip(500, 6.6, 10)">
+                    <div class="vip-card" onclick="subscribeVip(500, 6.6, 10)">
                         <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -373,7 +375,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="selectVip(1000, 7.2, 10)">
+                    <div class="vip-card" onclick="subscribeVip(1000, 7.2, 10)">
                         <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -382,7 +384,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="selectVip(3000, 8.5, 10)">
+                    <div class="vip-card" onclick="subscribeVip(3000, 8.5, 10)">
                         <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -391,7 +393,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="selectVip(5000, 10.0, 10)">
+                    <div class="vip-card" onclick="subscribeVip(5000, 10.0, 10)">
                         <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -402,61 +404,10 @@
                 </div>
             </div>
 
-            <!-- TRANSACTIONS VIEW -->
+            <!-- TRANSACTIONS VIEW (SHOWS ONLY IF SUBSCRIBED) -->
             <div id="view-transactions" class="view">
-                <div class="tx-hero-card">
-                    <div class="wallet-icon">👛</div>
-                    <div class="tx-balance-title">رصيد الحساب</div>
-                    <div class="tx-balance-val"><span class="val-balance">0.00</span> EGP</div>
-                    <div class="tx-commission-box">
-                        <div class="tx-commission-title">إجمالي أرباح العمولة</div>
-                        <div class="tx-commission-val">EGP <span id="tx-total-comm">0.00</span></div>
-                    </div>
-                </div>
-
-                <div class="tx-task-card">
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">اسم المنتج</span>
-                        <span class="tx-task-value" id="tx-prod-name">-</span>
-                    </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">تقدم المهمة</span>
-                        <span class="tx-task-value" id="tx-task-progress">(0/10)</span>
-                    </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">سعر الطلب</span>
-                        <span class="tx-task-value">EGP <span id="tx-order-price">0.00</span></span>
-                    </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">العمولة المتوقعة (على سعر الطلب)</span>
-                        <span class="tx-task-value">EGP <span id="tx-comm-price">0.00</span></span>
-                    </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">فرق السعر</span>
-                        <span class="tx-task-value">EGP <span id="tx-diff-price">0</span></span>
-                    </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">حالة الطلب</span>
-                        <span class="tx-task-value" style="color:#ffcc00;" id="tx-status">جاهز للتنفيذ</span>
-                    </div>
-
-                    <div class="progress-container" id="progress-container">
-                        <div class="progress-bar" id="progress-bar"></div>
-                        <div class="progress-text" id="progress-text">جاري المعالجة 0%</div>
-                    </div>
-
-                    <button class="btn-neon-pill" id="btn-submit-tx" style="margin-top:15px;" onclick="submitTxTask()">إرسال الآن</button>
-                </div>
-
-                <div class="tx-stats-grid">
-                    <div>
-                        <div class="tx-stat-num" id="tx-completed-cnt">0</div>
-                        <div class="tx-stat-label">عدد المهام المكتملة</div>
-                    </div>
-                    <div>
-                        <div class="tx-stat-num" id="tx-total-cnt">10</div>
-                        <div class="tx-stat-label">إجمالي عدد المهام</div>
-                    </div>
+                <div id="tx-subscription-container">
+                    <!-- Dynamic rendering based on subscription status -->
                 </div>
             </div>
 
@@ -483,7 +434,7 @@
             </div>
         </div>
 
-        <!-- NEW MODERN NAVBAR -->
+        <!-- NAVBAR -->
         <div class="navbar">
             <div class="nav-item active" onclick="switchTab('home', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -523,8 +474,10 @@
     <script>
         const ADMIN_PHONE = "01080633299";
         let isSignupMode = false;
-        let activeVipLimit = 170;
-        let activeVipRate = 3.6;
+        
+        let hasActiveSubscription = false;
+        let activeVipLimit = 0;
+        let activeVipRate = 0;
         let activeMaxTasks = 10;
         let activeCompletedTasks = 0;
         let totalCommissionProfit = 0.00;
@@ -633,15 +586,16 @@
             document.querySelectorAll('.val-balance').forEach(el => el.innerText = newBalance.toFixed(2));
         }
 
-        function selectVip(minBalance, commRate, totalTasks) {
+        function subscribeVip(minBalance, commRate, totalTasks) {
             const phone = localStorage.getItem('user_phone');
             const currentBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
 
             if(currentBal < minBalance) {
-                alert(`عذراً! يجب أن يمتلك حسابك ${minBalance} EGP على الأقل للدخول في هذا المستوى.`);
+                alert(`عذراً! يجب أن يمتلك حسابك ${minBalance} EGP على الأقل للدخول في هذا الاشتراك.`);
                 return;
             }
 
+            hasActiveSubscription = true;
             activeVipLimit = minBalance;
             activeVipRate = commRate;
             activeMaxTasks = totalTasks;
@@ -650,20 +604,79 @@
 
             currentProduct.price = minBalance;
 
+            alert(`تم الاشتراك في باقة EGP ${minBalance} بنجاح! تم تحويلك إلى صفحة المعاملات.`);
             switchTabByName('transactions');
         }
 
         function renderTransactionsData() {
+            const container = document.getElementById('tx-subscription-container');
+
+            if (!hasActiveSubscription) {
+                container.innerHTML = `
+                    <div class="empty-subscription-box">
+                        <div style="font-size:3rem; margin-bottom:10px;">⚠️</div>
+                        <h3 style="color:#fff; margin-bottom:8px;">لا يوجد اشتراك نشط</h3>
+                        <p style="font-size:0.85rem;">يرجى الذهاب إلى صفحة "مهمة" واختيار الاشتراك المناسب لبدء تنفيذ المعاملات وجني العمولات.</p>
+                        <button class="btn-neon-pill" style="margin-top:20px; width:180px; height:40px; font-size:0.9rem;" onclick="switchTabByName('task')">الانتقال للمهام</button>
+                    </div>
+                `;
+                return;
+            }
+
             const comm = ((currentProduct.price * activeVipRate) / 100).toFixed(2);
 
-            document.getElementById('tx-prod-name').innerText = currentProduct.name;
-            document.getElementById('tx-task-progress').innerText = `(${activeCompletedTasks + 1}/${activeMaxTasks})`;
-            document.getElementById('tx-order-price').innerText = currentProduct.price.toFixed(2);
-            document.getElementById('tx-comm-price').innerText = comm;
-            document.getElementById('tx-diff-price').innerText = currentProduct.diff;
-            document.getElementById('tx-completed-cnt').innerText = activeCompletedTasks;
-            document.getElementById('tx-total-cnt').innerText = activeMaxTasks;
-            document.getElementById('tx-total-comm').innerText = totalCommissionProfit.toFixed(2);
+            container.innerHTML = `
+                <div class="tx-hero-card">
+                    <div class="wallet-icon">👛</div>
+                    <div class="tx-balance-title">رصيد الحساب الحالي</div>
+                    <div class="tx-balance-val"><span class="val-balance">${parseFloat(localStorage.getItem('user_balance_' + localStorage.getItem('user_phone')) || 0).toFixed(2)}</span> EGP</div>
+                    <div class="tx-commission-box">
+                        <div class="tx-commission-title">إجمالي أرباح العمولة بالاشتراك الحالي (EGP ${activeVipLimit})</div>
+                        <div class="tx-commission-val">EGP <span id="tx-total-comm">${totalCommissionProfit.toFixed(2)}</span></div>
+                    </div>
+                </div>
+
+                <div class="tx-task-card">
+                    <div class="tx-task-row">
+                        <span class="tx-task-label">اسم المنتج</span>
+                        <span class="tx-task-value" id="tx-prod-name">${currentProduct.name}</span>
+                    </div>
+                    <div class="tx-task-row">
+                        <span class="tx-task-label">تقدم المهمة</span>
+                        <span class="tx-task-value" id="tx-task-progress">(${activeCompletedTasks + 1}/${activeMaxTasks})</span>
+                    </div>
+                    <div class="tx-task-row">
+                        <span class="tx-task-label">سعر الطلب</span>
+                        <span class="tx-task-value">EGP <span id="tx-order-price">${currentProduct.price.toFixed(2)}</span></span>
+                    </div>
+                    <div class="tx-task-row">
+                        <span class="tx-task-label">العمولة المتوقعة</span>
+                        <span class="tx-task-value">EGP <span id="tx-comm-price">${comm}</span></span>
+                    </div>
+                    <div class="tx-task-row">
+                        <span class="tx-task-label">حالة الطلب</span>
+                        <span class="tx-task-value" style="color:#ffcc00;" id="tx-status">جاهز للتنفيذ</span>
+                    </div>
+
+                    <div class="progress-container" id="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                        <div class="progress-text" id="progress-text">جاري المعالجة 0%</div>
+                    </div>
+
+                    <button class="btn-neon-pill" id="btn-submit-tx" style="margin-top:15px;" onclick="submitTxTask()">إرسال الآن</button>
+                </div>
+
+                <div class="tx-stats-grid">
+                    <div>
+                        <div class="tx-stat-num" id="tx-completed-cnt">${activeCompletedTasks}</div>
+                        <div class="tx-stat-label">عدد المهام المكتملة</div>
+                    </div>
+                    <div>
+                        <div class="tx-stat-num" id="tx-total-cnt">${activeMaxTasks}</div>
+                        <div class="tx-stat-label">إجمالي عدد المهام</div>
+                    </div>
+                </div>
+            `;
         }
 
         function submitTxTask() {
@@ -824,6 +837,11 @@
             const navItems = document.querySelectorAll('.nav-item');
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             navItems.forEach(n => n.classList.remove('active'));
+            
+            // Highlight navbar item
+            const targetIdx = ['home', 'task', 'transactions', 'orders', 'profile'].indexOf(tab);
+            if(targetIdx !== -1 && navItems[targetIdx]) navItems[targetIdx].classList.add('active');
+
             document.getElementById('view-' + tab).classList.add('active');
             renderTransactionsData();
         }
