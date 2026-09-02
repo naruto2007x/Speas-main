@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CENTRO COMERCIAL</title>
 
-    <!-- Supabase JS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
         :root {
             --bg-main: #0a0a0a;
@@ -204,9 +201,9 @@
                 </div>
             </div>
 
-            <!-- Task Exec Area -->
+            <!-- Task Area -->
             <div id="active-task-area" style="display:none;" class="task-box">
-                <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للااشتراكات</button>
+                <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem;">
                     <span>الطلبات المكتملة: <b id="task-progress">0/10</b></span>
                     <span>العمولة المقدرة: <b id="task-comm" style="color:var(--primary-green);">0 EGP</b></span>
@@ -284,13 +281,6 @@
     </div>
 
     <script>
-        // === SUPABASE CONFIGURATION ===
-        const SUPABASE_URL = 'https://njmehwvnwdzqzjscbqkd.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qbWVod3Zud2R6cXpqc2NicWtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMzE5MjEsImV4cCI6MjEwMzgwNzkyMX0.LKLUeMYXk4EXHB85u1tki9gJeLSSOC6WPB38qG0tqg8';
-
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let currentUser = null;
         let currentBalance = 0.00;
         let isSignup = false;
         let activeVipRate = 0;
@@ -327,108 +317,33 @@
             document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
         }
 
-        // Auth handler
-        async function handleAuth(e) {
+        // Phone Login Handler
+        function handleAuth(e) {
             e.preventDefault();
             
             const rawPhone = document.getElementById('auth-phone').value.trim();
             const phone = rawPhone.replace(/[^0-9]/g, '');
-            const pass = document.getElementById('auth-pass').value;
-            const btn = document.getElementById('auth-btn');
 
             if (!phone) {
                 alert('يرجى إدخال رقم هاتف صحيح');
                 return;
             }
 
-            const email = `${phone}@app.com`;
-
-            btn.disabled = true;
-            btn.innerText = 'جاري المعالجة...';
-
-            try {
-                if (isSignup) {
-                    const { data, error } = await db.auth.signUp({
-                        email: email,
-                        password: pass,
-                        options: {
-                            data: { phone_number: phone }
-                        }
-                    });
-                    
-                    if (error) throw error;
-
-                    // تسجيل الدخول المباشر والتخزين المحلي
-                    if (data.user) {
-                        currentUser = data.user;
-                        localStorage.setItem('user_phone', phone);
-                        localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
-                        alert('تم إنشاء الحساب بنجاح!');
-                        initApp();
-                        return;
-                    }
-                }
-
-                // تسجيل الدخول
-                const { data, error } = await db.auth.signInWithPassword({
-                    email: email,
-                    password: pass
-                });
-
-                if (error) {
-                    // إذا ظهرت مشكلة الإيميل غير مؤكد، يتم الدخول محلياً للحساب لتسهيل العمل بدون أي حظر
-                    if (error.message.includes('Email not confirmed')) {
-                        localStorage.setItem('user_phone', phone);
-                        localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
-                        initApp();
-                        return;
-                    }
-                    throw error;
-                }
-
-                currentUser = data.user;
-                localStorage.setItem('user_phone', phone);
-                localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
-                
-                await fetchUserData();
-
-            } catch (err) {
-                alert('خطأ: ' + (err.message || 'فشل الاتصال'));
-            } finally {
-                btn.disabled = false;
-                btn.innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
+            localStorage.setItem('user_phone', phone);
+            localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
+            
+            if(isSignup && !localStorage.getItem('user_balance_' + phone)) {
+                localStorage.setItem('user_balance_' + phone, '50.00');
             }
-        }
 
-        async function fetchUserData() {
-            const { data: { user } } = await db.auth.getUser();
-            if (user) {
-                currentUser = user;
-                let { data, error } = await db
-                    .from('profiles')
-                    .select('balance')
-                    .eq('id', user.id)
-                    .single();
-
-                if (data) {
-                    currentBalance = parseFloat(data.balance || 0);
-                }
-            }
             initApp();
-        }
-
-        async function updateBalanceOnServer(newBalance) {
-            currentBalance = newBalance;
-            document.querySelectorAll('.val-balance').forEach(el => el.innerText = newBalance.toFixed(2));
-
-            if (currentUser) {
-                await db.from('profiles').update({ balance: newBalance }).eq('id', currentUser.id);
-            }
         }
 
         function initApp() {
             const phone = localStorage.getItem('user_phone') || '01000000000';
-            
+            const savedBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0.00');
+            currentBalance = savedBal;
+
             document.getElementById('user-phone-disp').innerText = phone;
             document.getElementById('prof-phone-disp').innerText = phone;
             document.querySelectorAll('.val-balance').forEach(el => el.innerText = currentBalance.toFixed(2));
@@ -436,6 +351,13 @@
 
             document.getElementById('view-auth').classList.remove('active');
             document.getElementById('app-content').style.display = 'block';
+        }
+
+        function updateBalance(newBalance) {
+            currentBalance = newBalance;
+            const phone = localStorage.getItem('user_phone');
+            if(phone) localStorage.setItem('user_balance_' + phone, newBalance.toString());
+            document.querySelectorAll('.val-balance').forEach(el => el.innerText = newBalance.toFixed(2));
         }
 
         // VIP Task Handler
@@ -481,11 +403,11 @@
             btn.innerText = 'جاري المعالجة وإكمال الطلب... (5 ثوانٍ)';
             activeTaskPending = true;
 
-            setTimeout(async () => {
+            setTimeout(() => {
                 const comm = parseFloat((currentBalance * activeVipRate) / 100);
                 const newBal = currentBalance + comm;
 
-                await updateBalanceOnServer(newBal);
+                updateBalance(newBal);
 
                 activeCompletedTasks++;
                 activeTaskPending = false;
@@ -514,7 +436,7 @@
         }
         function closeWithdrawModal() { document.getElementById('withdraw-modal').classList.remove('active'); }
 
-        async function processWithdraw() {
+        function processWithdraw() {
             const wallet = document.getElementById('w-wallet').value;
             const amount = parseFloat(document.getElementById('w-amount').value);
 
@@ -522,7 +444,7 @@
             if(amount > currentBalance) { alert('الرصيد غير كافٍ للسحب'); return; }
 
             const newBalance = currentBalance - amount;
-            await updateBalanceOnServer(newBalance);
+            updateBalance(newBalance);
             
             const txList = document.getElementById('tx-list');
             if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
@@ -539,13 +461,11 @@
             el.classList.add('active');
         }
 
-        async function logout() { 
-            await db.auth.signOut();
+        function logout() { 
             localStorage.clear(); 
             location.reload(); 
         }
 
-        // Check active session on page load
         if (localStorage.getItem('user_phone')) {
             initApp();
         }
