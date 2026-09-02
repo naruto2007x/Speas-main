@@ -18,12 +18,12 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 75px; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 85px; }
 
         .view { display: none; }
         .view.active { display: block; }
 
-        /* Auth View Design */
+        /* Auth View */
         .auth-wrapper { min-height: 100vh; background: #000; display: flex; flex-direction: column; }
         .auth-hero { height: 240px; background: radial-gradient(circle at 10% 20%, rgba(100, 30, 120, 0.4) 0%, transparent 60%), radial-gradient(circle at 90% 10%, rgba(20, 80, 70, 0.4) 0%, transparent 60%), #0a0812; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 20px; }
         .flag-icon { position: absolute; top: 25px; right: 20px; width: 36px; height: 36px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
@@ -41,7 +41,7 @@
         .auth-switch-text { text-align: center; margin-top: 20px; font-size: 0.85rem; color: #aaa; }
         .auth-switch-text span { color: var(--primary-green); cursor: pointer; font-weight: bold; }
 
-        /* UI Styles */
+        /* General UI Elements */
         .app-header { text-align: center; font-weight: 800; font-size: 1.1rem; padding: 15px 0; letter-spacing: 1px; color: #fff; }
         .slider-container { width: 100%; height: 160px; border-radius: 16px; overflow: hidden; position: relative; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .slide { width: 100%; height: 100%; position: absolute; opacity: 0; transition: opacity 0.8s ease-in-out; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
@@ -64,6 +64,8 @@
 
         .section-title { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .section-title::before { content: ''; display: inline-block; width: 6px; height: 18px; background-color: var(--primary-green); border-radius: 3px; }
+
+        /* Top Selling Products - Full Original List */
         .products-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
         .product-card { background-color: #0b1510; border: 1px solid #1a3022; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; }
         .product-img-box { width: 80px; height: 80px; background: #ffffff; border-radius: 10px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -76,6 +78,7 @@
         .product-price-box { text-align: left; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; height: 100%; }
         .product-price { font-size: 1.1rem; font-weight: 800; color: #ffffff; }
 
+        /* VIP Grid */
         .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .vip-card { background: var(--card-bg); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color); text-align: center; cursor: pointer; }
         .vip-img { width: 100%; height: 110px; object-fit: cover; background: #222; }
@@ -84,7 +87,7 @@
         .vip-price { font-size: 1.1rem; font-weight: bold; margin: 3px 0; }
         .vip-badge { display: inline-block; background: rgba(55, 235, 116, 0.15); color: var(--primary-green); font-weight: bold; font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; margin-top: 4px; }
 
-        /* Transactions Custom UI */
+        /* Transactions UI */
         .tx-hero-card { background: linear-gradient(135deg, #0b1d12 0%, #050a07 100%); border: 1px solid #1a3322; border-radius: 16px; padding: 20px; position: relative; margin-bottom: 15px; }
         .tx-hero-card .wallet-icon { position: absolute; left: 20px; top: 20px; opacity: 0.15; font-size: 4rem; }
         .tx-balance-title { color: #888; font-size: 0.85rem; margin-bottom: 5px; }
@@ -104,12 +107,11 @@
         .tx-stat-num { font-size: 1.4rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
         .tx-stat-label { color: #666; font-size: 0.75rem; }
 
-        /* Animated Progress Bar */
         .progress-container { display: none; width: 100%; margin-top: 15px; background: #151515; border-radius: 20px; overflow: hidden; border: 1px solid #222; height: 26px; position: relative; }
         .progress-bar { width: 0%; height: 100%; background: var(--btn-gradient); transition: width 0.1s linear; }
         .progress-text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; color: #000; }
 
-        /* Orders Card Design */
+        /* Orders UI */
         .order-card { background: #0e1210; border: 1px solid #1a281e; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
         .order-header { display: flex; justify-content: space-between; border-bottom: 1px solid #1c231e; padding-bottom: 8px; margin-bottom: 8px; font-size: 0.8rem; color: #888; }
         .order-body { display: flex; justify-content: space-between; align-items: center; }
@@ -117,11 +119,67 @@
         .order-status { font-size: 0.75rem; color: var(--primary-green); background: rgba(55,235,116,0.1); padding: 2px 8px; border-radius: 4px; font-weight: bold; }
         .order-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; font-size: 0.8rem; color: #aaa; }
 
-        .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #080808; display: flex; justify-space-around; align-items: center; border-top: 1px solid #1a1a1a; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.72rem; cursor: pointer; gap: 4px; }
-        .nav-item.active { color: var(--primary-green); }
+        /* REDESIGNED MODERN NAVBAR */
+        .navbar { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            height: 68px; 
+            background: rgba(10, 15, 12, 0.85); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            border-top: 1px solid rgba(57, 235, 116, 0.15); 
+            z-index: 1000; 
+            padding: 0 10px;
+            box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+        }
+        .nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            color: #777777; 
+            font-size: 0.72rem; 
+            font-weight: 600;
+            cursor: pointer; 
+            gap: 4px; 
+            flex: 1;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-icon { 
+            width: 22px; 
+            height: 22px; 
+            fill: none; 
+            stroke: currentColor; 
+            stroke-width: 2; 
+            stroke-linecap: round; 
+            stroke-linejoin: round; 
+            transition: transform 0.2s ease, stroke 0.2s ease;
+        }
+        .nav-item.active { 
+            color: var(--primary-green); 
+        }
+        .nav-item.active .nav-icon {
+            transform: translateY(-2px);
+            stroke: var(--primary-green);
+        }
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 16px;
+            height: 3px;
+            background: var(--primary-green);
+            border-radius: 10px;
+            box-shadow: 0 0 8px var(--primary-green);
+        }
 
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
         .modal-content { background: var(--card-bg); padding: 20px; border-radius: 14px; width: 90%; max-width: 350px; border: 1px solid var(--border-color); }
@@ -188,7 +246,7 @@
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
+    <!-- MAIN APP -->
     <div id="app-content" style="display:none;">
         <div style="padding:15px;">
             <!-- HOME VIEW -->
@@ -232,41 +290,53 @@
                     <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
                 </div>
 
-                <!-- TOP SELLING PRODUCTS -->
+                <!-- TOP SELLING PRODUCTS LIST (RESTORED FULL) -->
                 <div class="section-title">المنتجات الأكثر مبيعا اليوم</div>
                 
                 <div class="products-list">
                     <div class="product-card">
-                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300"></div>
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300" alt="منتج"></div>
                         <div class="product-details">
-                            <div class="product-title">كيبل شحن ونقل بيانات USB</div>
+                            <div class="product-title">كيبل شحن ونقل بيانات USB high speed</div>
                             <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">5145</span></div>
                         </div>
                         <div class="product-price-box"><div class="product-price">EGP 170.00</div></div>
                     </div>
+                    
                     <div class="product-card">
-                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300"></div>
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300" alt="منتج"></div>
                         <div class="product-details">
-                            <div class="product-title">ساعة ذكية أصلية 8 Ultra</div>
+                            <div class="product-title">ساعة ذكية أصلية 8 Ultra الذكية</div>
                             <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">3410</span></div>
                         </div>
                         <div class="product-price-box"><div class="product-price">EGP 500.00</div></div>
                     </div>
+
                     <div class="product-card">
-                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300"></div>
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300" alt="منتج"></div>
                         <div class="product-details">
-                            <div class="product-title">سماعات رأس لا سلكية Hi-Fi</div>
+                            <div class="product-title">سماعات رأس لا سلكية Hi-Fi الصوتية</div>
                             <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">2890</span></div>
                         </div>
                         <div class="product-price-box"><div class="product-price">EGP 1000.00</div></div>
                     </div>
+
                     <div class="product-card">
-                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300"></div>
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300" alt="منتج"></div>
                         <div class="product-details">
-                            <div class="product-title">حذاء رياضي نايو أصلية</div>
+                            <div class="product-title">حذاء رياضي نايكي نايو الأصلية</div>
                             <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">1940</span></div>
                         </div>
                         <div class="product-price-box"><div class="product-price">EGP 2000.00</div></div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300" alt="منتج"></div>
+                        <div class="product-details">
+                            <div class="product-title">جاكيت أنيق ضخم الفخامة - SHEIN</div>
+                            <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">1250</span></div>
+                        </div>
+                        <div class="product-price-box"><div class="product-price">EGP 3000.00</div></div>
                     </div>
                 </div>
             </div>
@@ -370,7 +440,6 @@
                         <span class="tx-task-value" style="color:#ffcc00;" id="tx-status">جاهز للتنفيذ</span>
                     </div>
 
-                    <!-- Progress Bar -->
                     <div class="progress-container" id="progress-container">
                         <div class="progress-bar" id="progress-bar"></div>
                         <div class="progress-text" id="progress-text">جاري المعالجة 0%</div>
@@ -414,10 +483,10 @@
             </div>
         </div>
 
-        <!-- NAVBAR -->
+        <!-- NEW MODERN NAVBAR -->
         <div class="navbar">
             <div class="nav-item active" onclick="switchTab('home', this)">
-                <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 <span>الرئيسية</span>
             </div>
             <div class="nav-item" onclick="switchTab('task', this)">
@@ -425,7 +494,7 @@
                 <span>مهمة</span>
             </div>
             <div class="nav-item" onclick="switchTab('transactions', this)">
-                <svg class="nav-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
                 <span>المعاملات</span>
             </div>
             <div class="nav-item" onclick="switchTab('orders', this)">
@@ -462,7 +531,6 @@
         let activeTaskPending = false;
         let userExecutedOrders = [];
 
-        // قائمة منتجات متنوعة
         const demoProducts = [
             { name: "كيبل شحن لايتننك فاخر", price: 170.00, diff: 0 },
             { name: "ساعة يد كلاسيكية أصلية", price: 210.00, diff: 10 },
@@ -475,7 +543,6 @@
 
         let currentProduct = demoProducts[0];
 
-        // Slide Animation
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
@@ -581,14 +648,12 @@
             activeCompletedTasks = 0;
             totalCommissionProfit = 0.00;
 
-            // تحديد سعر الطلب بناءً على الباقة المحددة
             currentProduct.price = minBalance;
 
             switchTabByName('transactions');
         }
 
         function renderTransactionsData() {
-            // حساب العمولة بناءً على (سعر الطلب) وليس رصيد الحساب الإجمالي
             const comm = ((currentProduct.price * activeVipRate) / 100).toFixed(2);
 
             document.getElementById('tx-prod-name').innerText = currentProduct.name;
@@ -612,7 +677,6 @@
             const phone = localStorage.getItem('user_phone');
             const currentBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
 
-            // الشرط المخصص عند المهمة 4 في الباقة 170
             if (activeVipLimit === 170 && activeCompletedTasks === 3) {
                 const requiredBal = 820;
                 if (currentBal < requiredBal) {
@@ -645,8 +709,6 @@
                     clearInterval(timer);
 
                     const latestBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
-                    
-                    // العمولة تحسب على سعر الطلب نفسه (currentProduct.price)
                     const comm = parseFloat((currentProduct.price * activeVipRate) / 100);
                     const newBal = latestBal + comm;
 
@@ -676,7 +738,6 @@
                     document.getElementById('tx-status').innerText = 'تم الإكتمال بنجاح';
                     document.getElementById('tx-status').style.color = 'var(--primary-green)';
 
-                    // تغيير اسم المنتج للمهمة التالية مع الاحتفاظ بالسعر حسب الباقة
                     const nextProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
                     currentProduct = {
                         name: nextProd.name,
@@ -686,7 +747,7 @@
 
                     renderTransactionsData();
 
-                    alert(`تم تنفيذ المهمة (${activeCompletedTasks}/${activeMaxTasks}) بنجاح!\nوتمت إضافة عمولة بقيمة EGP ${comm.toFixed(2)} (محسوبة على سعر الطلب)`);
+                    alert(`تم تنفيذ المهمة (${activeCompletedTasks}/${activeMaxTasks}) بنجاح!\nوتمت إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
                 } else {
                     progressBar.style.width = progress + '%';
                     progressText.innerText = `جاري المعالجة ${Math.floor(progress)}%`;
