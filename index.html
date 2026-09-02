@@ -84,13 +84,13 @@
     <div id="view-auth" class="view active">
         <div class="auth-container">
             <h2 id="auth-title" style="color:var(--primary-green); text-align:center; margin-bottom:15px;">تسجيل الدخول</h2>
-            <form onsubmit="window.handleAuth(event)">
+            <form onsubmit="handleAuth(event)">
                 <div class="form-group"><label>رقم الهاتف</label><input type="text" id="auth-phone" required placeholder="01xxxxxxxxx"></div>
                 <div class="form-group"><label>كلمة المرور</label><input type="password" id="auth-pass" required></div>
                 <button type="submit" class="btn-submit" id="auth-btn">دخول</button>
             </form>
             <p style="text-align:center; margin-top:15px; font-size:0.85rem; color:var(--text-sub);">
-                <span id="auth-toggle" onclick="window.toggleAuth()" style="color:var(--primary-green); cursor:pointer;">ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)</span>
+                <span id="auth-toggle" onclick="toggleAuth()" style="color:var(--primary-green); cursor:pointer;">ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)</span>
             </p>
         </div>
     </div>
@@ -130,13 +130,13 @@
                 </div>
                 <div style="margin-top:12px;">
                     <div style="font-size:0.75rem; color:var(--text-sub);">رصيد الحساب</div>
-                    <div class="balance-amount">EGP <span class="val-balance">0.00</span></div>
+                    <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
                 </div>
             </div>
 
             <div class="actions-grid">
                 <button class="btn-action btn-deposit" onclick="alert('تواصل مع خدمة العملاء للإيداع')">📥 إيداع</button>
-                <button class="btn-action btn-withdraw" onclick="window.openWithdrawModal()">🏧 سحب</button>
+                <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
             </div>
         </div>
 
@@ -145,7 +145,7 @@
             <h3 style="margin-bottom:15px;">قائمة الاشتراكات والمهام</h3>
             
             <div id="vip-list" class="vip-grid">
-                <div class="vip-card" onclick="window.selectVip(170, 3.6, 10)">
+                <div class="vip-card" onclick="selectVip(170, 3.6, 10)">
                     <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500" class="vip-img" alt="ملابس">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -154,7 +154,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="window.selectVip(200, 5.4, 10)">
+                <div class="vip-card" onclick="selectVip(200, 5.4, 10)">
                     <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="vip-img" alt="أحذية رياضية">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -163,7 +163,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="window.selectVip(500, 6.6, 10)">
+                <div class="vip-card" onclick="selectVip(500, 6.6, 10)">
                     <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="vip-img" alt="ساعات فاخرة">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -172,7 +172,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="window.selectVip(1000, 7.2, 10)">
+                <div class="vip-card" onclick="selectVip(1000, 7.2, 10)">
                     <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" class="vip-img" alt="إلكترونيات">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -181,7 +181,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="window.selectVip(3000, 8.6, 10)">
+                <div class="vip-card" onclick="selectVip(3000, 8.6, 10)">
                     <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=500" class="vip-img" alt="سيارات رياضية">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -190,7 +190,7 @@
                     </div>
                 </div>
 
-                <div class="vip-card" onclick="window.selectVip(5000, 9.4, 10)">
+                <div class="vip-card" onclick="selectVip(5000, 9.4, 10)">
                     <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" class="vip-img" alt="سيارات فاخرة">
                     <div class="vip-body">
                         <div class="vip-limit">حد الرصيد</div>
@@ -202,7 +202,7 @@
 
             <!-- Task Exec Area -->
             <div id="active-task-area" style="display:none;" class="task-box">
-                <button onclick="window.exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
+                <button onclick="exitTaskArea()" style="background:none; border:none; color:var(--text-sub); margin-bottom:10px; cursor:pointer;">← العودة للاشتراكات</button>
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem;">
                     <span>الطلبات المكتملة: <b id="task-progress">0/10</b></span>
                     <span>العمولة المقدرة: <b id="task-comm" style="color:var(--primary-green);">0 EGP</b></span>
@@ -210,7 +210,7 @@
                 <img id="task-img" src="" class="task-product-img">
                 <h4 id="task-title" style="margin-bottom:5px;">-</h4>
                 <p id="task-price-info" style="color:var(--text-sub); font-size:0.85rem; margin-bottom:15px;">-</p>
-                <button id="btn-complete-task" class="btn-submit" onclick="window.submitTask()">إكمال الطلب</button>
+                <button id="btn-complete-task" class="btn-submit" onclick="submitTask()">إكمال الطلب</button>
             </div>
         </div>
 
@@ -234,33 +234,33 @@
         <div id="view-profile" class="view">
             <div class="user-card">
                 <div>الحساب: <b id="prof-phone-disp">-</b></div>
-                <div class="balance-amount">EGP <span class="val-balance">0.00</span></div>
+                <div class="balance-amount">EGP <span class="val-balance">50.00</span></div>
             </div>
             <p style="font-size:0.85rem; color:var(--text-sub);">رابط الدعوة الخاص بك:</p>
             <div id="ref-link" style="background:#222; padding:8px; border-radius:5px; font-size:0.75rem; margin-top:5px; word-break:break-all; border:1px dashed var(--primary-green);"></div>
             <br>
-            <button onclick="window.logout()" style="width:100%; padding:10px; background:#ff3333; color:#fff; border:none; border-radius:6px; font-weight:bold;">تسجيل الخروج</button>
+            <button onclick="logout()" style="width:100%; padding:10px; background:#ff3333; color:#fff; border:none; border-radius:6px; font-weight:bold;">تسجيل الخروج</button>
         </div>
 
         <!-- NAVBAR -->
         <div class="navbar">
-            <div class="nav-item active" onclick="window.switchTab('home', this)">
+            <div class="nav-item active" onclick="switchTab('home', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
                 <span>الرئيسية</span>
             </div>
-            <div class="nav-item" onclick="window.switchTab('task', this)">
+            <div class="nav-item" onclick="switchTab('task', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
                 <span>مهمة</span>
             </div>
-            <div class="nav-item" onclick="window.switchTab('transactions', this)">
+            <div class="nav-item" onclick="switchTab('transactions', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                 <span>المعاملات</span>
             </div>
-            <div class="nav-item" onclick="window.switchTab('orders', this)">
+            <div class="nav-item" onclick="switchTab('orders', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                 <span>الطلبات</span>
             </div>
-            <div class="nav-item" onclick="window.switchTab('profile', this)">
+            <div class="nav-item" onclick="switchTab('profile', this)">
                 <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <span>حسابي</span>
             </div>
@@ -274,38 +274,22 @@
             <div class="form-group"><label>رقم المحفظة (فودافون كاش / غيرها)</label><input type="text" id="w-wallet" placeholder="01xxxxxxxxx"></div>
             <div class="form-group"><label>المبلغ المراد سحبه</label><input type="number" id="w-amount" placeholder="0.00"></div>
             <div class="form-group"><label>كلمة المرور</label><input type="password" id="w-pass"></div>
-            <button class="btn-submit" onclick="window.processWithdraw()">تأكيد السحب</button>
-            <button onclick="window.closeWithdrawModal()" style="width:100%; padding:8px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer;">إلغاء</button>
+            <button class="btn-submit" onclick="processWithdraw()">تأكيد السحب</button>
+            <button onclick="closeWithdrawModal()" style="width:100%; padding:8px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer;">إلغاء</button>
         </div>
     </div>
 
-    <!-- FIREBASE SDK & APP LOGIC -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { initializeFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCmS3U5IdiEIZWXhSQ1Numy3zI4sNFH1I4",
-            authDomain: "naruto-44f7d.firebaseapp.com",
-            projectId: "naruto-44f7d",
-            storageBucket: "naruto-44f7d.firebasestorage.app",
-            messagingSenderId: "326662739910",
-            appId: "1:326662739910:web:d3ee6a2079e88f0fb344c7",
-            measurementId: "G-HXE6W6C7LK"
+    <script>
+        // === ZOHO API CONFIGURATION ===
+        const ZOHO_CONFIG = {
+            refreshToken: '1000.ecbc65770bacfec97eafdf6968b6729d.20adbcabb741cad37e0bacb971f4739c',
+            clientId: '1000.EOE64HHR20H8QCDNWJL2J2VC7VNPZV',
+            clientSecret: '86bbb9ca27973e3b4a5ccc3dcda056a5dcc868ba5b',
+            ownerName: 'anasmoza200',
+            appName: 'Naruto',
+            formName: 'Users'
         };
 
-        let db;
-        try {
-            const app = initializeApp(firebaseConfig);
-            // إجبار النظام على استخدام Long Polling لتفادي مشاكل الـ Offline على شبكة 4G
-            db = initializeFirestore(app, {
-                experimentalForceLongPolling: true
-            });
-        } catch(e) {
-            alert("خطأ في الاتصال بالسيرفر: " + e.message);
-        }
-
-        let currentUser = null;
         let isSignup = false;
         let activeVipRate = 0;
         let activeMaxTasks = 10;
@@ -321,7 +305,7 @@
             { name: "حذاء رياضي عصري", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800" }
         ];
 
-        // Slide animation
+        // Slider logic
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
@@ -335,83 +319,91 @@
         }
         setInterval(nextSlide, 3000);
 
-        window.toggleAuth = function() {
+        function toggleAuth() {
             isSignup = !isSignup;
             document.getElementById('auth-title').innerText = isSignup ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
             document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
-            document.getElementById('auth-toggle').innerText = isSignup ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب (بونص 50 EGP)';
-        };
-
-        // دالة إنشاء وتسجيل الحساب المعدلة للعمل المباشر
-        window.handleAuth = async function(e) {
-            e.preventDefault();
-            const phone = document.getElementById('auth-phone').value.trim();
-            const pass = document.getElementById('auth-pass').value.trim();
-
-            if(!phone || !pass) return alert("يرجى إدخال البيانات كاملة");
-
-            const userRef = doc(db, "users", phone);
-
-            if(isSignup) {
-                // إنشاء الحساب مباشرة باستخدام setDoc وتفادي القراءة المسبقة
-                try {
-                    const newUser = {
-                        phone: phone,
-                        password: pass,
-                        balance: 50.00,
-                        ref: 'REF' + Math.floor(1000 + Math.random() * 9000),
-                        createdAt: new Date().toISOString()
-                    };
-                    await setDoc(userRef, newUser);
-                    alert("تم إنشاء الحساب بنجاح! مبروك الحصول على بونص 50 EGP");
-                    localStorage.setItem('user_phone', phone);
-                    listenToUserData(phone);
-                } catch(err) {
-                    alert("خطأ في الاتصال بالسيرفر: " + err.message);
-                }
-            } else {
-                // تسجيل الدخول
-                try {
-                    const userSnap = await getDoc(userRef);
-                    if(!userSnap.exists() || userSnap.data().password !== pass) {
-                        alert("رقم الهاتف أو كلمة المرور غير صحيحة!");
-                        return;
-                    }
-                    localStorage.setItem('user_phone', phone);
-                    listenToUserData(phone);
-                } catch(err) {
-                    alert("خطأ في الدخول: " + err.message);
-                }
-            }
-        };
-
-        function listenToUserData(phone) {
-            const userRef = doc(db, "users", phone);
-            onSnapshot(userRef, (docSnap) => {
-                if(docSnap.exists()) {
-                    currentUser = docSnap.data();
-                    initAppUI();
-                }
-            }, (error) => {
-                alert("خطأ في جلب البيانات: " + error.message);
-            });
         }
 
-        function initAppUI() {
-            if(!currentUser) return;
-            const balance = parseFloat(currentUser.balance || 0).toFixed(2);
+        // === ZOHO CREATOR INTEGRATION ===
+        async function getZohoAccessToken() {
+            const res = await fetch('https://accounts.zoho.com/oauth/v2/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    'refresh_token': ZOHO_CONFIG.refreshToken,
+                    'client_id': ZOHO_CONFIG.clientId,
+                    'client_secret': ZOHO_CONFIG.clientSecret,
+                    'grant_type': 'refresh_token'
+                })
+            });
+            const data = await res.json();
+            return data.access_token;
+        }
+
+        async function saveUserToZoho(phone) {
+            const token = await getZohoAccessToken();
+            const url = `https://creator.zoho.com/api/v2/${ZOHO_CONFIG.ownerName}/${ZOHO_CONFIG.appName}/form/${ZOHO_CONFIG.formName}`;
             
-            document.getElementById('user-phone-disp').innerText = currentUser.phone;
-            document.getElementById('prof-phone-disp').innerText = currentUser.phone;
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Zoho-oauthtoken ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "data": {
+                        "Phone": phone,
+                        "Balance": 50.00
+                    }
+                })
+            });
+            return await res.json();
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            const phone = document.getElementById('auth-phone').value;
+            const btn = document.getElementById('auth-btn');
+
+            btn.disabled = true;
+            btn.innerText = 'جاري المعالجة...';
+
+            try {
+                if(isSignup) {
+                    await saveUserToZoho(phone);
+                }
+
+                localStorage.setItem('user_phone', phone);
+                if(!localStorage.getItem('user_balance')) {
+                    localStorage.setItem('user_balance', '50.00');
+                }
+                localStorage.setItem('user_ref', 'REF' + Math.floor(1000 + Math.random() * 9000));
+                initApp();
+            } catch (err) {
+                alert('حدث خطأ أثناء الاتصال بالخادم: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
+            }
+        }
+
+        function initApp() {
+            const phone = localStorage.getItem('user_phone');
+            const balance = parseFloat(localStorage.getItem('user_balance') || '50.00').toFixed(2);
+            
+            document.getElementById('user-phone-disp').innerText = phone;
+            document.getElementById('prof-phone-disp').innerText = phone;
             document.querySelectorAll('.val-balance').forEach(el => el.innerText = balance);
-            document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + currentUser.ref;
+            document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + localStorage.getItem('user_ref');
 
             document.getElementById('view-auth').classList.remove('active');
             document.getElementById('app-content').style.display = 'block';
         }
 
-        window.selectVip = function(minBalance, commRate, totalTasks) {
-            const currentBal = parseFloat(currentUser?.balance || 0);
+        // VIP Task Handler
+        function selectVip(minBalance, commRate, totalTasks) {
+            const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
             if(currentBal < minBalance) {
                 alert(`عذراً! يجب أن يمتلك حسابك ${minBalance} EGP على الأقل للدخول في هذا المستوى.`);
                 return;
@@ -424,16 +416,16 @@
             document.getElementById('vip-list').style.display = 'none';
             document.getElementById('active-task-area').style.display = 'block';
             loadRandomProduct();
-        };
+        }
 
-        window.exitTaskArea = function() {
+        function exitTaskArea() {
             document.getElementById('vip-list').style.display = 'grid';
             document.getElementById('active-task-area').style.display = 'none';
-        };
+        }
 
         function loadRandomProduct() {
             const prod = demoProducts[Math.floor(Math.random() * demoProducts.length)];
-            const currentBal = parseFloat(currentUser?.balance || 0);
+            const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
             const comm = ((currentBal * activeVipRate) / 100).toFixed(2);
 
             document.getElementById('task-img').src = prod.img;
@@ -443,7 +435,7 @@
             document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
         }
 
-        window.submitTask = function() {
+        function submitTask() {
             if(activeCompletedTasks >= activeMaxTasks) {
                 alert('لقد أكملت جميع طلبات هذا الاشتراك اليوم!');
                 return;
@@ -451,102 +443,73 @@
 
             const btn = document.getElementById('btn-complete-task');
             btn.disabled = true;
-            btn.innerText = 'جاري المعالجة... (5 ثوانٍ)';
+            btn.innerText = 'جاري المعالجة وإكمال الطلب... (5 ثوانٍ)';
             activeTaskPending = true;
 
-            setTimeout(async () => {
-                try {
-                    const currentBal = parseFloat(currentUser?.balance || 0);
-                    const comm = parseFloat((currentBal * activeVipRate) / 100);
-                    const newBal = currentBal + comm;
+            setTimeout(() => {
+                const currentBal = parseFloat(localStorage.getItem('user_balance') || '0');
+                const comm = parseFloat((currentBal * activeVipRate) / 100);
+                const newBal = currentBal + comm;
 
-                    const userRef = doc(db, "users", currentUser.phone);
-                    await updateDoc(userRef, { balance: newBal });
+                localStorage.setItem('user_balance', newBal.toFixed(2));
+                activeCompletedTasks++;
+                activeTaskPending = false;
 
-                    activeCompletedTasks++;
-                    activeTaskPending = false;
+                btn.disabled = false;
+                btn.innerText = 'إكمال الطلب';
 
-                    btn.disabled = false;
-                    btn.innerText = 'إكمال الطلب';
+                alert(`تم إكمال الطلب بنجاح وتم إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
+                initApp();
 
-                    alert(`تم إكمال الطلب بنجاح وتم إضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
-
-                    if(activeCompletedTasks < activeMaxTasks) {
-                        loadRandomProduct();
-                    } else {
-                        document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
-                        alert('تهانينا! لقد أكملت كافة المهام المتاحة!');
-                    }
-                } catch(e) {
-                    alert("خطأ في تحديث المهمة: " + e.message);
-                    btn.disabled = false;
-                    btn.innerText = 'إكمال الطلب';
+                if(activeCompletedTasks < activeMaxTasks) {
+                    loadRandomProduct();
+                } else {
+                    document.getElementById('task-progress').innerText = `${activeCompletedTasks}/${activeMaxTasks}`;
+                    alert('تهانينا! لقد أكملت كافة المهام المتاحة!');
                 }
             }, 5000);
-        };
+        }
 
-        window.openWithdrawModal = function() {
+        // Withdraw logic
+        function openWithdrawModal() { 
             if(activeTaskPending) {
                 alert('لا يمكنك طلب السحب أثناء وجود طلب قيد الإكمال!');
                 return;
             }
             document.getElementById('withdraw-modal').classList.add('active'); 
-        };
+        }
+        function closeWithdrawModal() { document.getElementById('withdraw-modal').classList.remove('active'); }
 
-        window.closeWithdrawModal = function() { 
-            document.getElementById('withdraw-modal').classList.remove('active'); 
-        };
-
-        window.processWithdraw = async function() {
-            const wallet = document.getElementById('w-wallet').value.trim();
+        function processWithdraw() {
+            const wallet = document.getElementById('w-wallet').value;
             const amount = parseFloat(document.getElementById('w-amount').value);
-            const pass = document.getElementById('w-pass').value.trim();
-            let currentBalance = parseFloat(currentUser?.balance || 0);
+            let currentBalance = parseFloat(localStorage.getItem('user_balance') || '50.00');
 
             if(!wallet || !amount || amount <= 0) { alert('يرجى كتابة البيانات بشكل صحيح'); return; }
-            if(pass !== currentUser.password) { alert('كلمة المرور غير صحيحة'); return; }
             if(amount > currentBalance) { alert('الرصيد غير كافٍ للسحب'); return; }
 
-            try {
-                const newBalance = currentBalance - amount;
-                const userRef = doc(db, "users", currentUser.phone);
+            currentBalance -= amount;
+            localStorage.setItem('user_balance', currentBalance.toFixed(2));
+            
+            const txList = document.getElementById('tx-list');
+            if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
+            txList.innerHTML = `<div style="background:#222; padding:8px; border-radius:5px; margin-bottom:5px;">سحب إلى ${wallet}: -${amount} EGP (قيد الانتظار)</div>` + txList.innerHTML;
 
-                await updateDoc(userRef, { balance: newBalance });
-                await addDoc(collection(db, "withdrawals"), {
-                    phone: currentUser.phone,
-                    wallet: wallet,
-                    amount: amount,
-                    status: "Pending",
-                    createdAt: new Date().toISOString()
-                });
+            alert('تم تقديم طلب السحب بنجاح!');
+            closeWithdrawModal();
+            initApp();
+        }
 
-                const txList = document.getElementById('tx-list');
-                if(txList.innerHTML.includes('لا توجد معاملات')) txList.innerHTML = '';
-                txList.innerHTML = `<div style="background:#222; padding:8px; border-radius:5px; margin-bottom:5px;">سحب إلى ${wallet}: -${amount} EGP (قيد الانتظار)</div>` + txList.innerHTML;
-
-                alert('تم تقديم طلب السحب بنجاح!');
-                window.closeWithdrawModal();
-            } catch(e) {
-                alert("حدث خطأ أثناء السحب: " + e.message);
-            }
-        };
-
-        window.switchTab = function(tab, el) {
+        function switchTab(tab, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('view-' + tab).classList.add('active');
             el.classList.add('active');
-        };
-
-        window.logout = function() { 
-            localStorage.clear(); 
-            location.reload(); 
-        };
-
-        const savedPhone = localStorage.getItem('user_phone');
-        if(savedPhone) {
-            listenToUserData(savedPhone);
         }
+
+        function logout() { localStorage.clear(); location.reload(); }
+
+        if(localStorage.getItem('user_phone')) { initApp(); }
     </script>
 </body>
 </html>
