@@ -73,7 +73,6 @@
         .product-info-row { display: flex; font-size: 0.75rem; color: #888888; }
         .product-info-row .label { color: #888888; margin-left: 5px; }
         .product-info-row .val-sales { color: #e53935; font-weight: bold; }
-        .product-info-row .val-growth { color: #ff9800; font-weight: bold; }
         .product-price-box { text-align: left; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; height: 100%; }
         .product-price { font-size: 1.1rem; font-weight: 800; color: #ffffff; }
 
@@ -119,7 +118,7 @@
         .order-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; font-size: 0.8rem; color: #aaa; }
 
         .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #080808; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1a1a1a; z-index: 1000; }
+        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #080808; display: flex; justify-space-around; align-items: center; border-top: 1px solid #1a1a1a; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.72rem; cursor: pointer; gap: 4px; }
         .nav-item.active { color: var(--primary-green); }
 
@@ -240,31 +239,39 @@
                     <div class="product-card">
                         <div class="product-img-box"><img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300"></div>
                         <div class="product-details">
-                            <div class="product-title">كيبل شحن ونقل بيانات</div>
+                            <div class="product-title">كيبل شحن ونقل بيانات USB</div>
                             <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">5145</span></div>
                         </div>
-                        <div class="product-price-box"><div class="product-price">EGP 7.04</div></div>
+                        <div class="product-price-box"><div class="product-price">EGP 170.00</div></div>
                     </div>
                     <div class="product-card">
-                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=300"></div>
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300"></div>
                         <div class="product-details">
-                            <div class="product-title">سيت قراصات نجوم</div>
+                            <div class="product-title">ساعة ذكية أصلية 8 Ultra</div>
+                            <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">3410</span></div>
+                        </div>
+                        <div class="product-price-box"><div class="product-price">EGP 500.00</div></div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300"></div>
+                        <div class="product-details">
+                            <div class="product-title">سماعات رأس لا سلكية Hi-Fi</div>
+                            <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">2890</span></div>
+                        </div>
+                        <div class="product-price-box"><div class="product-price">EGP 1000.00</div></div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300"></div>
+                        <div class="product-details">
+                            <div class="product-title">حذاء رياضي نايو أصلية</div>
                             <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">1940</span></div>
                         </div>
-                        <div class="product-price-box"><div class="product-price">EGP 34.95</div></div>
-                    </div>
-                    <div class="product-card">
-                        <div class="product-img-box"><img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300"></div>
-                        <div class="product-details">
-                            <div class="product-title">كيبل شحن لايتنغ</div>
-                            <div class="product-info-row"><span class="label">المبيعات:</span><span class="val-sales">1713</span></div>
-                        </div>
-                        <div class="product-price-box"><div class="product-price">EGP 15.98</div></div>
+                        <div class="product-price-box"><div class="product-price">EGP 2000.00</div></div>
                     </div>
                 </div>
             </div>
 
-            <!-- TASK VIEW -->
+            <!-- TASK VIEW (ALL VIP PACKAGES) -->
             <div id="view-task" class="view">
                 <h3 style="margin-bottom:15px;">قائمة الاشتراكات والمهام</h3>
                 
@@ -274,7 +281,7 @@
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
                             <div class="vip-price">EGP 170</div>
-                            <span class="vip-badge">نسبة العمولة 3.6%</span>
+                            <span class="vip-badge">عمولة 3.6%</span>
                         </div>
                     </div>
 
@@ -283,7 +290,7 @@
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
                             <div class="vip-price">EGP 200</div>
-                            <span class="vip-badge">نسبة العمولة 5.4%</span>
+                            <span class="vip-badge">عمولة 5.4%</span>
                         </div>
                     </div>
 
@@ -292,7 +299,7 @@
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
                             <div class="vip-price">EGP 500</div>
-                            <span class="vip-badge">نسبة العمولة 6.6%</span>
+                            <span class="vip-badge">عمولة 6.6%</span>
                         </div>
                     </div>
 
@@ -301,7 +308,25 @@
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
                             <div class="vip-price">EGP 1000</div>
-                            <span class="vip-badge">نسبة العمولة 7.2%</span>
+                            <span class="vip-badge">عمولة 7.2%</span>
+                        </div>
+                    </div>
+
+                    <div class="vip-card" onclick="selectVip(3000, 8.5, 10)">
+                        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" class="vip-img">
+                        <div class="vip-body">
+                            <div class="vip-limit">حد الرصيد</div>
+                            <div class="vip-price">EGP 3000</div>
+                            <span class="vip-badge">عمولة 8.5%</span>
+                        </div>
+                    </div>
+
+                    <div class="vip-card" onclick="selectVip(5000, 10.0, 10)">
+                        <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500" class="vip-img">
+                        <div class="vip-body">
+                            <div class="vip-limit">حد الرصيد</div>
+                            <div class="vip-price">EGP 5000</div>
+                            <span class="vip-badge">عمولة 10.0%</span>
                         </div>
                     </div>
                 </div>
@@ -333,7 +358,7 @@
                         <span class="tx-task-value">EGP <span id="tx-order-price">0.00</span></span>
                     </div>
                     <div class="tx-task-row">
-                        <span class="tx-task-label">العمولة المتوقعة</span>
+                        <span class="tx-task-label">العمولة المتوقعة (على سعر الطلب)</span>
                         <span class="tx-task-value">EGP <span id="tx-comm-price">0.00</span></span>
                     </div>
                     <div class="tx-task-row">
@@ -366,7 +391,7 @@
                 </div>
             </div>
 
-            <!-- ORDERS VIEW (DYNAMIC REAL ORDERS LIST) -->
+            <!-- ORDERS VIEW -->
             <div id="view-orders" class="view">
                 <h3 style="margin-bottom:15px;">سجل الطلبات المنفذة</h3>
                 <div id="orders-list">
@@ -435,14 +460,17 @@
         let activeCompletedTasks = 0;
         let totalCommissionProfit = 0.00;
         let activeTaskPending = false;
-        let userExecutedOrders = []; // Dynamic executed orders
+        let userExecutedOrders = [];
 
+        // قائمة منتجات متنوعة
         const demoProducts = [
             { name: "كيبل شحن لايتننك فاخر", price: 170.00, diff: 0 },
             { name: "ساعة يد كلاسيكية أصلية", price: 210.00, diff: 10 },
             { name: "جاكيت أنيق - SHEIN", price: 350.00, diff: 25 },
             { name: "حذاء رياضي عصري", price: 185.00, diff: 0 },
-            { name: "سماعات أذن لاسلكية", price: 420.00, diff: 30 }
+            { name: "سماعات أذن لاسلكية Pro", price: 420.00, diff: 30 },
+            { name: "حقيبة ظهر مقاومة للماء", price: 260.00, diff: 15 },
+            { name: "نظارة شمسية كلاسيكية", price: 195.00, diff: 5 }
         ];
 
         let currentProduct = demoProducts[0];
@@ -553,13 +581,15 @@
             activeCompletedTasks = 0;
             totalCommissionProfit = 0.00;
 
+            // تحديد سعر الطلب بناءً على الباقة المحددة
+            currentProduct.price = minBalance;
+
             switchTabByName('transactions');
         }
 
         function renderTransactionsData() {
-            const phone = localStorage.getItem('user_phone');
-            const currentBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
-            const comm = ((currentBal * activeVipRate) / 100).toFixed(2);
+            // حساب العمولة بناءً على (سعر الطلب) وليس رصيد الحساب الإجمالي
+            const comm = ((currentProduct.price * activeVipRate) / 100).toFixed(2);
 
             document.getElementById('tx-prod-name').innerText = currentProduct.name;
             document.getElementById('tx-task-progress').innerText = `(${activeCompletedTasks + 1}/${activeMaxTasks})`;
@@ -604,7 +634,7 @@
             document.getElementById('tx-status').style.color = '#ff9800';
 
             let progress = 0;
-            const duration = 4000;
+            const duration = 3500;
             const intervalTime = 50;
             const step = 100 / (duration / intervalTime);
 
@@ -615,7 +645,9 @@
                     clearInterval(timer);
 
                     const latestBal = parseFloat(localStorage.getItem('user_balance_' + phone) || '0');
-                    const comm = parseFloat((latestBal * activeVipRate) / 100);
+                    
+                    // العمولة تحسب على سعر الطلب نفسه (currentProduct.price)
+                    const comm = parseFloat((currentProduct.price * activeVipRate) / 100);
                     const newBal = latestBal + comm;
 
                     totalCommissionProfit += comm;
@@ -623,7 +655,6 @@
 
                     activeCompletedTasks++;
 
-                    // حفظ الطلب في مصفوفة الطلبات
                     const now = new Date();
                     const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
                     
@@ -645,11 +676,17 @@
                     document.getElementById('tx-status').innerText = 'تم الإكتمال بنجاح';
                     document.getElementById('tx-status').style.color = 'var(--primary-green)';
 
-                    // تغيير المنتج للمهمة القادمة
-                    currentProduct = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+                    // تغيير اسم المنتج للمهمة التالية مع الاحتفاظ بالسعر حسب الباقة
+                    const nextProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+                    currentProduct = {
+                        name: nextProd.name,
+                        price: activeVipLimit,
+                        diff: nextProd.diff
+                    };
+
                     renderTransactionsData();
 
-                    alert(`تم تنفيذ المهمة (${activeCompletedTasks}/${activeMaxTasks}) بنجاح! وإضافة عمولة بقيمة EGP ${comm.toFixed(2)}`);
+                    alert(`تم تنفيذ المهمة (${activeCompletedTasks}/${activeMaxTasks}) بنجاح!\nوتمت إضافة عمولة بقيمة EGP ${comm.toFixed(2)} (محسوبة على سعر الطلب)`);
                 } else {
                     progressBar.style.width = progress + '%';
                     progressText.innerText = `جاري المعالجة ${Math.floor(progress)}%`;
@@ -657,7 +694,6 @@
             }, intervalTime);
         }
 
-        // عرض الطلبات الديناميكية في صفحة الطلبات
         function renderOrdersList() {
             const container = document.getElementById('orders-list');
             if (userExecutedOrders.length === 0) {
