@@ -72,7 +72,7 @@
 
         /* Navbar */
         .nav-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0f0f0f; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1f1f1f; z-index: 1000; }
+        .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0f0f0f; display: flex; justify-space-around; align-items: center; border-top: 1px solid #1f1f1f; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 0.72rem; cursor: pointer; gap: 4px; }
         .nav-item.active { color: var(--primary-green); }
 
@@ -286,8 +286,7 @@
     <script>
         // === SUPABASE CONFIGURATION ===
         const SUPABASE_URL = 'https://njmehwvnwdzqzjscbqkd.supabase.co';
-        // ضع الـ anon public key الخاص بك من صفحة Settings -> Data API هنا
-        const SUPABASE_ANON_KEY = 'تأكد من إدراج مفتاح anon key الخاص بك هنا'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qbWVod3Zud2R6cXpqc2NicWtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMzE5MjEsImV4cCI6MjEwMzgwNzkyMX0.LKLUeMYXk4EXHB85u1tki9gJeLSSOC6WPB38qG0tqg8';
 
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -328,14 +327,20 @@
             document.getElementById('auth-btn').innerText = isSignup ? 'تسجيل (بونص 50 EGP)' : 'دخول';
         }
 
-        // === SUPABASE AUTH & DATA INTEGRATION ===
+        // Auth handler
         async function handleAuth(e) {
             e.preventDefault();
-            const phone = document.getElementById('auth-phone').value;
+            
+            const rawPhone = document.getElementById('auth-phone').value.trim();
+            const phone = rawPhone.replace(/[^0-9]/g, '');
             const pass = document.getElementById('auth-pass').value;
             const btn = document.getElementById('auth-btn');
 
-            // تحويل رقم الهاتف لإيميل وهمي مقبول من Supabase
+            if (!phone) {
+                alert('يرجى إدخال رقم هاتف صحيح (أرقام فقط)');
+                return;
+            }
+
             const email = `${phone}@app.com`;
 
             btn.disabled = true;
@@ -348,7 +353,7 @@
                         password: pass
                     });
                     if (error) throw error;
-                    alert('تم إنشاء الحساب بنجاح والحصول على 50 EGP بونص!');
+                    alert('تم إنشاء الحساب بنجاح!');
                     currentUser = data.user;
                 } else {
                     const { data, error } = await db.auth.signInWithPassword({
@@ -377,7 +382,6 @@
 
             currentUser = user;
 
-            // جلب الرصيد من جدول profiles في Supabase
             let { data, error } = await db
                 .from('profiles')
                 .select('balance')
@@ -386,15 +390,14 @@
 
             if (data) {
                 currentBalance = parseFloat(data.balance || 0);
-                initApp();
             }
+            initApp();
         }
 
         async function updateBalanceOnServer(newBalance) {
             currentBalance = newBalance;
             document.querySelectorAll('.val-balance').forEach(el => el.innerText = newBalance.toFixed(2));
 
-            // تحديث قاعدة البيانات في Supabase
             const { error } = await db
                 .from('profiles')
                 .update({ balance: newBalance })
