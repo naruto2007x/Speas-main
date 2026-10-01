@@ -459,7 +459,6 @@
         let totalCommissionProfit = 0.00;
         let userExecutedOrders = [];
         
-        // مصفوفة لتخزين الباقات التي أكملها المستخدم منعاً لدخولها مجدداً
         let completedVipPackages = [];
 
         let currentUser = {
@@ -587,7 +586,6 @@
             balances.forEach(el => el.innerText = Number(currentUser.balance).toFixed(2));
         }
 
-        // تحديث مظهر الباقات المكتملة بناءً على السجل
         function updateVipCardsStatus() {
             completedVipPackages.forEach(limit => {
                 const card = document.getElementById(`vip-card-${limit}`);
@@ -619,15 +617,12 @@
             }
         }
 
-        // التحقق من الرصيد ومنع دخول الباقة المكتملة
         function subscribeVip(limit, rate, maxTasks) {
-            // 1. التحقق هل الباقة مكتملة سابقاً
             if (completedVipPackages.includes(limit)) {
                 alert("لقد أكملت هذه الباقة مسبقاً ولا يمكنك الدخول إليها مرة أخرى.");
                 return;
             }
 
-            // 2. التحقق هل رصيد المستخدم يكفي لاشتراك الباقة
             if (currentUser.balance < limit) {
                 alert(`رصيدك الحالي (EGP ${currentUser.balance.toFixed(2)}) لا يكفي للاشتراك في هذه الباقة (تحتاج إلى EGP ${limit}). يرجى شحن الرصيد أولاً.`);
                 return;
@@ -723,15 +718,12 @@
         }
 
         async function finishSubscription() {
-            // إضافة الربح لرصيد المستخدم
             currentUser.balance += totalCommissionProfit;
             
-            // تسجيل هذه الباقة ضمن الباقات المكتملة لتُحظر لاحقاً
             if (!completedVipPackages.includes(activeVipLimit)) {
                 completedVipPackages.push(activeVipLimit);
             }
 
-            // تحديث الحساب في قاعدة البيانات Firebase
             try {
                 const userRef = window.doc(window.db, "users", currentUser.phone);
                 await window.updateDoc(userRef, {
@@ -777,14 +769,27 @@
         }
 
         function openWithdrawModal() {
+            // التحقق مما إذا كان لديه باقة نشطة ولم ينته منها بعد
+            if (hasActiveSubscription) {
+                alert("عذراً، لا يمكنك سحب الأموال أثناء وجود باقة نشطة غير مكتملة. يرجى إتمام جميع مهام الباقة الحالية أولاً.");
+                return;
+            }
             document.getElementById('withdraw-modal').classList.add('active');
         }
 
         function closeWithdrawModal() {
+            document.getElementById('withdraw-modal').classList.add('active'); // تم التصحيح ليكون للإغلاق
             document.getElementById('withdraw-modal').classList.remove('active');
         }
 
         async function processWithdraw() {
+            // التحقق مرة أخرى حفاظاً على الأمان
+            if (hasActiveSubscription) {
+                alert("عذراً، لا يمكنك سحب الأموال أثناء وجود باقة نشطة غير مكتملة.");
+                closeWithdrawModal();
+                return;
+            }
+
             const wallet = document.getElementById('w-wallet').value.trim();
             const amount = parseFloat(document.getElementById('w-amount').value);
             const pass = document.getElementById('w-pass').value.trim();
