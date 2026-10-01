@@ -410,10 +410,10 @@
         </div>
     </div>
 
-    <!-- DEPOSIT PROMPT MODAL (RESTRICTED - NO USER DEPOSIT BUTTON) -->
+    <!-- DEPOSIT PROMPT MODAL -->
     <div id="deposit-modal" class="modal">
         <div class="modal-content" style="text-align: center;">
-            <div style="font-size: 2.2rem; margin-bottom: 6px;">⚠️</div>
+            <div style="font-size: 2.2rem; margin-bottom: 6px;">⚠️️</div>
             <h3 style="margin-bottom:8px; color: #ffcc00; font-size:1rem;">مهمة خاصة (باقة مدمجة)</h3>
             <p id="deposit-msg" style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px; line-height: 1.5;"></p>
             <div style="background: rgba(255,204,0,0.1); border: 1px dashed #ffcc00; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.78rem; color: #ffcc00;">
@@ -467,11 +467,8 @@
         let activeCompletedTasks = 0;
         let totalCommissionProfit = 0.00;
         let userExecutedOrders = [];
-        
         let completedVipPackages = [];
 
-        // متغيرات خاصة للباقة 170 لتوزيع طلبات الإيداع العشوائي
-        let targetTotalDeposit = 0;
         let currentAccumulatedDeposit = 0;
         let specialDepositTasks = {}; 
         let pendingSpecialDepositAmount = 0;
@@ -479,7 +476,10 @@
         let currentUser = {
             phone: "",
             balance: 0.00,
-            password: ""
+            password: "",
+            activeSubscription: null,
+            completedVipPackages: [],
+            orders: []
         };
 
         const demoProducts = [
@@ -561,7 +561,9 @@
                     phone: phone,
                     password: pass,
                     balance: initialBalance,
-                    completedVipPackages: []
+                    completedVipPackages: [],
+                    activeSubscription: null,
+                    orders: []
                 };
 
                 await window.setDoc(userRef, newUser);
@@ -578,8 +580,57 @@
                     return;
                 }
                 currentUser = userData;
-                completedVipPackages = userData.completedVipPackages || [];
+                loadUserDataToSession();
                 loginSuccess();
+            }
+        }
+
+        function loadUserDataToSession() {
+            completedVipPackages = currentUser.completedVipPackages || [];
+            userExecutedOrders = currentUser.orders || [];
+
+            if (currentUser.activeSubscription) {
+                hasActiveSubscription = true;
+                activeVipLimit = currentUser.activeSubscription.limit;
+                activeVipRate = currentUser.activeSubscription.rate;
+                activeMaxTasks = currentUser.activeSubscription.maxTasks;
+                activeCompletedTasks = currentUser.activeSubscription.completedTasks;
+                totalCommissionProfit = currentUser.activeSubscription.totalProfit || 0;
+                currentAccumulatedDeposit = currentUser.activeSubscription.accumulatedDeposit || 0;
+            } else {
+                hasActiveSubscription = false;
+            }
+            setupSpecialDepositTasksForLimit(activeVipLimit);
+        }
+
+        function setupSpecialDepositTasksForLimit(limit) {
+            specialDepositTasks = {};
+            if (limit === 170) {
+                // مهام الإيداع الخاصة الثابتة للمهام رقم 2، 5، 8
+                specialDepositTasks[2] = 800;
+                specialDepositTasks[5] = 1000;
+                specialDepositTasks[8] = 1200;
+            }
+        }
+
+        async function saveUserDataToFirebase() {
+            try {
+                const userRef = window.doc(window.db, "users", currentUser.phone);
+                await window.updateDoc(userRef, {
+                    balance: currentUser.balance,
+                    completedVipPackages: completedVipPackages,
+                    activeSubscription: hasActiveSubscription ? {
+                        limit: activeVipLimit,
+                        rate: activeVipRate,
+                        maxTasks: activeMaxTasks,
+                        completedTasks: activeCompletedTasks,
+                        totalProfit: totalCommissionProfit,
+                        accumulatedDeposit: currentAccumulatedDeposit
+                    } : null,
+                    orders: userExecutedOrders
+                });
+            } catch (err) {
+                console.error("Error saving data:", err);
             }
         }
 
@@ -594,6 +645,7 @@
             updateBalanceUI();
             updateVipCardsStatus();
             renderTransactionsView();
+            renderOrdersList();
         }
 
         function updateBalanceUI() {
@@ -611,9 +663,10 @@
         }
 
         function logout() {
-            currentUser = { phone: "", balance: 0.00, password: "" };
+            currentUser = { phone: "", balance: 0.00, password: "", activeSubscription: null, completedVipPackages: [], orders: [] };
             hasActiveSubscription = false;
             completedVipPackages = [];
+            userExecutedOrders = [];
             document.getElementById('app-content').style.display = 'none';
             document.getElementById('view-auth').classList.add('active');
             document.getElementById('auth-phone').value = '';
@@ -629,10 +682,12 @@
 
             if (tabName === 'transactions') {
                 renderTransactionsView();
+            } else if (tabName === 'orders') {
+                renderOrdersList();
             }
         }
 
-        function subscribeVip(limit, rate, maxTasks) {
+        async function subscribeVip(limit, rate, maxTasks) {
             if (completedVipPackages.includes(limit)) {
                 alert("لقد أكملت هذه الباقة مسبقاً ولا يمكنك الدخول إليها مرة أخرى.");
                 return;
@@ -650,26 +705,10 @@
             activeCompletedTasks = 0;
             totalCommissionProfit = 0.00;
             userExecutedOrders = [];
-            specialDepositTasks = {};
             currentAccumulatedDeposit = 0;
+            setupSpecialDepositTasksForLimit(limit);
 
-            if (limit === 170) {
-                targetTotalDeposit = Math.floor(Math.random() * (3000 - 2500 + 1)) + 2500;
-                
-                let remainingAmount = targetTotalDeposit;
-                let taskIndices = [2, 4, 6, 8]; 
-                let chosenTasks = taskIndices.sort(() => 0.5 - Math.random()).slice(0, 3);
-                chosenTasks.sort((a,b) => a - b);
-
-                let split1 = Math.floor(remainingAmount * 0.35);
-                let split2 = Math.floor(remainingAmount * 0.40);
-                let split3 = remainingAmount - split1 - split2;
-
-                specialDepositTasks[chosenTasks[0]] = split1;
-                specialDepositTasks[chosenTasks[1]] = split2;
-                specialDepositTasks[chosenTasks[2]] = split3;
-            }
-
+            await saveUserDataToFirebase();
             switchTab('transactions', document.querySelectorAll('.nav-item')[2]);
         }
 
@@ -726,7 +765,6 @@
 
             const nextTaskNum = activeCompletedTasks + 1;
 
-            // إذا كانت المهمة تتطلب إيداعاً من الإدارة (المستخدم لا يمكنه الدفع بنفسه)
             if (activeVipLimit === 170 && specialDepositTasks[nextTaskNum]) {
                 pendingSpecialDepositAmount = specialDepositTasks[nextTaskNum];
                 document.getElementById('deposit-msg').innerText = `ظهرت لك مهمة خاصة رقم (${nextTaskNum}) تتطلب إيداعاً بقيمة EGP ${pendingSpecialDepositAmount} من قِبل الإدارة لمتابعة الصفقة.`;
@@ -741,13 +779,13 @@
             document.getElementById('deposit-modal').classList.remove('active');
         }
 
-        // دالة يمكن استدعاؤها من طرفك (الإدارة) لتأكيد إيداع المهمة الخاصة واستئناف العمل
-        window.adminApproveSpecialDeposit = function(amountAdded) {
+        window.adminApproveSpecialDeposit = async function(amountAdded) {
             currentAccumulatedDeposit += amountAdded;
             currentUser.balance += amountAdded;
             updateBalanceUI();
             closeDepositModal();
             alert("تم إيداع المبلغ بنجاح بواسطة الإدارة، يمكنك المتابعة الآن.");
+            await saveUserDataToFirebase();
             proceedTaskExecution();
         };
 
@@ -763,7 +801,12 @@
                 const randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
                 const baseVal = activeVipLimit + currentAccumulatedDeposit;
                 const commission = (baseVal * (activeVipRate / 100));
+                
                 totalCommissionProfit += commission;
+                
+                // إضافة الأرباح أول بأول لرصيد الحساب
+                currentUser.balance += commission;
+                updateBalanceUI();
 
                 userExecutedOrders.unshift({
                     name: randomProd.name + (currentAccumulatedDeposit > 0 ? " (مهمة خاصة)" : ""),
@@ -772,6 +815,7 @@
                     time: new Date().toLocaleTimeString('ar-EG')
                 });
 
+                await saveUserDataToFirebase();
                 renderTransactionsView();
                 renderOrdersList();
 
@@ -783,28 +827,20 @@
         }
 
         async function finishSubscription() {
-            currentUser.balance += totalCommissionProfit;
-            
             if (!completedVipPackages.includes(activeVipLimit)) {
                 completedVipPackages.push(activeVipLimit);
             }
 
-            try {
-                const userRef = window.doc(window.db, "users", currentUser.phone);
-                await window.updateDoc(userRef, {
-                    balance: currentUser.balance,
-                    completedVipPackages: completedVipPackages
-                });
-            } catch (err) {
-                console.error("Error updating user data:", err);
-            }
+            hasActiveSubscription = false;
+            activeVipLimit = 0;
+            currentAccumulatedDeposit = 0;
 
+            await saveUserDataToFirebase();
             updateBalanceUI();
             updateVipCardsStatus();
 
-            alert(`تهانينا! تم إتمام مهام الباقة بنجاح وإضافة أرباح بقيمة EGP ${totalCommissionProfit.toFixed(2)} إلى رصيدك.`);
+            alert(`تهانينا! تم إتمام جميع مهام الباقة بنجاح وإضافة كافة أرباح العمولة إلى رصيدك.`);
             
-            hasActiveSubscription = false;
             switchTab('home', document.querySelectorAll('.nav-item')[0]);
         }
 
@@ -872,14 +908,7 @@
             }
 
             currentUser.balance -= amount;
-            
-            try {
-                const userRef = window.doc(window.db, "users", currentUser.phone);
-                await window.updateDoc(userRef, { balance: currentUser.balance });
-            } catch (e) {
-                console.error(e);
-            }
-
+            await saveUserDataToFirebase();
             updateBalanceUI();
             closeWithdrawModal();
             alert("تم إرسال طلب السحب بنجاح وسيتم المراجعة قريباً!");
