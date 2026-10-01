@@ -79,14 +79,12 @@
 
         /* VIP Grid */
         .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .vip-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); text-align: center; cursor: pointer; position: relative; }
-        .vip-card.subscribed { opacity: 0.5; filter: grayscale(40%); cursor: not-allowed; }
+        .vip-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); text-align: center; cursor: pointer; }
         .vip-img { width: 100%; height: 100px; object-fit: cover; background: #222; }
         .vip-body { padding: 8px; }
         .vip-limit { font-size: 0.75rem; color: var(--text-sub); }
         .vip-price { font-size: 1rem; font-weight: bold; margin: 2px 0; }
         .vip-badge { display: inline-block; background: rgba(55, 235, 116, 0.15); color: var(--primary-green); font-weight: bold; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; }
-        .subscribed-tag { position: absolute; top: 8px; left: 8px; background: #e53935; color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
 
         /* Transactions UI */
         .tx-hero-card { background: linear-gradient(135deg, #0b1d12 0%, #050a07 100%); border: 1px solid #1a3322; border-radius: 14px; padding: 16px; position: relative; margin-bottom: 12px; }
@@ -229,7 +227,7 @@
                         <div class="credit-ring">100</div>
                     </div>
                     <div style="margin-top:10px;">
-                        <div style="font-size:0.7rem; color:var(--text-sub);">رصيد الحساب (شامل الهدية الترحيبية)</div>
+                        <div style="font-size:0.7rem; color:var(--text-sub);">رصيد الحساب</div>
                         <div class="balance-amount">EGP <span class="val-balance">0.00</span></div>
                     </div>
                 </div>
@@ -239,6 +237,7 @@
                     <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
                 </div>
 
+                <!-- UPDATED PRODUCTS SECTION WITH CABLES, PHONE CASES & LOW PRICES -->
                 <div class="section-title">المنتجات الأكثر مبيعا اليوم</div>
                 
                 <div class="products-list">
@@ -294,7 +293,7 @@
                 <h3 style="margin-bottom:12px; font-size:1.05rem;">قائمة الاشتراكات والمهام</h3>
                 
                 <div id="vip-list" class="vip-grid">
-                    <div class="vip-card" id="vip-card-170" onclick="subscribeVip(170, 3.6, 10)">
+                    <div class="vip-card" onclick="subscribeVip(170, 3.6, 10)">
                         <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -303,7 +302,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" id="vip-card-200" onclick="subscribeVip(200, 5.4, 10)">
+                    <div class="vip-card" onclick="subscribeVip(200, 5.4, 10)">
                         <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -312,7 +311,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" id="vip-card-500" onclick="subscribeVip(500, 6.6, 10)">
+                    <div class="vip-card" onclick="subscribeVip(500, 6.6, 10)">
                         <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -321,7 +320,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" id="vip-card-1000" onclick="subscribeVip(1000, 7.2, 10)">
+                    <div class="vip-card" onclick="subscribeVip(1000, 7.2, 10)">
                         <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -330,7 +329,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" id="vip-card-3000" onclick="subscribeVip(3000, 8.5, 10)">
+                    <div class="vip-card" onclick="subscribeVip(3000, 8.5, 10)">
                         <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -339,7 +338,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" id="vip-card-5000" onclick="subscribeVip(5000, 10.0, 10)">
+                    <div class="vip-card" onclick="subscribeVip(5000, 10.0, 10)">
                         <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -415,18 +414,6 @@
         </div>
     </div>
 
-    <!-- DEPOSIT MODAL (FOR SPECIAL 170 VIP TASKS) -->
-    <div id="deposit-task-modal" class="modal">
-        <div class="modal-content" style="text-align: center;">
-            <div style="font-size: 2.2rem; margin-bottom: 8px;">⚠️</div>
-            <h3 style="margin-bottom:8px; color:#ffcc00; font-size:1rem;">طلب إيداع إضافي مطلوب</h3>
-            <p id="deposit-msg-text" style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px; line-height: 1.4;">
-                لقد صادفت طلباً استثنائياً بقيمة عالية. لإكمال المهمة والاستمرار، يرجى إيداع مبلغ وقدره <b id="required-dep-amount" style="color:var(--primary-green);">0</b> جنيه.
-            </p>
-            <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem;" onclick="confirmTaskDeposit()">تأكيد الإيداع والمتابعة</button>
-        </div>
-    </div>
-
     <!-- Firebase SDK Imports & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
@@ -447,6 +434,7 @@
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
+        // Global variables exposed for window use
         window.db = db;
         window.doc = doc;
         window.setDoc = setDoc;
@@ -474,22 +462,15 @@
         let currentUser = {
             phone: "",
             balance: 0.00,
-            password: "",
-            subscribedVips: []
+            password: ""
         };
 
         const demoProducts = [
-            { name: "كيبل شحن سريع Type-C قماشي متين", price: 50.00 },
-            { name: "جراب حماية شفاف سيليكون مضاد للصدمات", price: 65.00 },
-            { name: "كيبل شحن ونقل بيانات آيفون سريع", price: 75.00 },
-            { name: "جراب موبايل ملون أنيق ناعم الملمس", price: 89.00 },
-            { name: "كيبل شحن متعدد 3 في 1 لجميع الأجهزة", price: 95.00 }
-        ];
-
-        const specialProducts = [
-            { name: "ساعة ذكية فاخرة Ultra الإصدار الأخير", price: 3500.00 },
-            { name: "سماعات بلوتوث لاسلكية عالية الأداء", price: 2800.00 },
-            { name: "كاميرا مراقبة ذكية منزلية متطورة", price: 4200.00 }
+            { name: "كيبل شحن سريع Type-C قماشي متين", price: 50.00, diff: 0 },
+            { name: "جراب حماية شفاف سيليكون مضاد للصدمات", price: 65.00, diff: 10 },
+            { name: "كيبل شحن ونقل بيانات آيفون سريع", price: 75.00, diff: 15 },
+            { name: "جراب موبايل ملون أنيق ناعم الملمس", price: 89.00, diff: 20 },
+            { name: "كيبل شحن متعدد 3 في 1 لجميع الأجهزة", price: 95.00, diff: 25 }
         ];
 
         let currentSlide = 0;
@@ -507,8 +488,8 @@
 
         function toggleAuthMode() {
             isSignupMode = !isSignupMode;
-            document.getElementById('auth-hero-title').innerText = isSignupMode ? 'قم بتسجيل حسابك (هدية 50 جنيه)' : 'تسجيل الدخول إلى حسابك';
-            document.getElementById('auth-btn').innerText = isSignupMode ? 'تسجيل وحصد الهدية' : 'تسجيل الدخول';
+            document.getElementById('auth-hero-title').innerText = isSignupMode ? 'قم بتسجيل حسابك' : 'تسجيل الدخول إلى حسابك';
+            document.getElementById('auth-btn').innerText = isSignupMode ? 'تسجيل' : 'تسجيل الدخول';
             document.getElementById('auth-toggle-link').innerHTML = isSignupMode 
                 ? 'اذهب لتسجيل الدخول <span>هل لديك حساب؟</span>' 
                 : 'اذهب للتسجيل <span>ليس لديك حساب؟</span>';
@@ -550,15 +531,14 @@
                     const newUser = {
                         phone: phone,
                         password: pass,
-                        balance: 50.00, 
-                        subscribedVips: [],
+                        balance: 0.00,
                         role: phone === ADMIN_PHONE ? "ADMIN" : "VIP",
                         createdAt: new Date().toISOString()
                     };
 
                     await window.setDoc(userRef, newUser);
                     currentUser = newUser;
-                    alert('🎉 مبروك! تم تسجيل حسابك بنجاح وحصولك على هدية ترحيبية بقيمة 50 جنيه.');
+                    alert('تم التسجيل بنجاح!');
                     initAppSession();
                 } else {
                     if (!userSnap.exists()) {
@@ -571,7 +551,6 @@
                         return;
                     }
                     currentUser = userData;
-                    if (!currentUser.subscribedVips) currentUser.subscribedVips = [];
                     initAppSession();
                 }
             } catch (error) {
@@ -587,7 +566,6 @@
             document.getElementById('user-phone-disp').innerText = currentUser.phone;
             document.getElementById('prof-phone-disp').innerText = currentUser.phone;
             updateBalanceUI();
-            updateVipCardsUI();
             document.getElementById('ref-link').innerText = window.location.origin + "?ref=" + currentUser.phone;
             renderTransactionsView();
         }
@@ -597,15 +575,12 @@
             balanceElements.forEach(el => el.innerText = Number(currentUser.balance).toFixed(2));
         }
 
-        async function saveUserData() {
+        async function saveUserBalance() {
             try {
                 const userRef = window.doc(window.db, "users", currentUser.phone);
-                await window.updateDoc(userRef, { 
-                    balance: currentUser.balance,
-                    subscribedVips: currentUser.subscribedVips
-                });
+                await window.updateDoc(userRef, { balance: currentUser.balance });
             } catch (err) {
-                console.error("Error updating user data:", err);
+                console.error("Error updating balance:", err);
             }
         }
 
@@ -620,47 +595,10 @@
                 renderTransactionsView();
             } else if(tabName === 'orders') {
                 renderOrdersView();
-            } else if(tabName === 'task') {
-                updateVipCardsUI();
             }
         }
 
-        function updateVipCardsUI() {
-            const vips = [170, 200, 500, 1000, 3000, 5000];
-            vips.forEach(limit => {
-                const card = document.getElementById(`vip-card-${limit}`);
-                if (!card) return;
-                
-                const isSubscribed = currentUser.subscribedVips && currentUser.subscribedVips.includes(limit);
-                const existingTag = card.querySelector('.subscribed-tag');
-
-                if (isSubscribed) {
-                    card.classList.add('subscribed');
-                    if (!existingTag) {
-                        const tag = document.createElement('div');
-                        tag.className = 'subscribed-tag';
-                        tag.innerText = 'مفعلة مسبقاً';
-                        card.appendChild(tag);
-                    }
-                } else {
-                    card.classList.remove('subscribed');
-                    if (existingTag) existingTag.remove();
-                }
-            });
-        }
-
-        async function subscribeVip(limit, rate, maxTasks) {
-            if (!currentUser.subscribedVips) currentUser.subscribedVips = [];
-
-            if (currentUser.subscribedVips.includes(limit)) {
-                alert('⚠️ عذراً، لقد قمت بالاشتراك في هذه الباقة مسبقاً ولا يمكنك تكرارها!');
-                return;
-            }
-
-            currentUser.subscribedVips.push(limit);
-            await saveUserData();
-            updateVipCardsUI();
-
+        function subscribeVip(limit, rate, maxTasks) {
             hasActiveSubscription = true;
             activeVipLimit = limit;
             activeVipRate = rate;
@@ -680,7 +618,7 @@
                     <div class="empty-subscription-box">
                         <div style="font-size:2rem; margin-bottom:8px;">📦</div>
                         <div style="font-weight:bold; color:#fff; margin-bottom:4px;">لا يوجد اشتراك نشط حالياً</div>
-                        <div style="font-size:0.75rem;">يرجى اختيار باقة اشتراك جديدة من تبويب "مهمة" للبدء في جني الأرباح. (ملاحظة: لا يمكن تكرار نفس الباقة مجدداً).</div>
+                        <div style="font-size:0.75rem;">يرجى اختيار باقة اشتراك من تبويب "مهمة" للبدء في جني الأرباح.</div>
                     </div>
                 `;
                 return;
@@ -761,48 +699,19 @@
                     progressBox.style.display = 'none';
                     btn.style.display = 'block';
 
-                    checkAndExecuteTask();
+                    completeTaskProcess();
                 }
             }, 50);
         }
 
-        function checkAndExecuteTask() {
-            const nextTaskIndex = activeCompletedTasks + 1;
-
-            // إذا كانت باقة 170 جنيه، وعند كل 3 مهمات (3, 6, 9) يتم مطالبته بإيداع عشوائي بين 2500 و 3000
-            if (activeVipLimit === 170 && (nextTaskIndex === 3 || nextTaskIndex === 6 || nextTaskIndex === 9)) {
-                // توليد مبلغ إيداع عشوائي بين 2500 و 3000
-                const randomDepositAmount = Math.floor(Math.random() * (3000 - 2500 + 1)) + 2500;
-                document.getElementById('required-dep-amount').innerText = randomDepositAmount;
-                document.getElementById('deposit-task-modal').classList.add('active');
-                return;
-            }
-
-            executeNormalTask();
-        }
-
-        function confirmTaskDeposit() {
-            document.getElementById('deposit-task-modal').classList.remove('active');
-            alert('تم استلام طلب الإيداع المؤقت بنجاح. استمرار تنفيذ المهمة...');
-            executeNormalTask();
-        }
-
-        function executeNormalTask() {
+        function completeTaskProcess() {
             activeCompletedTasks++;
-            
-            let randomProd;
-            // إذا كانت باقة 170 وعند المهمات المحددة، نجعل الطلب بسعر أعلى
-            if (activeVipLimit === 170 && (activeCompletedTasks === 3 || activeCompletedTasks === 6 || activeCompletedTasks === 9)) {
-                randomProd = specialProducts[Math.floor(Math.random() * specialProducts.length)];
-            } else {
-                randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
-            }
-
+            const randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
             const profit = randomProd.price * (activeVipRate / 100);
             totalCommissionProfit += profit;
             currentUser.balance += profit;
             updateBalanceUI();
-            saveUserData();
+            saveUserBalance();
 
             userExecutedOrders.unshift({
                 name: randomProd.name,
@@ -853,11 +762,6 @@
         }
 
         function openWithdrawModal() {
-            // منع السحب طالما أن المستخدم لم يُنهِ الباقة الحالية بالكامل (10 مهام)
-            if (!hasActiveSubscription || activeCompletedTasks < activeMaxTasks) {
-                alert('⚠️ عذراً، لا يمكنك إجراء عملية السحب الآن. يجب عليك إنهاء وإتمام جميع مهام الباقة النشطة أولاً!');
-                return;
-            }
             document.getElementById('withdraw-modal').classList.add('active');
         }
 
@@ -887,7 +791,7 @@
 
             currentUser.balance -= amount;
             updateBalanceUI();
-            await saveUserData();
+            await saveUserBalance();
 
             closeWithdrawModal();
             alert('تم تقديم طلب السحب بنجاح وسيتم المراجعة قريباً.');
@@ -897,7 +801,7 @@
         }
 
         function logout() {
-            currentUser = { phone: "", balance: 0.00, password: "", subscribedVips: [] };
+            currentUser = { phone: "", balance: 0.00, password: "" };
             hasActiveSubscription = false;
             document.getElementById('app-content').style.display = 'none';
             document.getElementById('view-auth').classList.add('active');
