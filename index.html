@@ -79,7 +79,9 @@
 
         /* VIP Grid */
         .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .vip-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); text-align: center; cursor: pointer; }
+        .vip-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); text-align: center; cursor: pointer; position: relative; }
+        .vip-card.completed { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
+        .vip-card.completed::after { content: 'مكتملة'; position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .vip-img { width: 100%; height: 100px; object-fit: cover; background: #222; }
         .vip-body { padding: 8px; }
         .vip-limit { font-size: 0.75rem; color: var(--text-sub); }
@@ -237,7 +239,6 @@
                     <button class="btn-action btn-withdraw" onclick="openWithdrawModal()">🏧 سحب</button>
                 </div>
 
-                <!-- UPDATED PRODUCTS SECTION WITH CABLES, PHONE CASES & LOW PRICES -->
                 <div class="section-title">المنتجات الأكثر مبيعا اليوم</div>
                 
                 <div class="products-list">
@@ -293,7 +294,7 @@
                 <h3 style="margin-bottom:12px; font-size:1.05rem;">قائمة الاشتراكات والمهام</h3>
                 
                 <div id="vip-list" class="vip-grid">
-                    <div class="vip-card" onclick="subscribeVip(170, 3.6, 10)">
+                    <div class="vip-card" id="vip-card-170" onclick="subscribeVip(170, 3.6, 10)">
                         <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -302,7 +303,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="subscribeVip(200, 5.4, 10)">
+                    <div class="vip-card" id="vip-card-200" onclick="subscribeVip(200, 5.4, 10)">
                         <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -311,7 +312,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="subscribeVip(500, 6.6, 10)">
+                    <div class="vip-card" id="vip-card-500" onclick="subscribeVip(500, 6.6, 10)">
                         <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -320,7 +321,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="subscribeVip(1000, 7.2, 10)">
+                    <div class="vip-card" id="vip-card-1000" onclick="subscribeVip(1000, 7.2, 10)">
                         <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -329,7 +330,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="subscribeVip(3000, 8.5, 10)">
+                    <div class="vip-card" id="vip-card-3000" onclick="subscribeVip(3000, 8.5, 10)">
                         <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -338,7 +339,7 @@
                         </div>
                     </div>
 
-                    <div class="vip-card" onclick="subscribeVip(5000, 10.0, 10)">
+                    <div class="vip-card" id="vip-card-5000" onclick="subscribeVip(5000, 10.0, 10)">
                         <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500" class="vip-img">
                         <div class="vip-body">
                             <div class="vip-limit">حد الرصيد</div>
@@ -434,7 +435,6 @@
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
-        // Global variables exposed for window use
         window.db = db;
         window.doc = doc;
         window.setDoc = setDoc;
@@ -458,6 +458,9 @@
         let activeCompletedTasks = 0;
         let totalCommissionProfit = 0.00;
         let userExecutedOrders = [];
+        
+        // مصفوفة لتخزين الباقات التي أكملها المستخدم منعاً لدخولها مجدداً
+        let completedVipPackages = [];
 
         let currentUser = {
             phone: "",
@@ -476,6 +479,7 @@
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
+        
         function nextSlide() {
             if(slides.length === 0) return;
             slides[currentSlide].classList.remove('active');
@@ -484,22 +488,33 @@
             slides[currentSlide].classList.add('active');
             dots[currentSlide].classList.add('active');
         }
-        setInterval(nextSlide, 3000);
+        setInterval(nextSlide, 3500);
 
         function toggleAuthMode() {
             isSignupMode = !isSignupMode;
-            document.getElementById('auth-hero-title').innerText = isSignupMode ? 'قم بتسجيل حسابك' : 'تسجيل الدخول إلى حسابك';
-            document.getElementById('auth-btn').innerText = isSignupMode ? 'تسجيل' : 'تسجيل الدخول';
-            document.getElementById('auth-toggle-link').innerHTML = isSignupMode 
-                ? 'اذهب لتسجيل الدخول <span>هل لديك حساب؟</span>' 
-                : 'اذهب للتسجيل <span>ليس لديك حساب؟</span>';
+            const title = document.getElementById('auth-hero-title');
+            const btn = document.getElementById('auth-btn');
+            const toggleLink = document.getElementById('auth-toggle-link');
+            const confirmPassGroup = document.getElementById('group-confirm-pass');
+            const inviteGroup = document.getElementById('group-invite-code');
 
-            document.getElementById('group-confirm-pass').style.display = isSignupMode ? 'block' : 'none';
-            document.getElementById('group-invite-code').style.display = isSignupMode ? 'block' : 'none';
+            if (isSignupMode) {
+                title.innerText = "إنشاء حساب جديد";
+                btn.innerText = "تسجيل حساب";
+                toggleLink.innerText = "لديك حساب بالفعل؟ اذهب لتسجيل الدخول";
+                confirmPassGroup.style.display = "block";
+                inviteGroup.style.display = "block";
+            } else {
+                title.innerText = "تسجيل الدخول إلى حسابك";
+                btn.innerText = "تسجيل الدخول";
+                toggleLink.innerText = "اذهب للتسجيل ليس لديك حساب؟";
+                confirmPassGroup.style.display = "none";
+                inviteGroup.style.display = "none";
+            }
         }
 
-        function togglePassVisibility(inputId) {
-            const input = document.getElementById(inputId);
+        function togglePassVisibility(id) {
+            const input = document.getElementById(id);
             input.type = input.type === 'password' ? 'text' : 'password';
         }
 
@@ -509,96 +524,115 @@
             const pass = document.getElementById('auth-pass').value.trim();
 
             if (!phone || !pass) {
-                alert('الرجاء إدخال رقم الهاتف/اسم المستخدم وكلمة المرور');
+                alert("يرجى إدخال البيانات كاملة");
                 return;
             }
 
-            try {
-                const userRef = window.doc(window.db, "users", phone);
-                const userSnap = await window.getDoc(userRef);
+            const userRef = window.doc(window.db, "users", phone);
+            const userSnap = await window.getDoc(userRef);
 
-                if (isSignupMode) {
-                    const confirmPass = document.getElementById('auth-confirm-pass').value.trim();
-                    if (pass !== confirmPass) {
-                        alert('كلمتا المرور غير متطابقتين');
-                        return;
-                    }
-                    if (userSnap.exists()) {
-                        alert('هذا الحساب مسجل مسبقاً، يرجى تسجيل الدخول');
-                        return;
-                    }
-
-                    const newUser = {
-                        phone: phone,
-                        password: pass,
-                        balance: 0.00,
-                        role: phone === ADMIN_PHONE ? "ADMIN" : "VIP",
-                        createdAt: new Date().toISOString()
-                    };
-
-                    await window.setDoc(userRef, newUser);
-                    currentUser = newUser;
-                    alert('تم التسجيل بنجاح!');
-                    initAppSession();
-                } else {
-                    if (!userSnap.exists()) {
-                        alert('الحساب غير موجود، يرجى إنشاء حساب جديد');
-                        return;
-                    }
-                    const userData = userSnap.data();
-                    if (userData.password !== pass) {
-                        alert('كلمة المرور غير صحيحة');
-                        return;
-                    }
-                    currentUser = userData;
-                    initAppSession();
+            if (isSignupMode) {
+                const confirmPass = document.getElementById('auth-confirm-pass').value.trim();
+                if (pass !== confirmPass) {
+                    alert("كلمتا المرور غير متطابقتين");
+                    return;
                 }
-            } catch (error) {
-                console.error("Auth Error:", error);
-                alert('حدث خطأ أثناء الاتصال بقاعدة البيانات.');
+                if (userSnap.exists()) {
+                    alert("هذا المستخدم مسجل مسبقاً، قم بتسجيل الدخول");
+                    return;
+                }
+
+                const initialBalance = phone === ADMIN_PHONE ? 50000 : 100.00;
+                const newUser = {
+                    phone: phone,
+                    password: pass,
+                    balance: initialBalance,
+                    completedVipPackages: []
+                };
+
+                await window.setDoc(userRef, newUser);
+                currentUser = newUser;
+                loginSuccess();
+            } else {
+                if (!userSnap.exists()) {
+                    alert("الحساب غير موجود، يرجى التسجيل أولاً");
+                    return;
+                }
+                const userData = userSnap.data();
+                if (userData.password !== pass) {
+                    alert("كلمة المرور غير صحيحة");
+                    return;
+                }
+                currentUser = userData;
+                completedVipPackages = userData.completedVipPackages || [];
+                loginSuccess();
             }
         }
 
-        function initAppSession() {
+        function loginSuccess() {
             document.getElementById('view-auth').classList.remove('active');
             document.getElementById('app-content').style.display = 'block';
-
+            
             document.getElementById('user-phone-disp').innerText = currentUser.phone;
             document.getElementById('prof-phone-disp').innerText = currentUser.phone;
-            updateBalanceUI();
             document.getElementById('ref-link').innerText = window.location.origin + "?ref=" + currentUser.phone;
+            
+            updateBalanceUI();
+            updateVipCardsStatus();
             renderTransactionsView();
         }
 
         function updateBalanceUI() {
-            const balanceElements = document.querySelectorAll('.val-balance');
-            balanceElements.forEach(el => el.innerText = Number(currentUser.balance).toFixed(2));
+            const balances = document.querySelectorAll('.val-balance');
+            balances.forEach(el => el.innerText = Number(currentUser.balance).toFixed(2));
         }
 
-        async function saveUserBalance() {
-            try {
-                const userRef = window.doc(window.db, "users", currentUser.phone);
-                await window.updateDoc(userRef, { balance: currentUser.balance });
-            } catch (err) {
-                console.error("Error updating balance:", err);
-            }
+        // تحديث مظهر الباقات المكتملة بناءً على السجل
+        function updateVipCardsStatus() {
+            completedVipPackages.forEach(limit => {
+                const card = document.getElementById(`vip-card-${limit}`);
+                if (card) {
+                    card.classList.add('completed');
+                }
+            });
         }
 
-        function switchTab(tabName, element) {
+        function logout() {
+            currentUser = { phone: "", balance: 0.00, password: "" };
+            hasActiveSubscription = false;
+            completedVipPackages = [];
+            document.getElementById('app-content').style.display = 'none';
+            document.getElementById('view-auth').classList.add('active');
+            document.getElementById('auth-phone').value = '';
+            document.getElementById('auth-pass').value = '';
+        }
+
+        function switchTab(tabName, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('view-' + tabName).classList.add('active');
 
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(element) element.classList.add('active');
+            el.classList.add('active');
 
-            if(tabName === 'transactions') {
+            if (tabName === 'transactions') {
                 renderTransactionsView();
-            } else if(tabName === 'orders') {
-                renderOrdersView();
             }
         }
 
+        // التحقق من الرصيد ومنع دخول الباقة المكتملة
         function subscribeVip(limit, rate, maxTasks) {
+            // 1. التحقق هل الباقة مكتملة سابقاً
+            if (completedVipPackages.includes(limit)) {
+                alert("لقد أكملت هذه الباقة مسبقاً ولا يمكنك الدخول إليها مرة أخرى.");
+                return;
+            }
+
+            // 2. التحقق هل رصيد المستخدم يكفي لاشتراك الباقة
+            if (currentUser.balance < limit) {
+                alert(`رصيدك الحالي (EGP ${currentUser.balance.toFixed(2)}) لا يكفي للاشتراك في هذه الباقة (تحتاج إلى EGP ${limit}). يرجى شحن الرصيد أولاً.`);
+                return;
+            }
+
             hasActiveSubscription = true;
             activeVipLimit = limit;
             activeVipRate = rate;
@@ -607,7 +641,6 @@
             totalCommissionProfit = 0.00;
             userExecutedOrders = [];
 
-            alert(`تم تفعيل اشتراك VIP بحد رصيد EGP ${limit} بنجاح!`);
             switchTab('transactions', document.querySelectorAll('.nav-item')[2]);
         }
 
@@ -617,8 +650,8 @@
                 container.innerHTML = `
                     <div class="empty-subscription-box">
                         <div style="font-size:2rem; margin-bottom:8px;">📦</div>
-                        <div style="font-weight:bold; color:#fff; margin-bottom:4px;">لا يوجد اشتراك نشط حالياً</div>
-                        <div style="font-size:0.75rem;">يرجى اختيار باقة اشتراك من تبويب "مهمة" للبدء في جني الأرباح.</div>
+                        <div style="font-weight:bold; color:#fff; margin-bottom:4px;">لا توجد باقة نشطة حالياً</div>
+                        <div style="font-size:0.75rem;">توجه إلى تبويب (مهمة) واشترك في باقة لبدء تنفيذ المهام وأرباح العمولة.</div>
                     </div>
                 `;
                 return;
@@ -626,117 +659,102 @@
 
             container.innerHTML = `
                 <div class="tx-hero-card">
-                    <div class="wallet-icon">💼</div>
-                    <div class="tx-balance-title">إجمالي الأصول (EGP)</div>
-                    <div class="tx-balance-val">${Number(currentUser.balance).toFixed(2)}</div>
+                    <div class="wallet-icon">💳</div>
+                    <div class="tx-balance-title">إجمالي رأس المال والباقات</div>
+                    <div class="tx-balance-val">EGP ${activeVipLimit.toFixed(2)}</div>
                     <div class="tx-commission-box">
-                        <div class="tx-commission-title">عمولة الطلب الحالي</div>
-                        <div class="tx-commission-val" id="tx-current-comm">0.00 EGP</div>
+                        <div class="tx-commission-title">إجمالي الأرباح المحققة</div>
+                        <div class="tx-commission-val">EGP <span id="tx-prof-disp">${totalCommissionProfit.toFixed(2)}</span></div>
                     </div>
                 </div>
 
                 <div class="tx-task-card">
                     <div class="tx-task-row">
-                        <span class="tx-task-label">الحد الأقصى للرصيد</span>
-                        <span class="tx-task-value">EGP ${activeVipLimit}</span>
-                    </div>
-                    <div class="tx-task-row">
                         <span class="tx-task-label">نسبة العمولة</span>
                         <span class="tx-task-value">${activeVipRate}%</span>
                     </div>
                     <div class="tx-task-row">
-                        <span class="tx-task-label">المهام المكتملة اليوم</span>
-                        <span class="tx-task-value"><span id="task-completed-count">${activeCompletedTasks}</span> / ${activeMaxTasks}</span>
+                        <span class="tx-task-label">المهام المكتملة</span>
+                        <span class="tx-task-value"><span id="tx-completed-disp">${activeCompletedTasks}</span> / ${activeMaxTasks}</span>
                     </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">أرباح العمولة التراكمية</span>
-                        <span class="tx-task-value" id="task-total-profit">${totalCommissionProfit.toFixed(2)} EGP</span>
-                    </div>
-
-                    <div class="progress-container" id="task-progress-box">
-                        <div class="progress-bar" id="task-progress-bar"></div>
-                        <div class="progress-text" id="task-progress-text">جاري إرسال الطلب... 0%</div>
-                    </div>
-
-                    <button class="btn-neon-pill" id="btn-grab-task" style="border-radius:10px; margin-top:14px;" onclick="startGrabbingTask()">الحصول على الطلب</button>
-                </div>
-
-                <div class="tx-stats-grid">
-                    <div>
-                        <div class="tx-stat-num" id="stat-todays-orders">${activeCompletedTasks}</div>
-                        <div class="tx-stat-label">طلبات اليوم</div>
-                    </div>
-                    <div>
-                        <div class="tx-stat-num" id="stat-todays-profit">${totalCommissionProfit.toFixed(2)}</div>
-                        <div class="tx-stat-label">أرباح اليوم</div>
+                    <div class="progress-container" id="task-progress-box" style="display:block;">
+                        <div class="progress-bar" id="task-progress-bar" style="width: ${(activeCompletedTasks / activeMaxTasks) * 100}%;"></div>
+                        <div class="progress-text" id="task-progress-text">جاري تنفيذ المهمة...</div>
                     </div>
                 </div>
+
+                <button class="btn-neon-pill" id="start-task-btn" onclick="executeTask()" style="border-radius:10px; height:45px;">
+                    ${activeCompletedTasks >= activeMaxTasks ? 'إنهاء الباقة واستلام الأرباح' : 'بدء جلب الطلب والمهمة'}
+                </button>
             `;
         }
 
-        function startGrabbingTask() {
+        async function executeTask() {
             if (activeCompletedTasks >= activeMaxTasks) {
-                alert('لقد أتممت كافة المهام المخصصة لك اليوم.');
+                finishSubscription();
                 return;
             }
 
-            const btn = document.getElementById('btn-grab-task');
-            const progressBox = document.getElementById('task-progress-box');
-            const progressBar = document.getElementById('task-progress-bar');
-            const progressText = document.getElementById('task-progress-text');
+            const btn = document.getElementById('start-task-btn');
+            btn.disabled = true;
+            btn.innerText = "جاري مطابقة المنتج...";
 
-            btn.style.display = 'none';
-            progressBox.style.display = 'block';
+            setTimeout(async () => {
+                activeCompletedTasks++;
+                const randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+                const commission = (activeVipLimit * (activeVipRate / 100));
+                totalCommissionProfit += commission;
 
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                progressBar.style.width = progress + '%';
-                progressText.innerText = `جاري إرسال الطلب... ${progress}%`;
+                userExecutedOrders.unshift({
+                    name: randomProd.name,
+                    price: activeVipLimit,
+                    commission: commission,
+                    time: new Date().toLocaleTimeString('ar-EG')
+                });
 
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    progressBox.style.display = 'none';
-                    btn.style.display = 'block';
+                renderTransactionsView();
+                renderOrdersList();
 
-                    completeTaskProcess();
+                if (activeCompletedTasks >= activeMaxTasks) {
+                    const finalBtn = document.getElementById('start-task-btn');
+                    if(finalBtn) finalBtn.innerText = "إنهاء الباقة واستلام الأرباح";
                 }
-            }, 50);
+            }, 1000);
         }
 
-        function completeTaskProcess() {
-            activeCompletedTasks++;
-            const randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
-            const profit = randomProd.price * (activeVipRate / 100);
-            totalCommissionProfit += profit;
-            currentUser.balance += profit;
+        async function finishSubscription() {
+            // إضافة الربح لرصيد المستخدم
+            currentUser.balance += totalCommissionProfit;
+            
+            // تسجيل هذه الباقة ضمن الباقات المكتملة لتُحظر لاحقاً
+            if (!completedVipPackages.includes(activeVipLimit)) {
+                completedVipPackages.push(activeVipLimit);
+            }
+
+            // تحديث الحساب في قاعدة البيانات Firebase
+            try {
+                const userRef = window.doc(window.db, "users", currentUser.phone);
+                await window.updateDoc(userRef, {
+                    balance: currentUser.balance,
+                    completedVipPackages: completedVipPackages
+                });
+            } catch (err) {
+                console.error("Error updating user data:", err);
+            }
+
             updateBalanceUI();
-            saveUserBalance();
+            updateVipCardsStatus();
 
-            userExecutedOrders.unshift({
-                name: randomProd.name,
-                price: randomProd.price,
-                profit: profit,
-                time: new Date().toLocaleTimeString()
-            });
-
-            document.getElementById('task-completed-count').innerText = activeCompletedTasks;
-            document.getElementById('task-total-profit').innerText = totalCommissionProfit.toFixed(2) + ' EGP';
-            document.getElementById('stat-todays-orders').innerText = activeCompletedTasks;
-            document.getElementById('stat-todays-profit').innerText = totalCommissionProfit.toFixed(2);
-            document.getElementById('tx-current-comm').innerText = profit.toFixed(2) + ' EGP';
-
-            alert(`تم تنفيذ الطلب بنجاح! تم إضافة عمولة بقيمة ${profit.toFixed(2)} EGP`);
+            alert(`تهانينا! تم إتمام مهام الباقة بنجاح وإضافة أرباح بقيمة EGP ${totalCommissionProfit.toFixed(2)} إلى رصيدك.`);
+            
+            hasActiveSubscription = false;
+            switchTab('home', document.querySelectorAll('.nav-item')[0]);
         }
 
-        function renderOrdersView() {
+        function renderOrdersList() {
             const list = document.getElementById('orders-list');
             if (userExecutedOrders.length === 0) {
-                list.innerHTML = `
-                    <div style="text-align:center; padding:30px; font-size:0.8rem; color:var(--text-sub);">
-                        لا توجد طلبات منفذة بعد. قم بتنفيذ المهام من شاشة المعاملات لتظهر هنا.
-                    </div>
-                `;
+                list.innerHTML = `<div style="text-align:center; padding:30px; font-size:0.8rem; color:var(--text-sub);">لا توجد طلبات منفذة بعد.</div>`;
                 return;
             }
 
@@ -745,15 +763,12 @@
                 html += `
                     <div class="order-card">
                         <div class="order-header">
-                            <span>التوقيت: ${ord.time}</span>
+                            <span>الوقت: ${ord.time}</span>
                             <span class="order-status">مكتمل</span>
                         </div>
                         <div class="order-body">
                             <div class="order-name">${ord.name}</div>
-                            <div style="color:var(--primary-green); font-weight:bold;">+${ord.profit.toFixed(2)} EGP</div>
-                        </div>
-                        <div class="order-details-grid">
-                            <div>السعر الأساسي: EGP ${ord.price}</div>
+                            <div style="font-weight:bold; color:var(--primary-green);">+EGP ${ord.commission.toFixed(2)}</div>
                         </div>
                     </div>
                 `;
@@ -774,39 +789,37 @@
             const amount = parseFloat(document.getElementById('w-amount').value);
             const pass = document.getElementById('w-pass').value.trim();
 
-            if (!wallet || !amount || !pass) {
-                alert('يرجى ملء جميع بيانات السحب');
+            if (!wallet || isNaN(amount) || !pass) {
+                alert("يرجى ملء جميع بيانات السحب بدقة");
                 return;
             }
 
             if (pass !== currentUser.password) {
-                alert('كلمة المرور غير صحيحة');
+                alert("كلمة المرور غير صحيحة");
                 return;
             }
 
-            if (amount > currentUser.balance) {
-                alert('رصيد الحساب غير كافٍ لإتمام عملية السحب');
+            if (amount <= 0 || amount > currentUser.balance) {
+                alert("المبلغ المراد سحبه غير متوفر في رصيدك");
                 return;
             }
 
             currentUser.balance -= amount;
-            updateBalanceUI();
-            await saveUserBalance();
+            
+            try {
+                const userRef = window.doc(window.db, "users", currentUser.phone);
+                await window.updateDoc(userRef, { balance: currentUser.balance });
+            } catch (e) {
+                console.error(e);
+            }
 
+            updateBalanceUI();
             closeWithdrawModal();
-            alert('تم تقديم طلب السحب بنجاح وسيتم المراجعة قريباً.');
+            alert("تم إرسال طلب السحب بنجاح وسيتم المراجعة قريباً!");
+            
             document.getElementById('w-wallet').value = '';
             document.getElementById('w-amount').value = '';
             document.getElementById('w-pass').value = '';
-        }
-
-        function logout() {
-            currentUser = { phone: "", balance: 0.00, password: "" };
-            hasActiveSubscription = false;
-            document.getElementById('app-content').style.display = 'none';
-            document.getElementById('view-auth').classList.add('active');
-            document.getElementById('auth-phone').value = '';
-            document.getElementById('auth-pass').value = '';
         }
     </script>
 </body>
