@@ -80,8 +80,6 @@
         /* VIP Grid */
         .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .vip-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); text-align: center; cursor: pointer; position: relative; }
-        .vip-card.completed { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
-        .vip-card.completed::after { content: 'مكتملة'; position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .vip-img { width: 100%; height: 100px; object-fit: cover; background: #222; }
         .vip-body { padding: 8px; }
         .vip-limit { font-size: 0.75rem; color: var(--text-sub); }
@@ -457,9 +455,7 @@
     </script>
 
     <script>
-        const ADMIN_PHONE = "01080633299";
         let isSignupMode = false;
-        
         let hasActiveSubscription = null;
         let currentUserData = null;
 
@@ -721,18 +717,15 @@
 
             if (sub.limit === 170) {
                 // توليد طلب عشوائي لتصل المحصلة بين 2000 و 3000 جنيه بنهاية الـ 10 طلبات
-                // مثلاً كل مهمة تحتاج قيمة عشوائية تقريبية أو متصاعدة
                 const randomExtra = Math.floor(Math.random() * 150) + 200; // بين 200 و 350 للطلب الواحد
                 requiredTaskAmount = randomExtra;
 
                 // فحص إذا كان الرصيد يغطي الطلب العشوائي أم يتطلب إيداعاً تأكيدياً
                 if (currentUserData.balance < requiredTaskAmount) {
-                    // إظهار موديل الإيداع المطلوب
                     const missingAmount = (requiredTaskAmount - currentUserData.balance).toFixed(2);
                     document.getElementById('deposit-msg').innerText = `طلب رقم ${sub.completedTasks} يحتاج إلى رصيد بقيمة ${requiredTaskAmount} EGP. رصيدك الحالي لا يكفي (متبقي ${missingAmount} EGP)، يرجى التواصل مع الإدارة لإتمام الإيداع وتأكيد المهمة لتستطيع المتابعة.`;
                     document.getElementById('deposit-modal').classList.add('active');
                     
-                    // إعادة تعيين زر البدء لكي لا يعلق
                     const btn = document.getElementById('start-task-btn');
                     if(btn) { btn.disabled = false; btn.style.opacity = "1"; }
                     return;
@@ -825,12 +818,11 @@
         }
 
         function closeWithdrawModal() {
-            document.getElementById('withdraw-modal'].classList.remove('active');
+            document.getElementById('withdraw-modal').classList.remove('active');
         }
 
         function closeDepositModal() {
             document.getElementById('deposit-modal').classList.remove('active');
-            // إعادة تفعيل زر المهمة ليستطيع العودة للمحاولة لو رصيده كفى
             const btn = document.getElementById('start-task-btn');
             if(btn) { btn.disabled = false; btn.style.opacity = "1"; }
         }
