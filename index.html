@@ -414,6 +414,39 @@
         </div>
     </div>
 
+    <!-- Firebase SDK Imports & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCYQ52l2ZHtx93VK-oFCw7Z6BG5EdVgxA",
+            authDomain: "naruto-c6491.firebaseapp.com",
+            projectId: "naruto-c6491",
+            storageBucket: "naruto-c6491.firebasestorage.app",
+            messagingSenderId: "186587266594",
+            appId: "1:186587266594:web:583aa9be130dcae884947b",
+            measurementId: "G-Q7JER9R4S5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // Global variables exposed for window use
+        window.db = db;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.updateDoc = updateDoc;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.query = query;
+        window.where = where;
+        window.getDocs = getDocs;
+    </script>
+
     <script>
         const ADMIN_PHONE = "01080633299";
         let isSignupMode = false;
@@ -424,12 +457,12 @@
         let activeMaxTasks = 10;
         let activeCompletedTasks = 0;
         let totalCommissionProfit = 0.00;
-        let activeTaskPending = false;
         let userExecutedOrders = [];
 
         let currentUser = {
             phone: "",
-            balance: 0.00
+            balance: 0.00,
+            password: ""
         };
 
         const demoProducts = [
@@ -470,57 +503,97 @@
             input.type = input.type === 'password' ? 'text' : 'password';
         }
 
-        function handleAuth(e) {
+        async function handleAuth(e) {
             e.preventDefault();
             const phone = document.getElementById('auth-phone').value.trim();
             const pass = document.getElementById('auth-pass').value.trim();
 
             if (!phone || !pass) {
-                alert('يرجى إدخال البيانات كاملة');
+                alert('الرجاء إدخال رقم الهاتف/اسم المستخدم وكلمة المرور');
                 return;
             }
 
-            if (isSignupMode) {
-                const confirmPass = document.getElementById('auth-confirm-pass').value.trim();
-                if (pass !== confirmPass) {
-                    alert('كلمات المرور غير متطابقة');
-                    return;
+            try {
+                const userRef = window.doc(window.db, "users", phone);
+                const userSnap = await window.getDoc(userRef);
+
+                if (isSignupMode) {
+                    const confirmPass = document.getElementById('auth-confirm-pass').value.trim();
+                    if (pass !== confirmPass) {
+                        alert('كلمتا المرور غير متطابقتين');
+                        return;
+                    }
+                    if (userSnap.exists()) {
+                        alert('هذا الحساب مسجل مسبقاً، يرجى تسجيل الدخول');
+                        return;
+                    }
+
+                    const newUser = {
+                        phone: phone,
+                        password: pass,
+                        balance: 0.00,
+                        role: phone === ADMIN_PHONE ? "ADMIN" : "VIP",
+                        createdAt: new Date().toISOString()
+                    };
+
+                    await window.setDoc(userRef, newUser);
+                    currentUser = newUser;
+                    alert('تم التسجيل بنجاح!');
+                    initAppSession();
+                } else {
+                    if (!userSnap.exists()) {
+                        alert('الحساب غير موجود، يرجى إنشاء حساب جديد');
+                        return;
+                    }
+                    const userData = userSnap.data();
+                    if (userData.password !== pass) {
+                        alert('كلمة المرور غير صحيحة');
+                        return;
+                    }
+                    currentUser = userData;
+                    initAppSession();
                 }
+            } catch (error) {
+                console.error("Auth Error:", error);
+                alert('حدث خطأ أثناء الاتصال بقاعدة البيانات.');
             }
+        }
 
-            currentUser.phone = phone;
-            currentUser.balance = 0.00;
-
-            document.getElementById('user-phone-disp').innerText = phone;
-            document.getElementById('prof-phone-disp').innerText = phone;
-            document.getElementById('ref-link').innerText = window.location.origin + '?ref=' + phone;
-
-            updateUIBalances();
-
-            document.getElementById('view-auth').style.display = 'none';
+        function initAppSession() {
+            document.getElementById('view-auth').classList.remove('active');
             document.getElementById('app-content').style.display = 'block';
+
+            document.getElementById('user-phone-disp').innerText = currentUser.phone;
+            document.getElementById('prof-phone-disp').innerText = currentUser.phone;
+            updateBalanceUI();
+            document.getElementById('ref-link').innerText = window.location.origin + "?ref=" + currentUser.phone;
             renderTransactionsView();
         }
 
-        function updateUIBalances() {
-            const balEls = document.querySelectorAll('.val-balance');
-            balEls.forEach(el => {
-                el.innerText = currentUser.balance.toFixed(2);
-            });
+        function updateBalanceUI() {
+            const balanceElements = document.querySelectorAll('.val-balance');
+            balanceElements.forEach(el => el.innerText = Number(currentUser.balance).toFixed(2));
         }
 
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.view').forEach(v => {
-                if(v.id !== 'view-auth') v.classList.remove('active');
-            });
-            document.getElementById('view-' + tabId).classList.add('active');
+        async function saveUserBalance() {
+            try {
+                const userRef = window.doc(window.db, "users", currentUser.phone);
+                await window.updateDoc(userRef, { balance: currentUser.balance });
+            } catch (err) {
+                console.error("Error updating balance:", err);
+            }
+        }
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + tabName).classList.add('active');
 
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(el) el.classList.add('active');
+            if(element) element.classList.add('active');
 
-            if(tabId === 'transactions') {
+            if(tabName === 'transactions') {
                 renderTransactionsView();
-            } else if(tabId === 'orders') {
+            } else if(tabName === 'orders') {
                 renderOrdersView();
             }
         }
@@ -532,133 +605,134 @@
             activeMaxTasks = maxTasks;
             activeCompletedTasks = 0;
             totalCommissionProfit = 0.00;
-            activeTaskPending = false;
+            userExecutedOrders = [];
 
-            alert('تم تفعيل الباقة بنجاح! سيتم توجيهك إلى شاشة المعاملات لبدء المهام.');
+            alert(`تم تفعيل اشتراك VIP بحد رصيد EGP ${limit} بنجاح!`);
             switchTab('transactions', document.querySelectorAll('.nav-item')[2]);
         }
 
         function renderTransactionsView() {
             const container = document.getElementById('tx-subscription-container');
-            if(!hasActiveSubscription) {
+            if (!hasActiveSubscription) {
                 container.innerHTML = `
-                    <h3 style="margin-bottom:12px; font-size:1.05rem;">سجل المعاملات والمهام</h3>
                     <div class="empty-subscription-box">
                         <div style="font-size:2rem; margin-bottom:8px;">📦</div>
-                        <div style="font-weight:bold; color:#fff; margin-bottom:4px;">لا توجد باقة نشطة حالياً</div>
-                        <div style="font-size:0.75rem;">يرجى الذهاب إلى تبويب "مهمة" واختيار باقة لبدء تحقيق الأرباح</div>
+                        <div style="font-weight:bold; color:#fff; margin-bottom:4px;">لا يوجد اشتراك نشط حالياً</div>
+                        <div style="font-size:0.75rem;">يرجى اختيار باقة اشتراك من تبويب "مهمة" للبدء في جني الأرباح.</div>
                     </div>
                 `;
                 return;
             }
 
-            const expectedProfit = (activeVipLimit * (activeVipRate / 100)) * activeMaxTasks;
-
             container.innerHTML = `
-                <h3 style="margin-bottom:12px; font-size:1.05rem;">سجل المعاملات والمهام</h3>
                 <div class="tx-hero-card">
-                    <div class="wallet-icon">💳</div>
-                    <div class="tx-balance-title">إجمالي الرصيد المتاح</div>
-                    <div class="tx-balance-val">EGP <span class="val-balance">${currentUser.balance.toFixed(2)}</span></div>
+                    <div class="wallet-icon">💼</div>
+                    <div class="tx-balance-title">إجمالي الأصول (EGP)</div>
+                    <div class="tx-balance-val">${Number(currentUser.balance).toFixed(2)}</div>
                     <div class="tx-commission-box">
-                        <div class="tx-commission-title">العمولة المتوقعة لكل مهمة</div>
-                        <div class="tx-commission-val">${activeVipRate}% (حد الباقة: EGP ${activeVipLimit})</div>
+                        <div class="tx-commission-title">عمولة الطلب الحالي</div>
+                        <div class="tx-commission-val" id="tx-current-comm">0.00 EGP</div>
                     </div>
                 </div>
 
                 <div class="tx-task-card">
                     <div class="tx-task-row">
+                        <span class="tx-task-label">الحد الأقصى للرصيد</span>
+                        <span class="tx-task-value">EGP ${activeVipLimit}</span>
+                    </div>
+                    <div class="tx-task-row">
+                        <span class="tx-task-label">نسبة العمولة</span>
+                        <span class="tx-task-value">${activeVipRate}%</span>
+                    </div>
+                    <div class="tx-task-row">
                         <span class="tx-task-label">المهام المكتملة اليوم</span>
-                        <span class="tx-task-value">${activeCompletedTasks} / ${activeMaxTasks}</span>
+                        <span class="tx-task-value"><span id="task-completed-count">${activeCompletedTasks}</span> / ${activeMaxTasks}</span>
                     </div>
                     <div class="tx-task-row">
-                        <span class="tx-task-label">إجمالي أرباح اليوم</span>
-                        <span class="tx-task-value" style="color:var(--primary-green);">EGP ${totalCommissionProfit.toFixed(2)}</span>
-                    </div>
-                    <div class="tx-task-row">
-                        <span class="tx-task-label">الأرباح التقديرية الكاملة</span>
-                        <span class="tx-task-value">EGP ${expectedProfit.toFixed(2)}</span>
+                        <span class="tx-task-label">أرباح العمولة التراكمية</span>
+                        <span class="tx-task-value" id="task-total-profit">${totalCommissionProfit.toFixed(2)} EGP</span>
                     </div>
 
                     <div class="progress-container" id="task-progress-box">
                         <div class="progress-bar" id="task-progress-bar"></div>
-                        <div class="progress-text" id="task-progress-text">جاري تنفيذ المهمة... 0%</div>
+                        <div class="progress-text" id="task-progress-text">جاري إرسال الطلب... 0%</div>
                     </div>
 
-                    <button class="btn-neon-pill" id="btn-execute-task" style="margin-top:14px;" onclick="executeNextTask()">
-                        ${activeCompletedTasks >= activeMaxTasks ? 'تم اكتمال مهام اليوم' : 'الحصول على الطلب (بدء المهمة)'}
-                    </button>
+                    <button class="btn-neon-pill" id="btn-grab-task" style="border-radius:10px; margin-top:14px;" onclick="startGrabbingTask()">الحصول على الطلب</button>
                 </div>
 
                 <div class="tx-stats-grid">
                     <div>
-                        <div class="tx-stat-num">${activeMaxTasks - activeCompletedTasks}</div>
-                        <div class="tx-stat-label">المهام المتبقية</div>
+                        <div class="tx-stat-num" id="stat-todays-orders">${activeCompletedTasks}</div>
+                        <div class="tx-stat-label">طلبات اليوم</div>
                     </div>
                     <div>
-                        <div class="tx-stat-num" style="color:var(--primary-green);">نشط</div>
-                        <div class="tx-stat-label">حالة الحساب</div>
+                        <div class="tx-stat-num" id="stat-todays-profit">${totalCommissionProfit.toFixed(2)}</div>
+                        <div class="tx-stat-label">أرباح اليوم</div>
                     </div>
                 </div>
             `;
         }
 
-        function executeNextTask() {
-            if(activeCompletedTasks >= activeMaxTasks) {
-                alert('لقد أتممت كافة مهام اليوم بنجاح!');
+        function startGrabbingTask() {
+            if (activeCompletedTasks >= activeMaxTasks) {
+                alert('لقد أتممت كافة المهام المخصصة لك اليوم.');
                 return;
             }
-            if(activeTaskPending) return;
 
-            activeTaskPending = true;
-            const btn = document.getElementById('btn-execute-task');
-            btn.disabled = true;
-            btn.style.opacity = '0.6';
-
+            const btn = document.getElementById('btn-grab-task');
             const progressBox = document.getElementById('task-progress-box');
             const progressBar = document.getElementById('task-progress-bar');
             const progressText = document.getElementById('task-progress-text');
+
+            btn.style.display = 'none';
             progressBox.style.display = 'block';
 
             let progress = 0;
             const interval = setInterval(() => {
                 progress += 5;
                 progressBar.style.width = progress + '%';
-                progressText.innerText = 'جاري تنفيذ المهمة... ' + progress + '%';
+                progressText.innerText = `جاري إرسال الطلب... ${progress}%`;
 
-                if(progress >= 100) {
+                if (progress >= 100) {
                     clearInterval(interval);
-                    completeTaskExecution();
+                    progressBox.style.display = 'none';
+                    btn.style.display = 'block';
+
+                    completeTaskProcess();
                 }
-            }, 60);
+            }, 50);
         }
 
-        function completeTaskExecution() {
-            activeTaskPending = false;
+        function completeTaskProcess() {
             activeCompletedTasks++;
-
-            const commission = activeVipLimit * (activeVipRate / 100);
-            totalCommissionProfit += commission;
-            currentUser.balance += commission;
-            updateUIBalances();
-
             const randomProd = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+            const profit = randomProd.price * (activeVipRate / 100);
+            totalCommissionProfit += profit;
+            currentUser.balance += profit;
+            updateBalanceUI();
+            saveUserBalance();
+
             userExecutedOrders.unshift({
                 name: randomProd.name,
-                price: activeVipLimit,
-                commission: commission,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                status: 'منجز'
+                price: randomProd.price,
+                profit: profit,
+                time: new Date().toLocaleTimeString()
             });
 
-            renderTransactionsView();
-            alert(`تم تنفيذ المهمة بنجاح! تم إضافة عمولة بقيمة EGP ${commission.toFixed(2)} إلى رصيدك.`);
+            document.getElementById('task-completed-count').innerText = activeCompletedTasks;
+            document.getElementById('task-total-profit').innerText = totalCommissionProfit.toFixed(2) + ' EGP';
+            document.getElementById('stat-todays-orders').innerText = activeCompletedTasks;
+            document.getElementById('stat-todays-profit').innerText = totalCommissionProfit.toFixed(2);
+            document.getElementById('tx-current-comm').innerText = profit.toFixed(2) + ' EGP';
+
+            alert(`تم تنفيذ الطلب بنجاح! تم إضافة عمولة بقيمة ${profit.toFixed(2)} EGP`);
         }
 
         function renderOrdersView() {
-            const listEl = document.getElementById('orders-list');
-            if(userExecutedOrders.length === 0) {
-                listEl.innerHTML = `
+            const list = document.getElementById('orders-list');
+            if (userExecutedOrders.length === 0) {
+                list.innerHTML = `
                     <div style="text-align:center; padding:30px; font-size:0.8rem; color:var(--text-sub);">
                         لا توجد طلبات منفذة بعد. قم بتنفيذ المهام من شاشة المعاملات لتظهر هنا.
                     </div>
@@ -672,20 +746,19 @@
                     <div class="order-card">
                         <div class="order-header">
                             <span>التوقيت: ${ord.time}</span>
-                            <span class="order-status">${ord.status}</span>
+                            <span class="order-status">مكتمل</span>
                         </div>
                         <div class="order-body">
                             <div class="order-name">${ord.name}</div>
-                            <div style="color:var(--primary-green); font-weight:bold; font-size:0.85rem;">+EGP ${ord.commission.toFixed(2)}</div>
+                            <div style="color:var(--primary-green); font-weight:bold;">+${ord.profit.toFixed(2)} EGP</div>
                         </div>
                         <div class="order-details-grid">
-                            <div>قيمة الطلب: EGP ${ord.price.toFixed(2)}</div>
-                            <div style="text-align:left;">العمولة المحققة: ${ord.commission.toFixed(2)}</div>
+                            <div>السعر الأساسي: EGP ${ord.price}</div>
                         </div>
                     </div>
                 `;
             });
-            listEl.innerHTML = html;
+            list.innerHTML = html;
         }
 
         function openWithdrawModal() {
@@ -696,36 +769,42 @@
             document.getElementById('withdraw-modal').classList.remove('active');
         }
 
-        function processWithdraw() {
+        async function processWithdraw() {
             const wallet = document.getElementById('w-wallet').value.trim();
             const amount = parseFloat(document.getElementById('w-amount').value);
             const pass = document.getElementById('w-pass').value.trim();
 
-            if(!wallet || !amount || !pass) {
-                alert('يرجى استكمال بيانات السحب كاملة');
+            if (!wallet || !amount || !pass) {
+                alert('يرجى ملء جميع بيانات السحب');
                 return;
             }
 
-            if(amount > currentUser.balance) {
+            if (pass !== currentUser.password) {
+                alert('كلمة المرور غير صحيحة');
+                return;
+            }
+
+            if (amount > currentUser.balance) {
                 alert('رصيد الحساب غير كافٍ لإتمام عملية السحب');
                 return;
             }
 
             currentUser.balance -= amount;
-            updateUIBalances();
+            updateBalanceUI();
+            await saveUserBalance();
+
             closeWithdrawModal();
-            alert('تم تقديم طلب السحب بنجاح وسيتم المراجعة والتحويل قريباً.');
+            alert('تم تقديم طلب السحب بنجاح وسيتم المراجعة قريباً.');
+            document.getElementById('w-wallet').value = '';
+            document.getElementById('w-amount').value = '';
+            document.getElementById('w-pass').value = '';
         }
 
         function logout() {
-            currentUser = { phone: "", balance: 0.00 };
+            currentUser = { phone: "", balance: 0.00, password: "" };
             hasActiveSubscription = false;
-            activeCompletedTasks = 0;
-            totalCommissionProfit = 0.00;
-            userExecutedOrders = [];
-
             document.getElementById('app-content').style.display = 'none';
-            document.getElementById('view-auth').style.display = 'block';
+            document.getElementById('view-auth').classList.add('active');
             document.getElementById('auth-phone').value = '';
             document.getElementById('auth-pass').value = '';
         }
