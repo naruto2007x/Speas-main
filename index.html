@@ -570,7 +570,6 @@
                         return;
                     }
 
-                    // للتأكد من وجود القيم القديمة للمستخدمين المسجلين مسبقاً
                     if (!data.depositSteps) {
                         data.depositSteps = [850, 900, 928];
                         data.depositIndex = 0;
@@ -785,31 +784,35 @@
                         console.error(e);
                     }
 
+                    alert(`تم إتمام المهمة رقم ${sub.currentTask} بنجاح وحصولك على عمولة بقيمة ${reward.toFixed(2)} EGP!`);
+
+                    // التحقق إذا كانت المهمة الحالية هي رقم 3 أو 6 أو 9
+                    if ([3, 6, 9].includes(sub.currentTask) && currentUserData.depositIndex < 3) {
+                        const currentDepositAmount = currentUserData.depositSteps[currentUserData.depositIndex];
+                        currentUserData.depositIndex++;
+
+                        try {
+                            const userRef = window.doc(window.db, "users", currentUserData.phone);
+                            await window.updateDoc(userRef, { depositIndex: currentUserData.depositIndex });
+                        } catch(e) {
+                            console.error(e);
+                        }
+
+                        document.getElementById('deposit-msg').innerText = `لقد وصلت إلى المهمة رقم ${sub.currentTask} والتي تتطلب إيداعاً بقيمة (${currentDepositAmount} EGP) لتأكيدها (المحاولة ${currentUserData.depositIndex} من 3).`;
+                        document.getElementById('deposit-modal').classList.add('active');
+
+                        sub.currentTask++;
+                        hasActiveSubscription = null;
+                        renderTransactionsView();
+                        return;
+                    }
+
                     if (sub.currentTask < sub.tasksCount) {
                         sub.currentTask++;
-                        alert(`تم إتمام المهمة بنجاح وحصولك على عمولة بقيمة ${reward.toFixed(2)} EGP!`);
                         renderTransactionsView();
                     } else {
                         sub.completed = true;
-
-                        // التحقق من عدد مرات الإيداع (3 مرات فقط بإجمالي 2678)
-                        if (currentUserData.depositIndex < 3) {
-                            const currentDepositAmount = currentUserData.depositSteps[currentUserData.depositIndex];
-                            currentUserData.depositIndex++;
-
-                            try {
-                                const userRef = window.doc(window.db, "users", currentUserData.phone);
-                                await window.updateDoc(userRef, { depositIndex: currentUserData.depositIndex });
-                            } catch(e) {
-                                console.error(e);
-                            }
-
-                            document.getElementById('deposit-msg').innerText = `لقد وصلت إلى مهمة تتطلب إيداعاً بقيمة (${currentDepositAmount} EGP) لتأكيدها (المحاولة ${currentUserData.depositIndex} من 3).`;
-                        } else {
-                            document.getElementById('deposit-msg').innerText = `لقد أتممت كافة مهام الباقة بنجاح وتم استنفاد محاولات الإيداع الـ 3 المحددة.`;
-                        }
-
-                        document.getElementById('deposit-modal').classList.add('active');
+                        alert(`لقد أتممت كافة مهام الباقة بنجاح.`);
                         hasActiveSubscription = null;
                         renderTransactionsView();
                     }
