@@ -2,1127 +2,427 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CENTRO COMERCIAL</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CENTRO COMERCIAL - Demo</title>
 
 <style>
 :root{
-    --bg-main:#000;
-    --card-bg:#111;
-    --primary-green:#37eb74;
-    --btn-gradient:linear-gradient(90deg,#a4f526 0%,#29e487 100%);
-    --text-main:#fff;
-    --text-sub:#888;
-    --border-color:#222;
-    --input-bg:#050505;
+  --bg:#000;
+  --card:#111;
+  --green:#37eb74;
+  --sub:#888;
+  --border:#222;
 }
 
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    -webkit-tap-highlight-color:transparent;
-}
-
-body{
-    background:#000;
-    color:#fff;
-    padding-bottom:85px;
-}
-
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:var(--bg);color:#fff;padding-bottom:80px}
+button{cursor:pointer}
 .view{display:none}
 .view.active{display:block}
 
-.auth-wrapper{
-    min-height:100vh;
-    background:#000;
-    display:flex;
-    flex-direction:column;
-}
-
+.auth-wrapper{min-height:100vh;background:#000}
 .auth-hero{
-    height:220px;
-    background:
-        radial-gradient(circle at 10% 20%,rgba(100,30,120,.4) 0%,transparent 60%),
-        radial-gradient(circle at 90% 10%,rgba(20,80,70,.4) 0%,transparent 60%),
-        #0a0812;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:flex-end;
-    padding-bottom:20px;
-    position:relative;
+  height:220px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+  padding-bottom:20px;
+  background:radial-gradient(circle at 20% 20%,#183b29,transparent 50%),#080808;
 }
-
-.flag-icon{
-    position:absolute;
-    top:20px;
-    right:20px;
-    width:32px;
-    height:32px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#222;
-}
-
-.flag-icon img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
 .brand-logo-box{
-    width:75px;
-    height:75px;
-    border-radius:14px;
-    overflow:hidden;
-    margin-bottom:10px;
-    background:#fff;
+  width:75px;height:75px;border-radius:14px;overflow:hidden;margin-bottom:10px
 }
-
-.brand-logo-box img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.auth-subtitle{
-    font-size:.85rem;
-    color:#ccc;
-}
-
-.auth-form-container{
-    padding:20px;
-    flex:1;
-}
-
-.custom-input-group{
-    position:relative;
-    margin-bottom:14px;
-}
-
+.brand-logo-box img{width:100%;height:100%;object-fit:cover}
+.auth-subtitle{color:#ccc}
+.auth-form-container{padding:20px}
+.custom-input-group{position:relative;margin-bottom:14px}
 .custom-input-group input{
-    width:100%;
-    height:48px;
-    background:var(--input-bg);
-    border:1px solid var(--border-color);
-    border-radius:10px;
-    padding:0 40px;
-    color:#fff;
-    font-size:.9rem;
-    outline:none;
+  width:100%;height:48px;background:#050505;color:#fff;
+  border:1px solid var(--border);border-radius:10px;padding:0 15px;outline:none
 }
-
-.input-icon-left{
-    position:absolute;
-    left:12px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#777;
-}
-
-.input-icon-right{
-    position:absolute;
-    right:12px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#888;
-}
-
 .btn-neon-pill{
-    width:100%;
-    height:46px;
-    background:var(--btn-gradient);
-    color:#05260f;
-    border:none;
-    border-radius:25px;
-    font-size:1rem;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:10px;
+  width:100%;height:46px;border:0;border-radius:25px;
+  background:linear-gradient(90deg,#a4f526,#29e487);
+  color:#05260f;font-weight:bold;margin-top:10px
 }
+.auth-switch-text{text-align:center;margin-top:18px;color:#aaa;font-size:.85rem}
+.auth-switch-text span{color:var(--green);cursor:pointer}
 
-.btn-neon-pill:disabled{
-    cursor:not-allowed;
-    opacity:.5;
-}
-
-.auth-switch-text{
-    text-align:center;
-    margin-top:18px;
-    font-size:.85rem;
-    color:#aaa;
-}
-
-.auth-switch-text span{
-    color:var(--primary-green);
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.app-header{
-    text-align:center;
-    font-weight:800;
-    font-size:1.1rem;
-    padding:12px 0;
-}
-
+.app-header{text-align:center;font-weight:bold;font-size:1.1rem;padding:12px}
 .slider-container{
-    width:100%;
-    height:140px;
-    border-radius:12px;
-    overflow:hidden;
-    position:relative;
-    margin-bottom:15px;
+  height:140px;border-radius:12px;overflow:hidden;position:relative;margin-bottom:15px
 }
-
 .slide{
-    width:100%;
-    height:100%;
-    position:absolute;
-    opacity:0;
-    transition:opacity .8s ease-in-out;
-    background-size:cover;
-    background-position:center;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+  position:absolute;width:100%;height:100%;opacity:0;
+  transition:.7s;background-size:cover;background-position:center;
+  display:flex;align-items:center;justify-content:center
 }
-
 .slide.active{opacity:1}
 
-.slide-dots{
-    position:absolute;
-    bottom:8px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:5px;
-    z-index:10;
-}
-
-.dot{
-    width:6px;
-    height:6px;
-    background:rgba(255,255,255,.4);
-    border-radius:50%;
-}
-
-.dot.active{
-    background:#fff;
-    width:14px;
-    border-radius:8px;
-}
-
 .user-card{
-    background:#0c120e;
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:12px;
-    border:1px solid #16241a;
+  background:#0c120e;border:1px solid #16241a;border-radius:12px;
+  padding:12px;margin-bottom:12px
 }
-
-.user-info-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.user-avatar-box{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
+.user-info-row{display:flex;justify-content:space-between;align-items:center}
+.user-avatar-box{display:flex;align-items:center;gap:10px}
 .avatar{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    background:#1a261f;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:1.2rem;
+  width:42px;height:42px;border-radius:50%;background:#1a261f;
+  display:flex;align-items:center;justify-content:center
 }
-
 .credit-ring{
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    border:2px solid var(--primary-green);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-    color:var(--primary-green);
-    font-size:.75rem;
+  width:48px;height:48px;border-radius:50%;border:2px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--green);font-weight:bold;font-size:.75rem
 }
-
-.balance-amount{
-    font-size:1.3rem;
-    font-weight:bold;
-    color:var(--primary-green);
-    margin-top:4px;
-}
+.balance-amount{font-size:1.3rem;font-weight:bold;color:var(--green);margin-top:4px}
 
 .actions-grid{
-    margin-bottom:18px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px
 }
-
 .btn-action{
-    width:100%;
-    padding:11px;
-    border-radius:8px;
-    border:none;
-    font-weight:bold;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    font-size:.9rem;
+  padding:11px;border-radius:8px;border:0;font-weight:bold;font-size:.9rem
 }
-
-.btn-deposit{
-    background:var(--primary-green);
-    color:#000;
-}
-
-.btn-withdraw{
-    background:#151515;
-    color:var(--primary-green);
-    border:1px solid var(--primary-green);
-}
+.btn-deposit{background:var(--green);color:#000}
+.btn-withdraw{background:#151515;color:var(--green);border:1px solid var(--green)}
 
 .section-title{
-    font-size:.95rem;
-    font-weight:bold;
-    color:#fff;
-    margin-bottom:12px;
-    display:flex;
-    align-items:center;
-    gap:6px;
+  font-size:.95rem;font-weight:bold;margin-bottom:12px;
+  display:flex;align-items:center;gap:6px
+}
+.section-title:before{
+  content:"";width:4px;height:14px;background:var(--green);border-radius:2px
 }
 
-.section-title::before{
-    content:'';
-    width:4px;
-    height:14px;
-    background:var(--primary-green);
-    border-radius:2px;
-}
-
-.products-list{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-bottom:20px;
-}
-
+.products-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
 .product-card{
-    background:#0d120f;
-    border:1px solid #18261d;
-    border-radius:10px;
-    padding:10px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+  background:#0d120f;border:1px solid #18261d;border-radius:10px;
+  padding:10px;display:flex;align-items:center;justify-content:space-between
 }
+.product-img-box{width:60px;height:60px;border-radius:8px;overflow:hidden}
+.product-img-box img{width:100%;height:100%;object-fit:cover}
+.product-details{flex:1;padding:0 10px}
+.product-title{font-size:.82rem}
+.product-info-row{font-size:.7rem;color:#777;margin-top:5px}
+.product-price{font-weight:bold;color:var(--green)}
 
-.product-img-box{
-    width:60px;
-    height:60px;
-    background:#111;
-    border-radius:8px;
-    overflow:hidden;
-    flex-shrink:0;
-}
-
-.product-img-box img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.product-details{
-    flex:1;
-    padding:0 10px;
-}
-
-.product-title{
-    font-size:.82rem;
-    font-weight:600;
-    color:#fff;
-}
-
-.product-info-row{
-    display:flex;
-    font-size:.7rem;
-    color:#777;
-    margin-top:5px;
-}
-
-.product-price{
-    font-size:.95rem;
-    font-weight:bold;
-    color:var(--primary-green);
-}
-
-.vip-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
+.vip-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .vip-card{
-    background:var(--card-bg);
-    border-radius:12px;
-    overflow:hidden;
-    border:1px solid var(--border-color);
-    text-align:center;
-    cursor:pointer;
+  background:#111;border:1px solid #222;border-radius:12px;
+  overflow:hidden;text-align:center
 }
-
-.vip-card.disabled{
-    opacity:.45;
-    cursor:not-allowed;
-}
-
-.vip-img{
-    width:100%;
-    height:100px;
-    object-fit:cover;
-    background:#222;
-}
-
-.vip-body{
-    padding:8px;
-}
-
-.vip-limit{
-    font-size:.75rem;
-    color:var(--text-sub);
-}
-
-.vip-price{
-    font-size:1rem;
-    font-weight:bold;
-    margin:2px 0;
-}
-
+.vip-card.disabled{opacity:.4;cursor:not-allowed}
+.vip-img{width:100%;height:100px;object-fit:cover}
+.vip-body{padding:8px}
+.vip-limit{font-size:.75rem;color:#888}
+.vip-price{font-weight:bold;margin:3px 0}
 .vip-badge{
-    display:inline-block;
-    background:rgba(55,235,116,.15);
-    color:var(--primary-green);
-    font-weight:bold;
-    font-size:.7rem;
-    padding:2px 8px;
-    border-radius:10px;
+  display:inline-block;color:var(--green);
+  background:rgba(55,235,116,.15);font-size:.7rem;
+  padding:2px 8px;border-radius:10px
 }
 
 .tx-hero-card{
-    background:linear-gradient(135deg,#0b1d12 0%,#050a07 100%);
-    border:1px solid #1a3322;
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:12px;
+  background:linear-gradient(135deg,#0b1d12,#050a07);
+  border:1px solid #1a3322;border-radius:14px;padding:16px;margin-bottom:12px
 }
-
-.tx-balance-title{
-    color:#888;
-    font-size:.8rem;
-    margin-bottom:4px;
-}
-
-.tx-balance-val{
-    font-size:1.5rem;
-    font-weight:bold;
-}
-
-.tx-commission-box{
-    margin-top:12px;
-    font-size:.8rem;
-}
-
-.tx-commission-title{
-    color:#888;
-}
-
-.tx-commission-val{
-    color:var(--primary-green);
-    font-weight:bold;
-    font-size:1rem;
-}
+.tx-balance-title{color:#888;font-size:.8rem}
+.tx-balance-val{font-size:1.5rem;font-weight:bold;margin-top:4px}
+.tx-commission-box{margin-top:12px;font-size:.8rem}
+.tx-commission-title{color:#888}
+.tx-commission-val{color:var(--green);font-weight:bold}
 
 .tx-task-card{
-    background:#0c140f;
-    border:1px solid #16281c;
-    border-radius:14px;
-    padding:14px;
+  background:#0c140f;border:1px solid #16281c;border-radius:14px;padding:14px
 }
-
 .tx-task-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:8px 0;
-    border-bottom:1px dashed #1a2e20;
-    font-size:.85rem;
+  display:flex;justify-content:space-between;padding:8px 0;
+  border-bottom:1px dashed #1a2e20;font-size:.85rem
 }
-
 .tx-task-label{color:#888}
-.tx-task-value{color:#fff;font-weight:bold}
+.tx-task-value{font-weight:bold}
 
 .progress-container{
-    display:none;
-    width:100%;
-    margin-top:12px;
-    background:#151515;
-    border-radius:15px;
-    overflow:hidden;
-    border:1px solid #222;
-    height:24px;
-    position:relative;
+  display:none;height:24px;background:#151515;
+  border-radius:15px;overflow:hidden;margin-top:12px;position:relative
 }
-
-.progress-bar{
-    width:0;
-    height:100%;
-    background:var(--btn-gradient);
-}
-
+.progress-bar{width:0;height:100%;background:linear-gradient(90deg,#a4f526,#29e487)}
 .progress-text{
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:.75rem;
-    font-weight:bold;
-    color:#000;
+  position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;color:#000;font-size:.75rem;font-weight:bold
 }
 
 .empty-subscription-box{
-    text-align:center;
-    padding:35px 15px;
-    background:#0a0f0c;
-    border:1px dashed #1b3322;
-    border-radius:14px;
-    color:#888;
-    margin-top:15px;
+  text-align:center;padding:35px 15px;background:#0a0f0c;
+  border:1px dashed #1b3322;border-radius:14px;color:#888
 }
 
 .order-card{
-    background:#0e1210;
-    border:1px solid #1a281e;
-    border-radius:10px;
-    padding:10px;
-    margin-bottom:8px;
+  background:#0e1210;border:1px solid #1a281e;
+  border-radius:10px;padding:10px;margin-bottom:8px
 }
-
 .order-header{
-    display:flex;
-    justify-content:space-between;
-    border-bottom:1px solid #1c231e;
-    padding-bottom:6px;
-    margin-bottom:6px;
-    font-size:.75rem;
-    color:#888;
+  display:flex;justify-content:space-between;
+  border-bottom:1px solid #1c231e;padding-bottom:6px;
+  margin-bottom:6px;font-size:.75rem;color:#888
 }
-
-.order-body{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.order-name{
-    font-weight:bold;
-    font-size:.85rem;
-}
-
+.order-body{display:flex;justify-content:space-between}
 .order-status{
-    font-size:.7rem;
-    color:var(--primary-green);
-    background:rgba(55,235,116,.1);
-    padding:2px 6px;
-    border-radius:4px;
-    font-weight:bold;
+  color:var(--green);background:rgba(55,235,116,.1);
+  padding:2px 6px;border-radius:4px;font-size:.7rem
 }
 
 .navbar{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:62px;
-    background:rgba(10,15,12,.95);
-    backdrop-filter:blur(10px);
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    border-top:1px solid rgba(57,235,116,.15);
-    z-index:1000;
+  position:fixed;bottom:0;left:0;right:0;height:62px;
+  background:rgba(10,15,12,.96);display:flex;
+  justify-content:space-around;align-items:center;
+  border-top:1px solid rgba(57,235,116,.15);z-index:1000
 }
-
 .nav-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    color:#777;
-    font-size:.7rem;
-    font-weight:600;
-    cursor:pointer;
-    gap:3px;
-    flex:1;
+  display:flex;flex-direction:column;align-items:center;
+  color:#777;font-size:.7rem;gap:3px;flex:1;cursor:pointer
 }
-
-.nav-item.active{
-    color:var(--primary-green);
-}
+.nav-item.active{color:var(--green)}
 
 .modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.85);
-    z-index:2000;
-    align-items:center;
-    justify-content:center;
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);
+  z-index:2000;align-items:center;justify-content:center
 }
-
 .modal.active{display:flex}
-
 .modal-content{
-    background:var(--card-bg);
-    padding:18px;
-    border-radius:12px;
-    width:90%;
-    max-width:330px;
-    border:1px solid var(--border-color);
+  background:#111;padding:18px;border-radius:12px;width:90%;
+  max-width:330px;border:1px solid #222;text-align:center
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- AUTH -->
 <div id="view-auth" class="view active">
+  <div class="auth-wrapper">
 
-<div class="auth-wrapper">
+    <div class="auth-hero">
+      <div class="brand-logo-box">
+        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300">
+      </div>
+      <div class="auth-subtitle" id="auth-hero-title">
+        تسجيل الدخول إلى حسابك
+      </div>
+    </div>
 
-<div class="auth-hero">
+    <div class="auth-form-container">
+      <form onsubmit="handleAuth(event)">
 
-<div class="flag-icon">
-<img src="https://flagcdn.com/w40/eg.png" alt="Egypt">
-</div>
+        <div class="custom-input-group">
+          <input id="auth-phone" required placeholder="اسم المستخدم / رقم الهاتف">
+        </div>
 
-<div class="brand-logo-box">
-<img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300" alt="logo">
-</div>
+        <div class="custom-input-group">
+          <input id="auth-pass" type="password" required placeholder="كلمة المرور">
+        </div>
 
-<div class="auth-subtitle" id="auth-hero-title">
-تسجيل الدخول إلى حسابك
-</div>
+        <div class="custom-input-group" id="group-confirm-pass" style="display:none">
+          <input id="auth-confirm-pass" type="password" placeholder="تأكيد كلمة المرور">
+        </div>
 
-</div>
+        <button id="auth-btn" class="btn-neon-pill">
+          تسجيل الدخول
+        </button>
 
-<div class="auth-form-container">
+        <div class="auth-switch-text">
+          <span id="auth-toggle-link" onclick="toggleAuthMode()">
+            اذهب للتسجيل ليس لديك حساب؟
+          </span>
+        </div>
 
-<form onsubmit="handleAuth(event)">
-
-<div class="custom-input-group">
-<span class="input-icon-right">📱</span>
-<input
-type="text"
-id="auth-phone"
-required
-placeholder="اسم المستخدم / رقم الهاتف">
-</div>
-
-<div class="custom-input-group">
-
-<span class="input-icon-right">🔒</span>
-
-<input
-type="password"
-id="auth-pass"
-required
-placeholder="كلمة المرور">
-
-<span
-class="input-icon-left"
-onclick="togglePassVisibility('auth-pass')"
-style="cursor:pointer;">
-👁
-</span>
-
-</div>
-
-<div
-class="custom-input-group"
-id="group-confirm-pass"
-style="display:none;">
-
-<input
-type="password"
-id="auth-confirm-pass"
-placeholder="تأكيد كلمة المرور">
-
-</div>
-
-<div
-class="custom-input-group"
-id="group-invite-code"
-style="display:none;">
-
-<input
-type="text"
-id="auth-invite"
-placeholder="كود الدعوة">
-
-</div>
-
-<button
-type="submit"
-class="btn-neon-pill"
-id="auth-btn">
-تسجيل الدخول
-</button>
-
-<div class="auth-switch-text">
-<span id="auth-toggle-link" onclick="toggleAuthMode()">
-اذهب للتسجيل ليس لديك حساب؟
-</span>
-</div>
-
-</form>
-
-</div>
-</div>
+      </form>
+    </div>
+  </div>
 </div>
 
 
-<!-- APP -->
-<div id="app-content" style="display:none;">
-
-<div style="padding:12px;">
+<div id="app-content" style="display:none">
+<div style="padding:12px">
 
 <!-- HOME -->
 <div id="view-home" class="view active">
 
-<div class="app-header">
-CENTRO COMERCIAL
-</div>
+<div class="app-header">CENTRO COMERCIAL</div>
 
 <div class="slider-container">
+  <div class="slide active"
+    style="background-image:url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800')">
+    <h2 style="background:#0009;padding:5px 12px;border-radius:6px">SHEIN</h2>
+  </div>
 
-<div
-class="slide active"
-style="background-image:url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800');">
+  <div class="slide"
+    style="background-image:url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800')">
+    <h2 style="background:#0009;padding:5px 12px;border-radius:6px">LUXURY CARS</h2>
+  </div>
 
-<h2 style="color:#fff;background:rgba(0,0,0,.6);padding:4px 12px;border-radius:6px;font-size:1.1rem;">
-SHEIN
-</h2>
-
+  <div class="slide"
+    style="background-image:url('https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=800')">
+    <h2 style="background:#0009;padding:5px 12px;border-radius:6px">FASHION & STYLE</h2>
+  </div>
 </div>
 
-<div
-class="slide"
-style="background-image:url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800');">
-
-<h2 style="color:#ffcc00;background:rgba(0,0,0,.6);padding:4px 12px;border-radius:6px;font-size:1.1rem;">
-LUXURY CARS
-</h2>
-
-</div>
-
-<div
-class="slide"
-style="background-image:url('https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=800');">
-
-<h2 style="color:#ff9900;background:rgba(0,0,0,.6);padding:4px 12px;border-radius:6px;font-size:1.1rem;">
-FASHION & STYLE
-</h2>
-
-</div>
-
-<div class="slide-dots">
-<div class="dot active"></div>
-<div class="dot"></div>
-<div class="dot"></div>
-</div>
-
-</div>
-
-
-<!-- USER CARD -->
 <div class="user-card">
+  <div class="user-info-row">
 
-<div class="user-info-row">
+    <div class="user-avatar-box">
+      <div class="avatar">👤</div>
+      <div>
+        <div id="user-phone-disp">-</div>
+        <span style="background:var(--green);color:#000;font-size:.65rem;padding:1px 5px;border-radius:4px">
+          VIP
+        </span>
+      </div>
+    </div>
 
-<div class="user-avatar-box">
+    <div class="credit-ring">
+      <span id="coin-ring">50</span>
+    </div>
 
-<div class="avatar">
-👤
+  </div>
+
+  <div style="margin-top:10px">
+    <div style="font-size:.7rem;color:#888">الرصيد الحالي</div>
+    <div class="balance-amount">
+      <span class="val-balance">0.00</span> EGP
+    </div>
+  </div>
 </div>
 
-<div>
-
-<div
-id="user-phone-disp"
-style="font-weight:bold;font-size:.9rem;">
--
-</div>
-
-<span
-style="background:var(--primary-green);
-color:#000;
-font-size:.65rem;
-font-weight:bold;
-padding:1px 5px;
-border-radius:4px;">
-VIP
-</span>
-
-</div>
-
-</div>
-
-<div class="credit-ring">
-<span id="coin-ring">50</span>
-</div>
-
-</div>
-
-<div style="margin-top:10px;">
-
-<div style="font-size:.7rem;color:var(--text-sub);">
-الرصيد الحالي
-</div>
-
-<div class="balance-amount">
-<span class="val-balance">0.00</span> EGP
-</div>
-
-</div>
-
-</div>
-
-
-<!-- OLD STYLE BUTTONS -->
 <div class="actions-grid">
+  <button class="btn-action btn-deposit" onclick="showDepositInfo()">
+    💳 إيداع
+  </button>
 
-<button
-class="btn-action btn-deposit"
-onclick="showDepositInfo()">
-💳 إيداع
-</button>
-
-<button
-class="btn-action btn-withdraw"
-onclick="showWithdrawInfo()">
-💸 سحب
-</button>
-
+  <button class="btn-action btn-withdraw" onclick="showWithdrawInfo()">
+    💸 سحب
+  </button>
 </div>
 
-
-<div class="section-title">
-المنتجات الأكثر مبيعاً اليوم
-</div>
+<div class="section-title">المنتجات الأكثر مبيعاً اليوم</div>
 
 <div class="products-list">
 
 <div class="product-card">
-
-<div class="product-img-box">
-<img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300">
+  <div class="product-img-box">
+    <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300">
+  </div>
+  <div class="product-details">
+    <div class="product-title">كيبل شحن سريع Type-C قماشي متين</div>
+    <div class="product-info-row">المبيعات: 6210</div>
+  </div>
+  <div class="product-price">50 EGP</div>
 </div>
-
-<div class="product-details">
-
-<div class="product-title">
-كيبل شحن سريع Type-C قماشي متين
-</div>
-
-<div class="product-info-row">
-المبيعات: 6210
-</div>
-
-</div>
-
-<div class="product-price">
-50 EGP
-</div>
-
-</div>
-
 
 <div class="product-card">
-
-<div class="product-img-box">
-<img src="https://images.unsplash.com/photo-1601593346740-925623e07925?w=300">
+  <div class="product-img-box">
+    <img src="https://images.unsplash.com/photo-1601593346740-925623e07925?w=300">
+  </div>
+  <div class="product-details">
+    <div class="product-title">جراب حماية شفاف سيليكون</div>
+    <div class="product-info-row">المبيعات: 5430</div>
+  </div>
+  <div class="product-price">65 EGP</div>
 </div>
-
-<div class="product-details">
-
-<div class="product-title">
-جراب حماية شفاف سيليكون
-</div>
-
-<div class="product-info-row">
-المبيعات: 5430
-</div>
-
-</div>
-
-<div class="product-price">
-65 EGP
-</div>
-
-</div>
-
 
 <div class="product-card">
-
-<div class="product-img-box">
-<img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300">
-</div>
-
-<div class="product-details">
-
-<div class="product-title">
-كيبل شحن ونقل بيانات آيفون
-</div>
-
-<div class="product-info-row">
-المبيعات: 4890
+  <div class="product-img-box">
+    <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300">
+  </div>
+  <div class="product-details">
+    <div class="product-title">كيبل شحن ونقل بيانات آيفون</div>
+    <div class="product-info-row">المبيعات: 4890</div>
+  </div>
+  <div class="product-price">75 EGP</div>
 </div>
 
 </div>
-
-<div class="product-price">
-75 EGP
-</div>
-
-</div>
-
-</div>
-
 </div>
 
 
 <!-- TASKS -->
 <div id="view-task" class="view">
 
-<h3 style="margin-bottom:12px;font-size:1.05rem;">
-قائمة الاشتراكات والمهام
-</h3>
+<h3 style="margin-bottom:12px">قائمة الاشتراكات والمهام</h3>
 
-<div id="vip-list" class="vip-grid">
+<div class="vip-grid">
 
-<div
-class="vip-card"
-id="vip-card-170"
-onclick="subscribeVip(170,3.6,10)">
-
-<img
-src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500"
-class="vip-img">
-
+<div class="vip-card" id="vip-card-170" onclick="subscribeVip(170,3.6,10)">
+<img class="vip-img" src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=500">
 <div class="vip-body">
-
-<div class="vip-limit">
-حد الرصيد
+<div class="vip-limit">حد الرصيد</div>
+<div class="vip-price">170 EGP</div>
+<span class="vip-badge">عمولة 3.6%</span>
+</div>
 </div>
 
-<div class="vip-price">
-170 EGP
-</div>
-
-<span class="vip-badge">
-عمولة 3.6%
-</span>
-
-</div>
-
-</div>
-
-
-<div
-class="vip-card"
-id="vip-card-200"
-onclick="subscribeVip(200,5.4,10)">
-
-<img
-src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"
-class="vip-img">
-
+<div class="vip-card" id="vip-card-200" onclick="subscribeVip(200,5.4,10)">
+<img class="vip-img" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500">
 <div class="vip-body">
-
-<div class="vip-limit">
-حد الرصيد
+<div class="vip-limit">حد الرصيد</div>
+<div class="vip-price">200 EGP</div>
+<span class="vip-badge">عمولة 5.4%</span>
+</div>
 </div>
 
-<div class="vip-price">
-200 EGP
-</div>
-
-<span class="vip-badge">
-عمولة 5.4%
-</span>
-
-</div>
-
-</div>
-
-
-<div
-class="vip-card"
-id="vip-card-500"
-onclick="subscribeVip(500,6.6,10)">
-
-<img
-src="https://images.unsplash.com/photo-1523275335684-37898b6baf80?w=500"
-class="vip-img">
-
+<div class="vip-card" id="vip-card-500" onclick="subscribeVip(500,6.6,10)">
+<img class="vip-img" src="https://images.unsplash.com/photo-1523275335684-37898b6baf80?w=500">
 <div class="vip-body">
-
-<div class="vip-limit">
-حد الرصيد
+<div class="vip-limit">حد الرصيد</div>
+<div class="vip-price">500 EGP</div>
+<span class="vip-badge">عمولة 6.6%</span>
+</div>
 </div>
 
-<div class="vip-price">
-500 EGP
-</div>
-
-<span class="vip-badge">
-عمولة 6.6%
-</span>
-
-</div>
-
-</div>
-
-
-<div
-class="vip-card"
-id="vip-card-1000"
-onclick="subscribeVip(1000,7.2,10)">
-
-<img
-src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500"
-class="vip-img">
-
+<div class="vip-card" id="vip-card-1000" onclick="subscribeVip(1000,7.2,10)">
+<img class="vip-img" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500">
 <div class="vip-body">
-
-<div class="vip-limit">
-حد الرصيد
+<div class="vip-limit">حد الرصيد</div>
+<div class="vip-price">1000 EGP</div>
+<span class="vip-badge">عمولة 7.2%</span>
+</div>
 </div>
 
-<div class="vip-price">
-1000 EGP
-</div>
-
-<span class="vip-badge">
-عمولة 7.2%
-</span>
-
-</div>
-
-</div>
-
-
-<div
-class="vip-card"
-id="vip-card-3000"
-onclick="subscribeVip(3000,8.5,10)">
-
-<img
-src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500"
-class="vip-img">
-
+<div class="vip-card" id="vip-card-3000" onclick="subscribeVip(3000,8.5,10)">
+<img class="vip-img" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500">
 <div class="vip-body">
-
-<div class="vip-limit">
-حد الرصيد
+<div class="vip-limit">حد الرصيد</div>
+<div class="vip-price">3000 EGP</div>
+<span class="vip-badge">عمولة 8.5%</span>
+</div>
 </div>
 
-<div class="vip-price">
-3000 EGP
-</div>
-
-<span class="vip-badge">
-عمولة 8.5%
-</span>
-
-</div>
-
-</div>
-
-
-<div
-class="vip-card"
-id="vip-card-5000"
-onclick="subscribeVip(5000,10,10)">
-
-<img
-src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500"
-class="vip-img">
-
+<div class="vip-card" id="vip-card-5000" onclick="subscribeVip(5000,10,10)">
+<img class="vip-img" src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500">
 <div class="vip-body">
-
-<div class="vip-limit">
-حد الرصيد
+<div class="vip-limit">حد الرصيد</div>
+<div class="vip-price">5000 EGP</div>
+<span class="vip-badge">عمولة 10%</span>
 </div>
-
-<div class="vip-price">
-5000 EGP
-</div>
-
-<span class="vip-badge">
-عمولة 10%
-</span>
-
 </div>
 
 </div>
-
-</div>
-
 </div>
 
 
 <!-- TRANSACTIONS -->
 <div id="view-transactions" class="view">
-
-<div id="tx-subscription-container"></div>
-
+  <div id="tx-subscription-container"></div>
 </div>
 
 
 <!-- ORDERS -->
 <div id="view-orders" class="view">
-
-<h3 style="margin-bottom:12px;font-size:1.05rem;">
-سجل المهام
-</h3>
-
-<div id="orders-list">
-
-<div style="text-align:center;padding:30px;font-size:.8rem;color:var(--text-sub);">
-لا توجد مهام منفذة بعد.
-</div>
-
-</div>
-
+  <h3 style="margin-bottom:12px">سجل المهام</h3>
+  <div id="orders-list">
+    <div style="text-align:center;padding:30px;color:#888">
+      لا توجد مهام منفذة بعد.
+    </div>
+  </div>
 </div>
 
 
@@ -1130,45 +430,24 @@ class="vip-img">
 <div id="view-profile" class="view">
 
 <div class="user-card">
+  الحساب:
+  <b id="prof-phone-disp">-</b>
 
-<div>
-الحساب:
-<b id="prof-phone-disp">-</b>
+  <div class="balance-amount">
+    <span class="val-balance">0.00</span> EGP
+  </div>
 </div>
 
-<div class="balance-amount">
-<span class="val-balance">0.00</span> EGP
-</div>
+<p style="font-size:.8rem;color:#888">رابط الدعوة الخاص بك:</p>
 
-</div>
-
-<p style="font-size:.8rem;color:var(--text-sub);">
-رابط الدعوة الخاص بك:
-</p>
-
-<div
-id="ref-link"
-style="background:#111;
-padding:8px;
-border-radius:6px;
-font-size:.7rem;
-margin-top:4px;
-word-break:break-all;
-border:1px dashed var(--primary-green);">
+<div id="ref-link"
+style="background:#111;padding:8px;border-radius:6px;font-size:.7rem;margin-top:4px;word-break:break-all;border:1px dashed var(--green)">
 </div>
 
 <br>
 
-<button
-onclick="logout()"
-style="width:100%;
-padding:10px;
-background:#ff3333;
-color:#fff;
-border:none;
-border-radius:8px;
-font-weight:bold;
-cursor:pointer;">
+<button onclick="logout()"
+style="width:100%;padding:10px;background:#ff3333;color:#fff;border:0;border-radius:8px;font-weight:bold">
 تسجيل الخروج
 </button>
 
@@ -1180,143 +459,97 @@ cursor:pointer;">
 <!-- NAV -->
 <div class="navbar">
 
-<div
-class="nav-item active"
-onclick="switchTab('home',this)">
-🏠
-<span>الرئيسية</span>
+<div class="nav-item active" onclick="switchTab('home',this)">
+🏠<span>الرئيسية</span>
 </div>
 
-<div
-class="nav-item"
-onclick="switchTab('task',this)">
-⭐
-<span>مهمة</span>
+<div class="nav-item" onclick="switchTab('task',this)">
+⭐<span>مهمة</span>
 </div>
 
-<div
-class="nav-item"
-onclick="switchTab('transactions',this)">
-💳
-<span>المعاملات</span>
+<div class="nav-item" onclick="switchTab('transactions',this)">
+💳<span>المعاملات</span>
 </div>
 
-<div
-class="nav-item"
-onclick="switchTab('orders',this)">
-📄
-<span>الطلبات</span>
+<div class="nav-item" onclick="switchTab('orders',this)">
+📄<span>الطلبات</span>
 </div>
 
-<div
-class="nav-item"
-onclick="switchTab('profile',this)">
-👤
-<span>حسابي</span>
+<div class="nav-item" onclick="switchTab('profile',this)">
+👤<span>حسابي</span>
 </div>
 
 </div>
 
 </div>
+</div>
 
 
-<!-- DEPOSIT INFO -->
+<!-- DEPOSIT -->
 <div id="deposit-modal" class="modal">
+<div class="modal-content">
 
-<div class="modal-content" style="text-align:center;">
+<div style="font-size:2rem">💳</div>
 
-<div style="font-size:2rem;">
-💳
-</div>
-
-<h3 style="margin:8px 0;color:var(--primary-green);">
+<h3 style="margin:8px 0;color:var(--green)">
 الإيداع
 </h3>
 
-<p style="font-size:.82rem;color:#ccc;line-height:1.6;">
-هذه واجهة تجريبية فقط. لا يتم تنفيذ أي عملية مالية حقيقية.
+<p style="font-size:.82rem;color:#ccc;line-height:1.6">
+لإتمام عملية الإيداع، يرجى التواصل مع خدمة العملاء.
 </p>
 
-<button
-class="btn-neon-pill"
-onclick="closeDepositInfo()">
+<button class="btn-neon-pill" onclick="closeDepositInfo()">
 إغلاق
 </button>
 
 </div>
-
 </div>
 
 
-<!-- WITHDRAW INFO -->
+<!-- WITHDRAW -->
 <div id="withdraw-modal" class="modal">
+<div class="modal-content">
 
-<div class="modal-content" style="text-align:center;">
+<div style="font-size:2rem">💸</div>
 
-<div style="font-size:2rem;">
-💸
-</div>
-
-<h3 style="margin:8px 0;color:var(--primary-green);">
+<h3 style="margin:8px 0;color:var(--green)">
 السحب
 </h3>
 
-<p style="font-size:.82rem;color:#ccc;line-height:1.6;">
-هذه واجهة تجريبية فقط. لا يتم تنفيذ أي عملية مالية حقيقية.
+<p style="font-size:.82rem;color:#ccc;line-height:1.6">
+لإتمام عملية السحب، يرجى التواصل مع خدمة العملاء.
 </p>
 
-<button
-class="btn-neon-pill"
-onclick="closeWithdrawInfo()">
+<button class="btn-neon-pill" onclick="closeWithdrawInfo()">
 إغلاق
 </button>
 
 </div>
-
 </div>
 
 
 <script type="module">
 
-import { initializeApp }
+import {initializeApp}
 from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-import { getAnalytics }
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-
 import {
-getFirestore,
-doc,
-setDoc,
-getDoc,
-updateDoc,
-collection,
-addDoc,
-query,
-where,
-getDocs
+getFirestore,doc,setDoc,getDoc,updateDoc,
+collection,addDoc,query,where,getDocs
 }
 from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-
-const firebaseConfig = {
+const firebaseConfig={
 apiKey:"AIzaSyCCYQ52l2ZHtx93VK-oFCw7Z6BG5EdVgxA",
 authDomain:"naruto-c6491.firebaseapp.com",
 projectId:"naruto-c6491",
 storageBucket:"naruto-c6491.firebasestorage.app",
 messagingSenderId:"186587266594",
-appId:"1:186587266594:web:583aa9be130dcae884947b",
-measurementId:"G-Q7JER9R4S5"
+appId:"1:186587266594:web:583aa9be130dcae884947b"
 };
 
 const app=initializeApp(firebaseConfig);
-
-try{
-getAnalytics(app);
-}catch(e){
-console.log("Analytics unavailable");
-}
-
 const db=getFirestore(app);
 
 window.db=db;
@@ -1336,529 +569,247 @@ window.getDocs=getDocs;
 <script>
 
 let isSignupMode=false;
-let hasActiveSubscription=null;
 let currentUserData=null;
+let hasActiveSubscription=null;
 let taskRunning=false;
 
 
-/* =========================
-   SESSION
-========================= */
-
-window.addEventListener("DOMContentLoaded",()=>{
-
-const savedPhone=localStorage.getItem("centro_user");
-
-if(savedPhone){
-fetchUserData(savedPhone);
-}
-
-});
-
-
-/* =========================
-   SLIDER
-========================= */
-
-let currentSlide=0;
-
-const slides=document.querySelectorAll(".slide");
-const dots=document.querySelectorAll(".dot");
-
-function nextSlide(){
-
-if(!slides.length)return;
-
-slides[currentSlide].classList.remove("active");
-
-if(dots[currentSlide]){
-dots[currentSlide].classList.remove("active");
-}
-
-currentSlide=(currentSlide+1)%slides.length;
-
-slides[currentSlide].classList.add("active");
-
-if(dots[currentSlide]){
-dots[currentSlide].classList.add("active");
-}
-
-}
-
-setInterval(nextSlide,3500);
-
-
-/* =========================
-   PASSWORD
-========================= */
-
-window.togglePassVisibility=function(id){
-
-const input=document.getElementById(id);
-
-input.type=
-input.type==="password"
-?"text"
-:"password";
-
-};
-
-
-/* =========================
-   AUTH MODE
-========================= */
+/* AUTH MODE */
 
 window.toggleAuthMode=function(){
 
 isSignupMode=!isSignupMode;
 
 document.getElementById("auth-hero-title").innerText=
-isSignupMode
-?"إنشاء حساب جديد"
-:"تسجيل الدخول إلى حسابك";
+isSignupMode?"إنشاء حساب جديد":"تسجيل الدخول إلى حسابك";
 
 document.getElementById("auth-btn").innerText=
-isSignupMode
-?"تسجيل حساب"
-:"تسجيل الدخول";
+isSignupMode?"تسجيل حساب":"تسجيل الدخول";
 
 document.getElementById("auth-toggle-link").innerText=
-isSignupMode
-?"لديك حساب بالفعل؟ سجل الدخول"
-:"اذهب للتسجيل ليس لديك حساب؟";
+isSignupMode?"لديك حساب بالفعل؟ سجل الدخول":"اذهب للتسجيل ليس لديك حساب؟";
 
 document.getElementById("group-confirm-pass").style.display=
-isSignupMode
-?"block"
-:"none";
-
-document.getElementById("group-invite-code").style.display=
-isSignupMode
-?"block"
-:"none";
+isSignupMode?"block":"none";
 
 };
 
 
-/* =========================
-   AUTH
-========================= */
+/* AUTH */
 
-window.handleAuth=async function(event){
+window.handleAuth=async function(e){
 
-event.preventDefault();
+e.preventDefault();
 
-const phone=
-document.getElementById("auth-phone")
-.value.trim();
-
-const pass=
-document.getElementById("auth-pass")
-.value.trim();
+const phone=document.getElementById("auth-phone").value.trim();
+const pass=document.getElementById("auth-pass").value.trim();
 
 if(!phone||!pass){
-
 alert("الرجاء إدخال بيانات صحيحة");
 return;
-
 }
 
-const userRef=
-window.doc(
-window.db,
-"users",
-phone
-);
+const userRef=window.doc(window.db,"users",phone);
 
 try{
 
-const userSnap=
-await window.getDoc(userRef);
-
-
-/* NEW USER */
+const snap=await window.getDoc(userRef);
 
 if(isSignupMode){
 
-const confirmPass=
-document.getElementById("auth-confirm-pass")
-.value.trim();
+const confirm=document.getElementById("auth-confirm-pass").value.trim();
 
-if(pass!==confirmPass){
-
+if(pass!==confirm){
 alert("كلمات المرور غير متطابقة");
 return;
-
 }
 
-if(userSnap.exists()){
-
+if(snap.exists()){
 alert("المستخدم موجود بالفعل");
 return;
-
 }
 
-
-/*
-   المستخدم الجديد يحصل على 50
-   كرصيد ترحيبي مرة واحدة فقط.
-*/
-
 const newUser={
-
-phone:phone,
-
-pass:pass,
-
+phone,
+pass,
 balance:50,
-
 welcomeBonus:50,
-
 vip:"VIP",
-
 depositSteps:[850,900,928],
-
 depositIndex:0,
-
 activeSubscription:null,
-
 createdAt:new Date().toISOString()
-
 };
 
-await window.setDoc(
-userRef,
-newUser
-);
+await window.setDoc(userRef,newUser);
 
-localStorage.setItem(
-"centro_user",
-phone
-);
+localStorage.setItem("centro_user",phone);
 
 currentUserData=newUser;
 
 initAppSession(phone);
 
-alert(
-"🎁 تم إنشاء حسابك وحصلت على 50 EGP رصيد ترحيبي!"
-);
+alert("🎁 تم إنشاء حسابك وحصلت على 50 EGP رصيد ترحيبي!");
 
 return;
-
 }
 
-
-/* LOGIN */
-
-if(!userSnap.exists()){
-
-alert(
-"المستخدم غير موجود. يرجى التسجيل أولاً."
-);
-
+if(!snap.exists()){
+alert("المستخدم غير موجود. يرجى التسجيل أولاً.");
 return;
-
 }
 
-const data=userSnap.data();
+const data=snap.data();
 
 if(data.pass!==pass){
-
 alert("كلمة المرور غير صحيحة");
 return;
-
 }
 
+data.balance=Number(data.balance||0);
+data.depositSteps=Array.isArray(data.depositSteps)?data.depositSteps:[850,900,928];
+data.depositIndex=Number(data.depositIndex||0);
 
-/*
-   الحسابات القديمة تظل كما هي.
-*/
-
-if(typeof data.balance!=="number"){
-
-data.balance=
-Number(data.balance||0);
-
-}
-
-if(!data.depositSteps){
-
-data.depositSteps=[
-850,
-900,
-928
-];
-
-data.depositIndex=0;
-
-}
-
-if(data.depositIndex===undefined){
-
-data.depositIndex=0;
-
-}
-
-await window.updateDoc(
-userRef,
-{
+await window.updateDoc(userRef,{
 balance:data.balance,
 depositSteps:data.depositSteps,
 depositIndex:data.depositIndex
-}
-);
+});
 
-localStorage.setItem(
-"centro_user",
-phone
-);
+localStorage.setItem("centro_user",phone);
 
 currentUserData=data;
 
 initAppSession(phone);
 
-}
+}catch(err){
 
-catch(e){
-
-console.error(e);
-
-alert(
-"حدث خطأ في الاتصال بقاعدة البيانات"
-);
+console.error(err);
+alert("حدث خطأ في الاتصال بقاعدة البيانات");
 
 }
 
 };
 
 
-/* =========================
-   FETCH USER
-========================= */
+/* SESSION */
 
 async function fetchUserData(phone){
 
 try{
 
-const userRef=
-window.doc(
-window.db,
-"users",
-phone
-);
-
-const snap=
-await window.getDoc(userRef);
+const ref=window.doc(window.db,"users",phone);
+const snap=await window.getDoc(ref);
 
 if(!snap.exists()){
-
-localStorage.removeItem(
-"centro_user"
-);
-
+localStorage.removeItem("centro_user");
 return;
-
 }
 
 currentUserData=snap.data();
 
-if(typeof currentUserData.balance!=="number"){
+currentUserData.balance=Number(currentUserData.balance||0);
+currentUserData.depositSteps=
+Array.isArray(currentUserData.depositSteps)?
+currentUserData.depositSteps:[850,900,928];
 
-currentUserData.balance=
-Number(
-currentUserData.balance||0
-);
-
-}
-
-if(!currentUserData.depositSteps){
-
-currentUserData.depositSteps=[
-850,
-900,
-928
-];
-
-}
-
-if(currentUserData.depositIndex===undefined){
-
-currentUserData.depositIndex=0;
-
-}
-
-await window.updateDoc(
-userRef,
-{
-balance:currentUserData.balance,
-depositSteps:currentUserData.depositSteps,
-depositIndex:currentUserData.depositIndex
-}
-);
+currentUserData.depositIndex=
+Number(currentUserData.depositIndex||0);
 
 initAppSession(phone);
 
-}
-catch(e){
-
+}catch(e){
 console.error(e);
-
 }
 
 }
 
+window.addEventListener("DOMContentLoaded",()=>{
 
-/* =========================
-   INIT
-========================= */
+const phone=localStorage.getItem("centro_user");
+
+if(phone)fetchUserData(phone);
+
+});
+
+
+/* INIT */
 
 function initAppSession(phone){
 
-document.getElementById(
-"view-auth"
-).style.display="none";
+document.getElementById("view-auth").style.display="none";
+document.getElementById("app-content").style.display="block";
 
-document.getElementById(
-"app-content"
-).style.display="block";
+document.getElementById("user-phone-disp").innerText=phone;
+document.getElementById("prof-phone-disp").innerText=phone;
 
-document.getElementById(
-"user-phone-disp"
-).innerText=phone;
-
-document.getElementById(
-"prof-phone-disp"
-).innerText=phone;
-
-document.getElementById(
-"ref-link"
-).innerText=
-window.location.origin+
-window.location.pathname+
-"?ref="+phone;
+document.getElementById("ref-link").innerText=
+location.origin+location.pathname+"?ref="+phone;
 
 hasActiveSubscription=
 currentUserData.activeSubscription||null;
 
-updateBalanceUI(
-currentUserData.balance||0
-);
-
+updateBalanceUI(currentUserData.balance);
 updateVipCards();
 
 }
 
 
-/* =========================
-   BALANCE UI
-========================= */
+/* BALANCE */
 
 function updateBalanceUI(balance){
 
-const value=
-Number(balance||0)
-.toFixed(2);
+const value=Number(balance||0).toFixed(2);
 
-document.querySelectorAll(
-".val-balance"
-)
-.forEach(el=>{
-el.innerText=value;
-});
+document.querySelectorAll(".val-balance")
+.forEach(el=>el.innerText=value);
 
-const ring=
-document.getElementById("coin-ring");
-
-if(ring){
-
-ring.innerText=
-Math.floor(
-Number(balance||0)
-);
-
-}
+document.getElementById("coin-ring").innerText=
+Math.floor(Number(balance||0));
 
 }
 
 
-/* =========================
-   DEPOSIT / WITHDRAW UI
-========================= */
+/* DEPOSIT / WITHDRAW */
 
 window.showDepositInfo=function(){
-
-document.getElementById(
-"deposit-modal"
-).classList.add("active");
-
+document.getElementById("deposit-modal").classList.add("active");
 };
 
 window.closeDepositInfo=function(){
-
-document.getElementById(
-"deposit-modal"
-).classList.remove("active");
-
+document.getElementById("deposit-modal").classList.remove("active");
 };
 
 window.showWithdrawInfo=function(){
-
-document.getElementById(
-"withdraw-modal"
-).classList.add("active");
-
+document.getElementById("withdraw-modal").classList.add("active");
 };
 
 window.closeWithdrawInfo=function(){
-
-document.getElementById(
-"withdraw-modal"
-).classList.remove("active");
-
+document.getElementById("withdraw-modal").classList.remove("active");
 };
 
 
-/* =========================
-   TAB
-========================= */
+/* TABS */
 
-window.switchTab=function(tabName,el){
+window.switchTab=function(tab,el){
 
 document.querySelectorAll(".view")
-.forEach(v=>{
-v.classList.remove("active");
-});
+.forEach(v=>v.classList.remove("active"));
 
-document.querySelectorAll(
-".navbar .nav-item"
-)
-.forEach(n=>{
-n.classList.remove("active");
-});
+document.querySelectorAll(".nav-item")
+.forEach(n=>n.classList.remove("active"));
 
-document.getElementById(
-"view-"+tabName
-).classList.add("active");
+document.getElementById("view-"+tab).classList.add("active");
 
-if(el){
-el.classList.add("active");
-}
+if(el)el.classList.add("active");
 
-if(tabName==="transactions"){
-renderTransactionsView();
-}
-
-if(tabName==="orders"){
-loadOrders();
-}
+if(tab==="transactions")renderTransactions();
+if(tab==="orders")loadOrders();
 
 };
 
 
-/* =========================
-   VIP STATUS
-========================= */
+/* VIP */
 
 function updateVipCards(){
 
@@ -1871,589 +822,286 @@ const cards=[
 ["vip-card-5000",5000]
 ];
 
-const balance=
-Number(
-currentUserData?.balance||0
-);
+const balance=Number(currentUserData?.balance||0);
 
 const active=
 currentUserData?.activeSubscription &&
 !currentUserData.activeSubscription.completed;
 
-cards.forEach(([id,amount])=>{
+cards.forEach(([id,price])=>{
 
-const el=
-document.getElementById(id);
+const el=document.getElementById(id);
 
 if(!el)return;
 
-if(active||balance<amount){
-
-el.classList.add("disabled");
-
-}else{
-
-el.classList.remove("disabled");
-
-}
+el.classList.toggle("disabled",active||balance<price);
 
 });
 
 }
 
 
-/* =========================
-   LOGOUT
-========================= */
+/* SUBSCRIBE */
 
-window.logout=function(){
-
-localStorage.removeItem(
-"centro_user"
-);
-
-location.reload();
-
-};
-
-
-/* =========================
-   SUBSCRIBE
-========================= */
-
-window.subscribeVip=async function(
-amount,
-commission,
-tasksCount
-){
+window.subscribeVip=async function(amount,commission,tasksCount){
 
 if(taskRunning)return;
-
-
-/* منع أكثر من باقة */
 
 if(
 currentUserData.activeSubscription &&
 !currentUserData.activeSubscription.completed
 ){
 
-alert(
-"لديك باقة نشطة بالفعل. أنهِ الباقة الحالية أولاً."
-);
+alert("لديك باقة نشطة بالفعل. أنهِ الباقة الحالية أولاً.");
 
 switchTab(
 "transactions",
-document.querySelectorAll(
-".navbar .nav-item"
-)[2]
+document.querySelectorAll(".nav-item")[2]
 );
 
 return;
-
 }
 
-const balance=
-Number(
-currentUserData.balance||0
-);
-
-const price=
-Number(amount);
+const balance=Number(currentUserData.balance||0);
+const price=Number(amount);
 
 if(balance<price){
-
-const shortage=
-price-balance;
 
 alert(
 `الرصيد غير كافٍ.
 
 سعر الباقة: ${price.toFixed(2)} EGP
 رصيدك: ${balance.toFixed(2)} EGP
-المطلوب: ${shortage.toFixed(2)} EGP`
+المطلوب: ${(price-balance).toFixed(2)} EGP`
 );
 
 return;
-
 }
 
-const newSubscription={
-
+const sub={
 amount:price,
-
 commission:Number(commission),
-
 tasksCount:Number(tasksCount),
-
 currentTask:1,
-
 completed:false
-
 };
 
-const newBalance=
-balance-price;
+const newBalance=balance-price;
 
 try{
 
-const userRef=
-window.doc(
-window.db,
-"users",
-currentUserData.phone
-);
-
 await window.updateDoc(
-userRef,
+window.doc(window.db,"users",currentUserData.phone),
 {
 balance:newBalance,
-activeSubscription:newSubscription
+activeSubscription:sub
 }
 );
 
-currentUserData.balance=
-newBalance;
+currentUserData.balance=newBalance;
+currentUserData.activeSubscription=sub;
+hasActiveSubscription=sub;
 
-currentUserData.activeSubscription=
-newSubscription;
-
-hasActiveSubscription=
-newSubscription;
-
-updateBalanceUI(
-newBalance
-);
-
+updateBalanceUI(newBalance);
 updateVipCards();
 
 switchTab(
 "transactions",
-document.querySelectorAll(
-".navbar .nav-item"
-)[2]
+document.querySelectorAll(".nav-item")[2]
 );
 
-}
-catch(e){
+}catch(e){
 
 console.error(e);
-
-alert(
-"حدث خطأ أثناء إنشاء الاشتراك."
-);
+alert("حدث خطأ أثناء إنشاء الاشتراك.");
 
 }
 
 };
 
 
-/* =========================
-   TRANSACTIONS
-========================= */
+/* TRANSACTIONS */
 
-function renderTransactionsView(){
+function renderTransactions(){
 
-const container=
-document.getElementById(
-"tx-subscription-container"
-);
+const box=document.getElementById("tx-subscription-container");
+const sub=hasActiveSubscription;
 
-if(
-!hasActiveSubscription ||
-hasActiveSubscription.completed
-){
+if(!sub||sub.completed){
 
-container.innerHTML=`
-
+box.innerHTML=`
 <div class="empty-subscription-box">
-
 لا توجد باقة نشطة حالياً.<br>
-
 اختر باقة من قسم مهمة.
-
-</div>
-
-`;
-
+</div>`;
 return;
 
 }
 
-const sub=
-hasActiveSubscription;
-
-container.innerHTML=`
+box.innerHTML=`
 
 <div class="tx-hero-card">
 
-<div class="tx-balance-title">
-الرصيد الحالي
-</div>
+<div class="tx-balance-title">الرصيد الحالي</div>
 
 <div class="tx-balance-val">
-${Number(
-currentUserData.balance||0
-).toFixed(2)} EGP
+${Number(currentUserData.balance||0).toFixed(2)} EGP
 </div>
 
 <div class="tx-commission-box">
-
-<div class="tx-commission-title">
-عمولة الباقة
-</div>
-
-<div class="tx-commission-val">
-${sub.commission}%
+<div class="tx-commission-title">عمولة الباقة</div>
+<div class="tx-commission-val">${sub.commission}%</div>
 </div>
 
 </div>
-
-</div>
-
 
 <div class="tx-task-card">
 
 <div class="tx-task-row">
-
-<span class="tx-task-label">
-الباقة:
-</span>
-
-<span class="tx-task-value">
-${sub.amount} EGP
-</span>
-
+<span class="tx-task-label">الباقة:</span>
+<span class="tx-task-value">${sub.amount} EGP</span>
 </div>
-
 
 <div class="tx-task-row">
-
-<span class="tx-task-label">
-المهمة الحالية:
-</span>
-
-<span class="tx-task-value">
-${sub.currentTask} / ${sub.tasksCount}
-</span>
-
+<span class="tx-task-label">المهمة الحالية:</span>
+<span class="tx-task-value">${sub.currentTask} / ${sub.tasksCount}</span>
 </div>
 
-
-<div
-id="progress-box"
-class="progress-container">
-
-<div
-id="progress-bar"
-class="progress-bar">
-</div>
-
-<div
-id="progress-text"
-class="progress-text">
+<div id="progress-box" class="progress-container">
+<div id="progress-bar" class="progress-bar"></div>
+<div id="progress-text" class="progress-text">
 جاري إتمام المهمة... 0%
 </div>
-
 </div>
-
 
 <button
 id="btn-start-task"
 class="btn-neon-pill"
-style="margin-top:15px;"
 onclick="executeTask()">
-
 بدء إتمام المهمة الحالية
-
 </button>
 
-</div>
-
-`;
+</div>`;
 
 }
 
 
-/* =========================
-   TASK EXECUTION
-========================= */
+/* TASK */
 
 window.executeTask=async function(){
 
 if(taskRunning)return;
 
-const sub=
-hasActiveSubscription;
+const sub=hasActiveSubscription;
 
 if(!sub||sub.completed){
 
-alert(
-"لا توجد باقة نشطة حالياً."
-);
-
+alert("لا توجد باقة نشطة حالياً.");
 return;
 
 }
 
-const taskNumber=
-Number(sub.currentTask);
+const taskNumber=Number(sub.currentTask);
+let required=0;
 
-let requiredCoins=0;
+if([3,6,9].includes(taskNumber)){
 
-if(
-[3,6,9].includes(taskNumber)
-){
+const index=Number(currentUserData.depositIndex||0);
+const steps=currentUserData.depositSteps||[850,900,928];
 
-const index=
-Number(
-currentUserData.depositIndex||0
-);
-
-const steps=
-Array.isArray(
-currentUserData.depositSteps
-)
-?currentUserData.depositSteps
-:[850,900,928];
-
-if(index<steps.length){
-
-requiredCoins=
-Number(
-steps[index]||0
-);
+if(index<steps.length)
+required=Number(steps[index]||0);
 
 }
 
-}
+const balance=Number(currentUserData.balance||0);
 
-
-/*
-   التحقق من الرصيد قبل المهمة.
-*/
-
-const currentBalance=
-Number(
-currentUserData.balance||0
-);
-
-if(
-requiredCoins>0 &&
-currentBalance<requiredCoins
-){
-
-const shortage=
-requiredCoins-currentBalance;
+if(required>0&&balance<required){
 
 alert(
 `لا يمكن إكمال المهمة رقم ${taskNumber}.
 
-المطلوب: ${requiredCoins.toFixed(2)} EGP
-رصيدك الحالي: ${currentBalance.toFixed(2)} EGP
-الناقص: ${shortage.toFixed(2)} EGP`
+المطلوب: ${required.toFixed(2)} EGP
+رصيدك الحالي: ${balance.toFixed(2)} EGP
+الناقص: ${(required-balance).toFixed(2)} EGP`
 );
 
 return;
 
 }
-
-const btn=
-document.getElementById(
-"btn-start-task"
-);
-
-const progressBox=
-document.getElementById(
-"progress-box"
-);
-
-const progressBar=
-document.getElementById(
-"progress-bar"
-);
-
-const progressText=
-document.getElementById(
-"progress-text"
-);
 
 taskRunning=true;
 
-if(btn){
+const box=document.getElementById("progress-box");
+const bar=document.getElementById("progress-bar");
+const text=document.getElementById("progress-text");
+const btn=document.getElementById("btn-start-task");
 
+box.style.display="block";
 btn.disabled=true;
-btn.style.opacity=".5";
-
-}
-
-if(progressBox){
-
-progressBox.style.display="block";
-
-}
 
 let progress=0;
 
-const interval=
-setInterval(async()=>{
+const timer=setInterval(async()=>{
 
-progress+=5;
+progress+=10;
 
-if(progressBar){
+bar.style.width=progress+"%";
+text.innerText=`جاري إتمام المهمة... ${progress}%`;
 
-progressBar.style.width=
-progress+"%";
+if(progress<100)return;
 
-}
-
-if(progressText){
-
-progressText.innerText=
-`جاري إتمام المهمة... ${progress}%`;
-
-}
-
-if(progress>=100){
-
-clearInterval(interval);
+clearInterval(timer);
 
 try{
 
-/*
-   خصم المتطلبات الافتراضية.
-*/
+if(required>0){
 
-if(requiredCoins>0){
-
-const balanceNow=
-Number(
-currentUserData.balance||0
-);
-
-if(balanceNow<requiredCoins){
-
-taskRunning=false;
-
-if(btn){
-
-btn.disabled=false;
-btn.style.opacity="1";
-
+currentUserData.balance-=required;
+currentUserData.depositIndex++;
 }
-
-if(progressBox){
-
-progressBox.style.display="none";
-
-}
-
-alert(
-"الرصيد لم يعد كافياً لإتمام المهمة."
-);
-
-renderTransactionsView();
-
-return;
-
-}
-
-currentUserData.balance=
-balanceNow-requiredCoins;
-
-currentUserData.depositIndex=
-Number(
-currentUserData.depositIndex||0
-)+1;
-
-}
-
-
-/*
-   حساب مكافأة المهمة.
-*/
 
 const reward=
 Number(sub.amount)*
 (Number(sub.commission)/100);
 
-currentUserData.balance=
-Number(
-currentUserData.balance||0
-)+reward;
+currentUserData.balance+=reward;
 
-
-/*
-   تحديث حالة المهمة.
-*/
-
-if(
-sub.currentTask<
-sub.tasksCount
-){
+if(sub.currentTask<sub.tasksCount){
 
 sub.currentTask++;
 
 }else{
 
 sub.completed=true;
-
 currentUserData.activeSubscription=null;
-
 hasActiveSubscription=null;
 
 }
 
-
-/*
-   حفظ البيانات.
-*/
-
-const userRef=
-window.doc(
-window.db,
-"users",
-currentUserData.phone
-);
-
 await window.updateDoc(
-userRef,
+window.doc(window.db,"users",currentUserData.phone),
 {
-balance:Number(
-currentUserData.balance||0
-),
-depositIndex:Number(
-currentUserData.depositIndex||0
-),
-activeSubscription:
-currentUserData.activeSubscription
+balance:Number(currentUserData.balance),
+depositIndex:Number(currentUserData.depositIndex||0),
+activeSubscription:currentUserData.activeSubscription
 }
 );
 
-
-/*
-   تسجيل المهمة.
-*/
-
 await window.addDoc(
-window.collection(
-window.db,
-"orders"
-),
+window.collection(window.db,"orders"),
 {
 phone:currentUserData.phone,
-type:"task_reward",
-taskNumber:taskNumber,
-reward:reward,
-requiredCoins:requiredCoins,
+type:"demo_task_reward",
+taskNumber,
+reward,
+requiredCoins:required,
 status:"مكتملة",
 date:new Date().toISOString()
 }
 );
 
-updateBalanceUI(
-currentUserData.balance
-);
-
+updateBalanceUI(currentUserData.balance);
 updateVipCards();
 
 taskRunning=false;
@@ -2461,50 +1109,23 @@ taskRunning=false;
 alert(
 `تم إتمام المهمة رقم ${taskNumber} بنجاح.
 
-مكافأة المهمة: ${reward.toFixed(2)} EGP`+
-(
-requiredCoins>0
-?
-`\nتم خصم ${requiredCoins.toFixed(2)} EGP`
-:""
-)
+مكافأة تجريبية: ${reward.toFixed(2)} EGP`
 );
 
-if(sub.completed){
+if(sub.completed)
+alert("🎉 لقد أتممت جميع مهام الباقة.");
 
-alert(
-"🎉 لقد أتممت جميع مهام الباقة."
-);
+renderTransactions();
 
-}
-
-renderTransactionsView();
-
-}
-catch(e){
+}catch(e){
 
 console.error(e);
 
 taskRunning=false;
-
-alert(
-"حدث خطأ أثناء حفظ المهمة. لم يتم تأكيد إتمامها."
-);
-
-if(btn){
-
 btn.disabled=false;
-btn.style.opacity="1";
+box.style.display="none";
 
-}
-
-if(progressBox){
-
-progressBox.style.display="none";
-
-}
-
-}
+alert("حدث خطأ أثناء حفظ المهمة.");
 
 }
 
@@ -2513,46 +1134,27 @@ progressBox.style.display="none";
 };
 
 
-/* =========================
-   ORDERS
-========================= */
+/* ORDERS */
 
 async function loadOrders(){
 
-if(!currentUserData)return;
+const list=document.getElementById("orders-list");
 
 try{
 
-const q=
-window.query(
-window.collection(
-window.db,
-"orders"
-),
-window.where(
-"phone",
-"==",
-currentUserData.phone
-)
+const q=window.query(
+window.collection(window.db,"orders"),
+window.where("phone","==",currentUserData.phone)
 );
 
-const snapshot=
-await window.getDocs(q);
+const snap=await window.getDocs(q);
 
-const list=
-document.getElementById(
-"orders-list"
-);
-
-if(snapshot.empty){
+if(snap.empty){
 
 list.innerHTML=`
-
-<div style="text-align:center;padding:30px;color:#888;">
+<div style="text-align:center;padding:30px;color:#888">
 لا توجد مهام منفذة بعد.
-</div>
-
-`;
+</div>`;
 
 return;
 
@@ -2560,95 +1162,86 @@ return;
 
 let html="";
 
-snapshot.forEach(docSnap=>{
+snap.forEach(d=>{
 
-const data=
-docSnap.data();
+const data=d.data();
 
 html+=`
 
 <div class="order-card">
 
 <div class="order-header">
-
-<span>
-${new Date(
-data.date
-).toLocaleString()}
-</span>
-
-<span>
-مكافأة مهمة
-</span>
-
+<span>${new Date(data.date).toLocaleString()}</span>
+<span>مكافأة مهمة</span>
 </div>
 
 <div class="order-body">
 
 <div>
-
-<div class="order-name">
+<div style="font-weight:bold">
 المهمة رقم ${data.taskNumber||"-"}
 </div>
 
-<div
-style="font-size:.8rem;
-color:var(--primary-green);
-font-weight:bold;
-margin-top:2px;">
-
-${Number(
-data.reward||
-data.amount||
-0
-).toFixed(2)} EGP
-
+<div style="color:var(--green);font-weight:bold;margin-top:3px">
+${Number(data.reward||0).toFixed(2)} EGP
 </div>
 
 ${
 Number(data.requiredCoins||0)>0
-?
-`
-<div
-style="font-size:.7rem;
-color:#ffcc00;
-margin-top:3px;">
-
-خصم: ${
-Number(
-data.requiredCoins
-).toFixed(2)
-} EGP
-
-</div>
-`
+?`
+<div style="font-size:.7rem;color:#ffcc00;margin-top:3px">
+متطلب تجريبي: ${Number(data.requiredCoins).toFixed(2)} EGP
+</div>`
 :""
 }
 
 </div>
 
-<span class="order-status">
-${data.status||"مكتملة"}
-</span>
+<span class="order-status">مكتملة</span>
 
 </div>
-
-</div>
-
-`;
+</div>`;
 
 });
 
 list.innerHTML=html;
 
-}
-catch(e){
+}catch(e){
 
 console.error(e);
 
 }
 
 }
+
+
+/* LOGOUT */
+
+window.logout=function(){
+
+localStorage.removeItem("centro_user");
+location.reload();
+
+};
+
+
+/* SLIDER */
+
+let slide=0;
+
+setInterval(()=>{
+
+const slides=document.querySelectorAll(".slide");
+
+if(!slides.length)return;
+
+slides.forEach(s=>s.classList.remove("active"));
+
+slide=(slide+1)%slides.length;
+
+slides[slide].classList.add("active");
+
+},3500);
 
 </script>
 
